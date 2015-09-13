@@ -1,0 +1,30 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+
+proc run { i c } {
+  send -i $i "$c\r"
+  expect -i $i "mysql>"
+}
+
+proc login_system { t p } {
+  set timeout $t
+  spawn /usr/bin/env -i LANG=C TERM=vt100 /usr/bin/mysql -p
+  set tmp $spawn_id
+  expect -i $tmp "Enter password:"
+  send -i $tmp "$p\r"
+  expect -i $tmp "mysql>"
+  return $tmp
+}
+
+proc logout_system { i } {
+  send -i $i "quit\r"
+  set timeout 5
+  expect -i $i eof
+}
+
+set X1 [login_system -1 root]
+run $X1 "create database test;"
+run $X1 "use test;"
+run $X1 "drop table sbtest;"
+logout_system $X1

@@ -1,0 +1,70 @@
+diff -ur aget-0.4/Aget.c aget-0.4.mod//Aget.c
+--- aget-0.4/Aget.c	2002-11-22 13:40:23.000000000 +0530
++++ aget-0.4.mod//Aget.c	2012-02-27 18:15:57.386777837 +0530
+@@ -30,8 +30,8 @@
+ extern int fsuggested, nthreads;
+ extern int bwritten;
+ extern pthread_t hthread;
+-
+-extern int errno;
++#include <errno.h>
++//extern int errno;
+ 
+ 
+ void get(struct request *req)
+diff -ur aget-0.4/Download.c aget-0.4.mod//Download.c
+--- aget-0.4/Download.c	2002-11-19 19:30:39.000000000 +0530
++++ aget-0.4.mod//Download.c	2012-02-27 18:16:07.596777835 +0530
+@@ -28,8 +28,8 @@
+ 
+ extern sigset_t signal_set;
+ 
+-
+-extern int errno;
++#include <errno.h>
++//extern int errno;
+ 
+ unsigned int bwritten = 0;
+ pthread_mutex_t bwritten_mutex = PTHREAD_MUTEX_INITIALIZER;
+diff -ur aget-0.4/Head.c aget-0.4.mod//Head.c
+--- aget-0.4/Head.c	2002-11-22 13:08:03.000000000 +0530
++++ aget-0.4.mod//Head.c	2012-02-27 18:16:15.906777833 +0530
+@@ -29,9 +29,9 @@
+ #include "Defs.h"
+ #include "Misc.h"
+ 
+-
+-extern int errno;
+-extern int h_errno;
++#include <errno.h>
++//extern int errno;
++//extern int h_errno;
+ 
+ 
+ void http_head_req(struct request *req)
+diff -ur aget-0.4/Makefile aget-0.4.mod//Makefile
+--- aget-0.4/Makefile	2002-11-22 13:09:24.000000000 +0530
++++ aget-0.4.mod//Makefile	2012-02-27 18:09:02.436777943 +0530
+@@ -2,7 +2,7 @@
+ # http://www.enderunix.org/aget/
+ 
+ OBJS = main.o Aget.o Misc.o Head.o Signal.o Download.o Resume.o
+-CFLAGS = -g -Wall -W -pedantic 
++CFLAGS = -g -Wall -W -pedantic -D_GNU_SOURCE
+ LDFLAGS = -pthread
+ CC = gcc
+ STRIP = strip
+diff -ur aget-0.4/main.c aget-0.4.mod//main.c
+--- aget-0.4/main.c	2003-06-04 14:12:09.000000000 +0530
++++ aget-0.4.mod//main.c	2012-02-27 18:16:22.406777831 +0530
+@@ -13,8 +13,8 @@
+ #include "Signal.h"
+ #include "Resume.h"
+ #include "main.h"
+-
+-extern int errno;
++#include <errno.h>
++//extern int errno;
+ 
+ int main(int argc, char **argv)
+ {
