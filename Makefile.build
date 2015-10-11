@@ -20,7 +20,8 @@ NTHREADS=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 SNTHREADS=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 BTKERNEL=$(shell lsmod | grep bt | wc -l)
 
-PROGS=lmem false_share radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft #radiosity sysbench pfscan pbzip2 aget  cholesky
+PROGS=lmem false_share radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity sysbench pfscan pbzip2 aget  cholesky
+#PROGS=radiosity sysbench pfscan pbzip2 aget  cholesky
 RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2 randfile.10.3 randfile.10.4 randfile.10.5 randfile.10.6 randfile.40.1 randfile.100.2 randfile.200.1 randfile 200.1 randfile.400.1
 
 all::
@@ -42,7 +43,7 @@ fft:: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime 1000 FFT.$$n `pwd`/$(SPLASH)/codes/kernels/fft/FFT -p $$n -m 16 > /dev/null; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 radix:: $(SPLASH)/codes/Makefile.config
@@ -50,7 +51,7 @@ radix:: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime 10 RADIX.$$n `pwd`/$(SPLASH)/codes/kernels/radix/RADIX -p $$n -n 33554432 > /dev/null; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 lu-cont:: $(SPLASH)/codes/Makefile.config
@@ -58,7 +59,7 @@ lu-cont:: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime 10 LU-CONT.$$n `pwd`/$(SPLASH)/codes/kernels/lu/contiguous_blocks/LU -p $$n -n 2048 > /dev/null; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 lu-ncont:: $(SPLASH)/codes/Makefile.config
@@ -66,7 +67,7 @@ lu-ncont:: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime 10 LU-NCONT.$$n `pwd`/$(SPLASH)/codes/kernels/lu/non_contiguous_blocks/LU -p $$n -n 2048 > /dev/null; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 cholesky:: $(SPLASH)/codes/Makefile.config
@@ -74,7 +75,7 @@ cholesky:: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); ./mytime 1 CHOLESKY.$$n `pwd`/$(SPLASH)/codes/kernels/cholesky/CHOLESKY -p $$n; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 barnes:: $(SPLASH)/codes/Makefile.config
@@ -83,7 +84,7 @@ barnes:: $(SPLASH)/codes/Makefile.config
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  echo > in && echo 16384 >> in && echo 123 >> in && echo NULL >> in && echo 0.025 >> in && echo 0.05 >> in && echo 1.0 >> in && echo 2.0 >> in && echo 4 >> in && echo 0.075 >> in && echo 0.25 >> in && echo $$n >> in; \
 	  for i in $(ITERS); do $(build)/mytime 40 BARNES.$$n ./param `pwd`/$(SPLASH)/codes/apps/barnes/BARNES in > /dev/null 2>/dev/null; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 fmm:: $(SPLASH)/codes/Makefile.config
@@ -92,7 +93,7 @@ fmm:: $(SPLASH)/codes/Makefile.config
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  echo "two cluster" > in && echo plummer >> in && echo 16384 >> in && echo 1e-6 >> in && echo $$n >> in && echo 5 >> in && echo .025 >> in && echo 0.0 >> in && echo "cost zones" >> in; \
 	  for i in $(ITERS); do $(build)/mytime 30 FMM.$$n ./param `pwd`/$(SPLASH)/codes/apps/fmm/FMM  in > /dev/null 2>/dev/null; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 #can set -n4098 for larger machines
@@ -101,7 +102,7 @@ ocean:: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do $(build)/mytime 50 OCEAN.$$n `pwd`/$(SPLASH)/codes/apps/ocean/contiguous_partitions/OCEAN -n258 -p$$n -e1e-07 -r20000 -t28800 > /dev/null; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 radiosity: $(SPLASH)/codes/Makefile.config
@@ -111,7 +112,7 @@ radiosity: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do $(build)/mytime 1 RADIOSITY.$$n `pwd`/$(SPLASH)/codes/apps/radiosity/RADIOSITY -p $$n -batch -room; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 raytrace: $(SPLASH)/codes/Makefile.config
@@ -119,7 +120,7 @@ raytrace: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do cd `pwd`/$(SPLASH)/codes/apps/raytrace && $(build)/mytime 30 RAYTRACE.$$n ./RAYTRACE -p $$n inputs/balls4.env > /dev/null 2>/dev/null && cd -; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 volrend: $(SPLASH)/codes/Makefile.config
@@ -127,7 +128,7 @@ volrend: $(SPLASH)/codes/Makefile.config
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do cd `pwd`/$(SPLASH)/codes/apps/volrend && $(build)/mytime 15 VOLREND.$$n ./VOLREND $$n inputs/head > /dev/null && cd -; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 water-nsquared: $(SPLASH)/codes/Makefile.config
@@ -136,7 +137,7 @@ water-nsquared: $(SPLASH)/codes/Makefile.config
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  echo "  1.5e-16   512  300   6" > in && echo " -1       3000     3  0" >> in && echo "$$n 6.212752" >> in; \
 	  for i in $(ITERS); do cd `pwd`/$(SPLASH)/codes/apps/water-nsquared && $(build)/mytime 3 WATER-NSQUARED.$$n $(build)/param ./WATER-NSQUARED  $(build)/in > /dev/null 2>/dev/null && cd -; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 water-spatial: $(SPLASH)/codes/Makefile.config
@@ -145,35 +146,35 @@ water-spatial: $(SPLASH)/codes/Makefile.config
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  echo "  1.5e-17   512  50   6" > in && echo " 0       0     3  0" >> in && echo "$$n 6.212752" >> in; \
 	  for i in $(ITERS); do cd `pwd`/$(SPLASH)/codes/apps/water-spatial && $(build)/mytime 20 WATER-SPATIAL.$$n $(build)/param ./WATER-SPATIAL $(build)/in > /dev/null 2>/dev/null && cd -; done \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 sharedvar:: $(SRCDIR)/sharedvar.c mytime 
 	gcc -o SHAREDVAR $(SRCDIR)/sharedvar.c -lpthread
 	n=1 ; while [[ $$n -le $(NTHREADS) ]] ; do \
 	  for i in $(ITERS); do $(build)/mytime 1 SHAREDVAR.$$n ./SHAREDVAR $$n; done \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 false_share:: $(SRCDIR)/false_share.c mytime 
 	gcc -o FALSE_SHARE $(SRCDIR)/false_share.c -lpthread
 	n=1 ; while [[ $$n -le $(NTHREADS) ]] ; do \
 	  for i in $(ITERS); do $(build)/mytime 5 FALSE_SHARE.$$n ./FALSE_SHARE $$n > /dev/null; done \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 lmem:: $(SRCDIR)/lmem.c mytime 
 	gcc -o LMEM $(SRCDIR)/lmem.c -lpthread
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  for i in $(ITERS); do $(build)/mytime 100 LMEM.$$n ./LMEM $$n > /dev/null; done \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 noshare:: $(SRCDIR)/noshare.c mytime 
 	gcc -o NOSHARE $(SRCDIR)/noshare.c -lpthread
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  for i in $(ITERS); do $(build)/mytime 1 NOSHARE.$$n ./NOSHARE $$n; done \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 
@@ -182,7 +183,7 @@ pfscan:: mytime $(RANDOM_FILES)
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime 100 PFSCAN.$$n `pwd`/$(PFSCAN)/pfscan -n $$n foobar $(RANDOM_FILES); done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 pbzip2:: mytime $(RANDOM_FILES)
@@ -190,7 +191,7 @@ pbzip2:: mytime $(RANDOM_FILES)
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
           for i in $(ITERS); do ./mytime 1 PBZIP2.$$n `pwd`/$(PBZIP2)/pbzip2 -k -p $$n $(RANDOM_FILES); done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 aget:: mytime randfile.40.1
@@ -201,14 +202,14 @@ aget:: mytime randfile.40.1
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
           for i in $(ITERS); do ./mytime 1 AGET.$$n `pwd`/$(AGET)/aget -n $$n randfile.40.1; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 lincompile::
 	for i in $(LINUX_ITERS); do \
 	  n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	    cd $(LINUX) && make clean && /usr/bin/time -v -o lincompile_$(NTHREADS)_is_bt_$(BTKERNEL).$$i make -s -j $(NTHREADS); \
-            ((n = n + 1)); \
+            ((n = n * 2)); \
 	  done \
 	done
 
@@ -222,7 +223,7 @@ sysbench::
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime 1 SYSBENCH.$$n $(SYSBENCH)/sysbench/sysbench --num-threads=$$n --mysql-user=root --mysql-password=root --mysql-db=test --max-requests=100000 --test=oltp --oltp-table-size=4000000 --mysql-socket=/var/run/mysqld/mysqld.sock run; done; \
-          ((n = n + 1)); \
+          ((n = n * 2)); \
 	done
 
 mytime: mytime.o utils/utils.o
