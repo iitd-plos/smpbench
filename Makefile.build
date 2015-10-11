@@ -16,6 +16,7 @@ SPLASH=splash2
 HPCC=hpcc-1.5.0b
 GRAPH500=graph500-2.1.4
 PARSEC=parsec-3.0
+MEMCACHED=memcached-1.4.24
 
 OBJS=utils/utils.o
 SRCS=$(OBJS:.o=.c)
@@ -236,22 +237,30 @@ hpcc::
 	patch -p0 < $(SRCDIR)/$(HPCC).patch
 	cd $(HPCC) && make arch=intel && cd ..
 	lamboot
-	cd $(HPCC) && ./mytime 10 ./hpcc && cd ..
+	cd $(HPCC) && ./mytime 10 HPCC.1 ./hpcc && cd ..
 	
 graph500::
 	#TODO: implement proper reporting of results in profile.results
 	tar xf ../tars/$(GRAPH500).tar.bz2
 	patch -p0 < $(GRAPH500).patch
-	cd $(GRAPH500) && make && ./mytime 100 ./make-edgelist > out && cd ..
-	cd $(GRAPH500) && make clean && CPPFLAGS="-DUSE_MMAP_LARGE -DUSE_MMAP_LARGE_EXT" make && ./mytime 100 ./make-edgelist > out && cd .. #use huge-pages
+	cd $(GRAPH500) && make && ./mytime 100 GRAPH500.1 ./make-edgelist > out && cd ..
+	cd $(GRAPH500) && make clean && CPPFLAGS="-DUSE_MMAP_LARGE -DUSE_MMAP_LARGE_EXT" make && ./mytime 100 GRAPH500.1.hugepages ./make-edgelist > out && cd .. #use huge-pages
 
 parsec::
 	#TODO: implement proper reporting of results in profile.results
-	tar xf ../tars/parsec-3.0.tar.gz
+	tar xf ../tars/$(PARSEC).tar.gz
 	./bin/parsecmgmt -a build -p canneal
 	./bin/parsecmgmt -a build -p streamcluster
 	./bin/parsecmgmt -a run -p streamcluster -i native
-	./bin/parsecmgmt -a run -p canneal -i native
+	./mytime 1 STREAMCLUSTER.1 ./bin/parsecmgmt -a run -p streamcluster -n 1 -i native
+	./mytime 2 STREAMCLUSTER.2 ./bin/parsecmgmt -a run -p streamcluster -n 2 -i native
+	./mytime 1 CANNEAL.1 ./bin/parsecmgmt -a run -p canneal -n 1 -i native
+	./mytime 2 CANNEAL.2 ./bin/parsecmgmt -a run -p canneal -n 2 -i native
+
+memcached::
+	#sudo apt-get install libevent-dev libevent1-dev
+	tar xf ../tars/$(MEMCACHED).tar.gz
+	cd $(MEMCACHED) && ./configure && make && ./memcached -d -m 256 -p 11211 && cd ..
 
 mytime: mytime.o utils/utils.o
 	$(CC) $(CFLAGS) -o $@ $< $(OBJS)
