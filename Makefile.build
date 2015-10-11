@@ -13,6 +13,9 @@ AGET=aget-0.4
 SYSBENCH=sysbench-0.4.12
 DATA_RANDOM=Data-Random-0.06
 SPLASH=splash2
+HPCC=hpcc-1.5.0b
+GRAPH500=graph500-2.1.4
+PARSEC=parsec-3.0
 
 OBJS=utils/utils.o
 SRCS=$(OBJS:.o=.c)
@@ -20,7 +23,7 @@ NTHREADS=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 SNTHREADS=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 BTKERNEL=$(shell lsmod | grep bt | wc -l)
 
-PROGS=lmem false_share radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity sysbench pfscan pbzip2 aget  cholesky
+PROGS=lmem false_share radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity sysbench pfscan pbzip2 aget cholesky hpcc
 #PROGS=radiosity sysbench pfscan pbzip2 aget  cholesky
 RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2 randfile.10.3 randfile.10.4 randfile.10.5 randfile.10.6 randfile.40.1 randfile.100.2 randfile.200.1 randfile 200.1 randfile.400.1
 
@@ -225,6 +228,30 @@ sysbench::
 	  for i in $(ITERS); do ./mytime 1 SYSBENCH.$$n $(SYSBENCH)/sysbench/sysbench --num-threads=$$n --mysql-user=root --mysql-password=root --mysql-db=test --max-requests=100000 --test=oltp --oltp-table-size=4000000 --mysql-socket=/var/run/mysqld/mysqld.sock run; done; \
           ((n = n * 2)); \
 	done
+
+hpcc::
+	#TODO: implement proper reporting of results in profile.results
+	#sudo apt-get install gfortran mpi
+	tar xzf ../tars/$(HPCC).tar.gz
+	patch -p0 < $(SRCDIR)/$(HPCC).patch
+	cd $(HPCC) && make arch=intel && cd ..
+	lamboot
+	cd $(HPCC) && ./mytime 10 ./hpcc && cd ..
+	
+graph500::
+	#TODO: implement proper reporting of results in profile.results
+	tar xf ../tars/$(GRAPH500).tar.bz2
+	patch -p0 < $(GRAPH500).patch
+	cd $(GRAPH500) && make && ./mytime 100 ./make-edgelist > out && cd ..
+	cd $(GRAPH500) && make clean && CPPFLAGS="-DUSE_MMAP_LARGE -DUSE_MMAP_LARGE_EXT" make && ./mytime 100 ./make-edgelist > out && cd .. #use huge-pages
+
+parsec::
+	#TODO: implement proper reporting of results in profile.results
+	tar xf ../tars/parsec-3.0.tar.gz
+	./bin/parsecmgmt -a build -p canneal
+	./bin/parsecmgmt -a build -p streamcluster
+	./bin/parsecmgmt -a run -p streamcluster -i native
+	./bin/parsecmgmt -a run -p canneal -i native
 
 mytime: mytime.o utils/utils.o
 	$(CC) $(CFLAGS) -o $@ $< $(OBJS)
