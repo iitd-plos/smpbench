@@ -13,6 +13,7 @@ usage(void)
 int
 main(int argc, char **argv)
 {
+  struct rusage rusage;
   if (argc <= 2) {
     usage();
   }
@@ -22,12 +23,11 @@ main(int argc, char **argv)
     usage();
   }
   profile_init();
-  //argv[2] = "/usr/bin/time";
   int i;
   profile_start(bname);
   for (i = 0; i < num_iter; i++) {
     pid_t child = xfork(argv[3], &argv[3]);
-    waitpid(child, NULL, 0);
+    wait4(child, NULL, 0, &rusage);
   }
   profile_stop(0);
   return 0;
