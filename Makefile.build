@@ -9,7 +9,6 @@ ITERS?=1 #2 3 4 5 6 7 8
 LINUX=linux-2.6.36.4
 PFSCAN=pfscan-1.0
 PBZIP2=pbzip2-1.1.6
-AGET=aget-0.4
 SYSBENCH=sysbench-0.4.12
 DATA_RANDOM=Data-Random-0.06
 SPLASH=splash2
@@ -23,8 +22,7 @@ SRCS=$(OBJS:.o=.c)
 NTHREADS?=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 SNTHREADS?=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 
-SPLASH_PROGS=radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity cholesky aget hpcc
-#PROGS=radiosity sysbench pfscan pbzip2 aget  cholesky
+SPLASH_PROGS=radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity cholesky hpcc
 RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2 randfile.10.3 randfile.10.4 randfile.10.5 randfile.10.6 randfile.40.1 randfile.100.2 randfile.200.1 randfile 200.1 randfile.400.1
 
 help:
@@ -34,7 +32,7 @@ pbzip2_prepare: $(RANDOM_FILES)
 
 pfscan_prepare: $(RANDOM_FILES)
 
-build: $(SPLASH)/codes/Makefile.config microbench_build sysbench_build pfscan_build pbzip2_build aget_build linux_src hpcc_build graph500_build parsec_build memcached_build
+build: $(SPLASH)/codes/Makefile.config microbench_build sysbench_build pfscan_build pbzip2_build linux_src hpcc_build graph500_build parsec_build memcached_build
 
 linux_src: $(LINUX)/Makefile
 
@@ -51,14 +49,14 @@ splashrun::
 		$(MAKE) $$prog; \
 	done
 
-$(SPLASH)/codes/Makefile.config: mytime param
+$(SPLASH)/codes/Makefile.config: $(TARS_DIR)/$(SPLASH).tbz2
 	tar xjf $(TARS_DIR)/$(SPLASH).tbz2
 	mv $(SPLASH)/codes/Makefile.config $(SPLASH)/codes/Makefile.config.bak
 	echo "include $(SRCDIR)/config-host.mak" > $(SPLASH)/codes/Makefile.config
 	cat $(SPLASH)/codes/Makefile.config.bak >> $(SPLASH)/codes/Makefile.config
 
 #the -m parameter could be set to 26 or even 28 on larger machine
-fft:: $(SPLASH)/codes/Makefile.config
+fft:: $(SPLASH)/codes/Makefile.config mytime
 	cd $(SPLASH)/codes/kernels/fft && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
@@ -220,21 +218,6 @@ pbzip2_run:: $(PBZIP2)/pbzip2 mytime $(RANDOM_FILES)
           ((n = n * 2)); \
 	done
 
-aget_build: $(AGET)/aget
-
-$(AGET)/aget: $(TARS_DIR)/$(AGET).tar.gz $(SRCDIR)/$(AGET).patch
-	tar xzf $(TARS_DIR)/$(AGET).tar.gz
-	patch -p0 < $(SRCDIR)/$(AGET).patch
-	cd $(AGET) && make && make strip && cd ..
-
-aget_run:: $(AGET)/aget mytime randfile.40.1
-	scp randfile.40.1 root@$(WEBSERVER):/var/www/
-	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
-	  echo "nthreads=$$n" >> $(build)/profile.results; \
-          for i in $(ITERS); do ./mytime 1 AGET.$$n `pwd`/$(AGET)/aget -n $$n randfile.40.1; done; \
-          ((n = n * 2)); \
-	done
-
 lincompile_run:: $(LINUX)/Makefile
 	for i in $(ITERS); do \
 	  n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
@@ -325,7 +308,7 @@ $(RANDOM_FILES): %: gen_randfile.pl
 	perl -I$(SRCDIR) -I$(DATA_RANDOM)/lib $(SRCDIR)/gen_randfile.pl $@
 
 clean::
-	rm -rf *.o utils/*.o mytime $(SYSBENCH) $(PFSCAN) $(PBZIP2) $(AGET) $(SPLASH) $(HPCC) $(GRAPH500) $(PARSEC) $(MEMCACHED)
+	rm -rf *.o utils/*.o mytime $(SYSBENCH) $(PFSCAN) $(PBZIP2) $(SPLASH) $(HPCC) $(GRAPH500) $(PARSEC) $(MEMCACHED)
 
 distclean:: clean
 	rm -f $(RANDOM_FILES)
