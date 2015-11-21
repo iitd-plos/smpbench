@@ -4,8 +4,7 @@ VPATH=$(SRCDIR)
 SHELL=/bin/bash
 
 LINUX=/root/linux
-ITERS=1 #2 3 4 5 6 7 8 
-LINUX_ITERS=1 2
+ITERS?=1 #2 3 4 5 6 7 8 
 
 PFSCAN=pfscan-1.0
 PBZIP2=pbzip2-1.1.6
@@ -20,17 +19,30 @@ MEMCACHED=memcached-1.4.24
 
 OBJS=utils/utils.o
 SRCS=$(OBJS:.o=.c)
-NTHREADS=$(shell cat /proc/cpuinfo | grep processor | wc -l)
-SNTHREADS=$(shell cat /proc/cpuinfo | grep processor | wc -l)
+NTHREADS?=$(shell cat /proc/cpuinfo | grep processor | wc -l)
+SNTHREADS?=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 BTKERNEL=$(shell lsmod | grep bt | wc -l)
 
-PROGS=lmem false_share radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity sysbench pfscan pbzip2 aget cholesky hpcc
+SPLASH_PROGS=radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity cholesky aget hpcc
 #PROGS=radiosity sysbench pfscan pbzip2 aget  cholesky
 RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2 randfile.10.3 randfile.10.4 randfile.10.5 randfile.10.6 randfile.40.1 randfile.100.2 randfile.200.1 randfile 200.1 randfile.400.1
 
-all::
+help:
+	echo "Make targets: build microbench_run splashrun sysbench_run pfscan_run pbzip2_run pbzip2_prepare pfscan_prepare"
+
+pbzip2_prepare: $(RANDOM_FILES)
+
+pfscan_prepare: $(RANDOM_FILES)
+
+build: $(SPLASH)/codes/Makefile.config microbench_build sysbench_build pfscan_build pbzip2_build
+
+microbench_build: lmem false_share noshare sharedvar
+
+microbench_run: lmem_run false_share_run noshare_run sharedvar_run
+
+splashrun::
 	echo "=====\nNEW RUN\n=====\n\n" >> profile.results
-	for prog in $(PROGS); do \
+	for prog in $(SPLASH_PROGS); do \
 		$(MAKE) $$prog; \
 	done
 
@@ -39,7 +51,6 @@ $(SPLASH)/codes/Makefile.config: mytime param
 	mv $(SPLASH)/codes/Makefile.config $(SPLASH)/codes/Makefile.config.bak
 	echo "include $(SRCDIR)/config-host.mak" > $(SPLASH)/codes/Makefile.config
 	cat $(SPLASH)/codes/Makefile.config.bak >> $(SPLASH)/codes/Makefile.config
-	touch splash
 
 #the -m parameter could be set to 26 or even 28 on larger machine
 fft:: $(SPLASH)/codes/Makefile.config
@@ -153,48 +164,54 @@ water-spatial: $(SPLASH)/codes/Makefile.config
           ((n = n * 2)); \
 	done
 
-sharedvar:: $(SRCDIR)/sharedvar.c mytime 
-	gcc -o SHAREDVAR $(SRCDIR)/sharedvar.c -lpthread
+lmem false_share noshare sharedvar: %: $(SRCDIR)/%.c
+	gcc -o $@ $< -lpthread
+
+sharedvar_run:: sharedvar mytime 
 	n=1 ; while [[ $$n -le $(NTHREADS) ]] ; do \
 	  for i in $(ITERS); do $(build)/mytime 1 SHAREDVAR.$$n ./SHAREDVAR $$n; done \
           ((n = n * 2)); \
 	done
 
-false_share:: $(SRCDIR)/false_share.c mytime 
-	gcc -o FALSE_SHARE $(SRCDIR)/false_share.c -lpthread
+false_share_run::false_share mytime 
 	n=1 ; while [[ $$n -le $(NTHREADS) ]] ; do \
 	  for i in $(ITERS); do $(build)/mytime 5 FALSE_SHARE.$$n ./FALSE_SHARE $$n > /dev/null; done \
           ((n = n * 2)); \
 	done
 
-lmem:: $(SRCDIR)/lmem.c mytime 
-	gcc -o LMEM $(SRCDIR)/lmem.c -lpthread
+lmem_run:: lmem mytime 
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  for i in $(ITERS); do $(build)/mytime 100 LMEM.$$n ./LMEM $$n > /dev/null; done \
           ((n = n * 2)); \
 	done
 
-noshare:: $(SRCDIR)/noshare.c mytime 
-	gcc -o NOSHARE $(SRCDIR)/noshare.c -lpthread
+noshare_run:: noshare mytime 
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  for i in $(ITERS); do $(build)/mytime 1 NOSHARE.$$n ./NOSHARE $$n; done \
           ((n = n * 2)); \
 	done
 
+pfscan_build: $(PFSCAN)/pfscan
 
-pfscan:: mytime $(RANDOM_FILES) 
-	tar xzf ../tars/$(N).tar.gz && cd $(PFSCAN) && make lnx && cd ..
+$(PFSCAN)/pfscan: ../tars/$(PFSCAN).tar.gz
+	tar xzf ../tars/$(PFSCAN).tar.gz && cd $(PFSCAN) && make lnx && cd ..
+
+pbzip2_build: $(PBZIP2)/pbzip2
+
+$(PBZIP2)/pbzip2: ../tars/$(PBZIP2).tar.gz
+	tar xzf ../tars/$(PBZIP2).tar.gz && cd $(PBZIP2) && make && cd ..
+
+pfscan_run:: $(PFSCAN)/pfscan mytime $(RANDOM_FILES) 
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
-	  for i in $(ITERS); do ./mytime 100 PFSCAN.$$n `pwd`/$(PFSCAN)/pfscan -n $$n foobar $(RANDOM_FILES); done; \
+	  for i in $(ITERS); do ./mytime 100 PFSCAN.$$n $(PFSCAN)/pfscan -n $$n foobar $(RANDOM_FILES); done; \
           ((n = n * 2)); \
 	done
 
-pbzip2:: mytime $(RANDOM_FILES)
-	tar xzf ../tars/$(PBZIP2).tar.gz && cd $(PBZIP2) && make && cd ..
+pbzip2_run:: $(PBZIP2)/pbzip2 mytime $(RANDOM_FILES)
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
-          for i in $(ITERS); do ./mytime 1 PBZIP2.$$n `pwd`/$(PBZIP2)/pbzip2 -k -p $$n $(RANDOM_FILES); done; \
+          for i in $(ITERS); do ./mytime 1 PBZIP2.$$n $(PBZIP2)/pbzip2 -k -p $$n $(RANDOM_FILES); done; \
           ((n = n * 2)); \
 	done
 
@@ -210,7 +227,7 @@ aget:: mytime randfile.40.1
 	done
 
 lincompile::
-	for i in $(LINUX_ITERS); do \
+	for i in $(ITERS); do \
 	  n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	    cd $(LINUX) && make clean && /usr/bin/time -v -o lincompile_$(NTHREADS)_is_bt_$(BTKERNEL).$$i make -s -j $(NTHREADS); \
             ((n = n * 2)); \
@@ -218,11 +235,15 @@ lincompile::
 	done
 
 
-sysbench::
+sysbench_build:$(SYSBENCH)/sysbench/sysbench
+
+$(SYSBENCH)/sysbench/sysbench:
 	#sudo apt-get install mysql-server libmysqlclient15-dev
 	tar xzf ../tars/$(SYSBENCH).tar.gz
 	cd $(SYSBENCH) && (autoreconf -fiv || /bin/true) && ./configure && make
 	expect $(SRCDIR)/mysql_prepare_for_sysbench.exp
+
+sysbench_run:: $(SYSBENCH)/sysbench/sysbench
 	$(SYSBENCH)/sysbench/sysbench --test=oltp --mysql-user=root --mysql-password=root --mysql-db=test --mysql-table-engine=myisam --oltp-table-size=4000000 --mysql-socket=/var/run/mysqld/mysqld.sock prepare
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
