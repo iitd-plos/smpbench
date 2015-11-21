@@ -1,5 +1,6 @@
-#!/usr/bin/expect -f
+#!/usr/bin/expect -d
 
+exp_internal 1
 set timeout -1
 
 proc run { i c } {
@@ -9,8 +10,10 @@ proc run { i c } {
 
 proc login_system { t p } {
   set timeout $t
-  spawn /usr/bin/env -i LANG=C TERM=vt100 /usr/bin/mysql -p
+  spawn /usr/bin/env -i LANG=C TERM=vt100 /usr/bin/sudo /usr/bin/mysql -p
   set tmp $spawn_id
+  expect -i $tmp -re {.sudo. password for .+: }
+  send -i $tmp "$::env(SUDO_PASSWORD)\r"
   expect -i $tmp "Enter password:"
   send -i $tmp "$p\r"
   expect -i $tmp "mysql>"

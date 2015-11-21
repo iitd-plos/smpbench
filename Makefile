@@ -4,6 +4,9 @@ include Make.conf
 all:: $(build) $(build)/Makefile
 	make -C $(build)
 
+$(MAKE_TARGETS): $(build) $(build)/Makefile
+	make -C $(build) $@
+
 $(build):
 	mkdir -p $@
 
