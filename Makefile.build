@@ -32,7 +32,7 @@ pbzip2_prepare: $(RANDOM_FILES)
 
 pfscan_prepare: $(RANDOM_FILES)
 
-build: $(SPLASH)/codes/Makefile.config microbench_build sysbench_build pfscan_build pbzip2_build linux_src hpcc_build graph500_build parsec_build memcached_build
+build: mytime $(SPLASH)/codes/Makefile.config microbench_build sysbench_build pfscan_build pbzip2_build linux_src hpcc_build graph500_build parsec_build memcached_build
 
 linux_src: $(LINUX)/Makefile
 
