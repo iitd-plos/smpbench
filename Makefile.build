@@ -37,7 +37,8 @@ build: mytime $(SPLASH)/codes/Makefile.config microbench_build sysbench_build pf
 linux_src: $(LINUX)/Makefile
 
 $(LINUX)/Makefile: $(TARS_DIR)/$(LINUX).tar.bz2
-	tar xjf $<
+	tar xf $<
+	touch $(LINUX)/Makefile
 
 microbench_build: lmem false_share noshare sharedvar
 
@@ -273,6 +274,7 @@ parsec_build: $(PARSEC)/bin/parsecmgmt
 
 $(PARSEC)/bin/parsecmgmt: $(TARS_DIR)/$(PARSEC).tar.gz
 	tar xf $(TARS_DIR)/$(PARSEC).tar.gz
+	touch $(PARSEC)/bin/parsecmgmt
 	$(PARSEC)/bin/parsecmgmt -a build -p canneal
 	$(PARSEC)/bin/parsecmgmt -a build -p streamcluster
 
