@@ -1,4 +1,15 @@
+Prepare:
+-------
 sudo apt-get install libtool mysql-server libmysqlclient15-dev gfortran mpi libevent-dev libevent1-dev automake libboost-all-dev libbz2-dev libatlas-base-dev libtiff-dev
+
+Put your user password in the environment variable as follows (change the
+password to something insecure before doing this, your password will be
+visible in plaintext):
+
 export SUDO_PASSWORD=<user-sudo-password>
 
+Use the following password for mysql-server: "root"
+
+Build:
+-----
 make build
