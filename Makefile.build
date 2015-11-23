@@ -55,6 +55,21 @@ $(SPLASH)/codes/Makefile.config: $(TARS_DIR)/$(SPLASH).tbz2
 	mv $(SPLASH)/codes/Makefile.config $(SPLASH)/codes/Makefile.config.bak
 	echo "include $(SRCDIR)/config-host.mak" > $(SPLASH)/codes/Makefile.config
 	cat $(SPLASH)/codes/Makefile.config.bak >> $(SPLASH)/codes/Makefile.config
+	cd $(SPLASH)/codes/kernels/radix && make clean && make && cd -
+	cd $(SPLASH)/codes/kernels/lu/contiguous_blocks && make clean && make && cd -
+	cd $(SPLASH)/codes/kernels/lu/non_contiguous_blocks && make clean && make && cd -
+	cd $(SPLASH)/codes/kernels/cholesky && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/barnes && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/fmm && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/ocean/contiguous_partitions && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/radiosity/glibdumb && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/radiosity/glibps && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/radiosity && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/raytrace && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/volrend && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/water-nsquared && make clean && make && cd -
+	cd $(SPLASH)/codes/apps/water-spatial && make clean && make && cd -
+
 
 #the -m parameter could be set to 26 or even 28 on larger machine
 fft:: $(SPLASH)/codes/Makefile.config mytime
@@ -66,7 +81,6 @@ fft:: $(SPLASH)/codes/Makefile.config mytime
 	done
 
 radix:: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/kernels/radix && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime RADIX.$$n `pwd`/$(SPLASH)/codes/kernels/radix/RADIX -p $$n -n 33554432 > /dev/null; done; \
@@ -74,7 +88,6 @@ radix:: $(SPLASH)/codes/Makefile.config
 	done
 
 lu-cont:: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/kernels/lu/contiguous_blocks && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime LU-CONT.$$n `pwd`/$(SPLASH)/codes/kernels/lu/contiguous_blocks/LU -p $$n -n 2048 > /dev/null; done; \
@@ -82,7 +95,6 @@ lu-cont:: $(SPLASH)/codes/Makefile.config
 	done
 
 lu-ncont:: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/kernels/lu/non_contiguous_blocks && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime LU-NCONT.$$n `pwd`/$(SPLASH)/codes/kernels/lu/non_contiguous_blocks/LU -p $$n -n 2048 > /dev/null; done; \
@@ -90,7 +102,6 @@ lu-ncont:: $(SPLASH)/codes/Makefile.config
 	done
 
 cholesky:: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/kernels/cholesky && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); ./mytime CHOLESKY.$$n `pwd`/$(SPLASH)/codes/kernels/cholesky/CHOLESKY -p $$n; done; \
@@ -98,7 +109,6 @@ cholesky:: $(SPLASH)/codes/Makefile.config
 	done
 
 barnes:: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/apps/barnes && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  echo > in && echo 16384 >> in && echo 123 >> in && echo NULL >> in && echo 0.025 >> in && echo 0.05 >> in && echo 1.0 >> in && echo 2.0 >> in && echo 4 >> in && echo 0.075 >> in && echo 0.25 >> in && echo $$n >> in; \
@@ -107,7 +117,6 @@ barnes:: $(SPLASH)/codes/Makefile.config
 	done
 
 fmm:: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/apps/fmm && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  echo "two cluster" > in && echo plummer >> in && echo 16384 >> in && echo 1e-6 >> in && echo $$n >> in && echo 5 >> in && echo .025 >> in && echo 0.0 >> in && echo "cost zones" >> in; \
@@ -117,7 +126,6 @@ fmm:: $(SPLASH)/codes/Makefile.config
 
 #can set -n4098 for larger machines
 ocean:: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/apps/ocean/contiguous_partitions && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(SNTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do $(build)/mytime OCEAN.$$n `pwd`/$(SPLASH)/codes/apps/ocean/contiguous_partitions/OCEAN -n258 -p$$n -e1e-07 -r20000 -t28800 > /dev/null; done; \
@@ -125,9 +133,6 @@ ocean:: $(SPLASH)/codes/Makefile.config
 	done
 
 radiosity: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/apps/radiosity && make clean && make && cd -
-	cd $(SPLASH)/codes/apps/radiosity/glibdumb && make clean && make && cd -
-	cd $(SPLASH)/codes/apps/radiosity/glibps && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do $(build)/mytime RADIOSITY.$$n `pwd`/$(SPLASH)/codes/apps/radiosity/RADIOSITY -p $$n -batch -room; done; \
@@ -135,7 +140,6 @@ radiosity: $(SPLASH)/codes/Makefile.config
 	done
 
 raytrace: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/apps/raytrace && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do cd `pwd`/$(SPLASH)/codes/apps/raytrace && $(build)/mytime RAYTRACE.$$n ./RAYTRACE -p $$n inputs/balls4.env > /dev/null 2>/dev/null && cd -; done; \
@@ -143,7 +147,6 @@ raytrace: $(SPLASH)/codes/Makefile.config
 	done
 
 volrend: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/apps/volrend && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do cd `pwd`/$(SPLASH)/codes/apps/volrend && $(build)/mytime VOLREND.$$n ./VOLREND $$n inputs/head > /dev/null && cd -; done; \
@@ -151,7 +154,6 @@ volrend: $(SPLASH)/codes/Makefile.config
 	done
 
 water-nsquared: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/apps/water-nsquared && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  echo "  1.5e-16   512  300   6" > in && echo " -1       3000     3  0" >> in && echo "$$n 6.212752" >> in; \
@@ -160,7 +162,6 @@ water-nsquared: $(SPLASH)/codes/Makefile.config
 	done
 
 water-spatial: $(SPLASH)/codes/Makefile.config
-	cd $(SPLASH)/codes/apps/water-spatial && make clean && make && cd -
 	n=1 ; while [[ $$n -le $(NTHREADS) ]] ; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  echo "  1.5e-17   512  50   6" > in && echo " 0       0     3  0" >> in && echo "$$n 6.212752" >> in; \

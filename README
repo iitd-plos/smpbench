@@ -1,4 +1,4 @@
-sudo apt-get install libtool mysql-server libmysqlclient15-dev gfortran mpi libevent-dev libevent1-dev automake libboost-all-dev libbz2-dev libatlas-base-dev
+sudo apt-get install libtool mysql-server libmysqlclient15-dev gfortran mpi libevent-dev libevent1-dev automake libboost-all-dev libbz2-dev libatlas-base-dev libtiff-dev
 export SUDO_PASSWORD=<user-sudo-password>
 
 make build
