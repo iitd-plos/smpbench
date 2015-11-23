@@ -49,3 +49,7 @@ if [ -z "$ndebug" ]; then
 else
   echo "#define NDEBUG" >> $config_h
 fi
+
+echo "our \$srcdir = \"$source_path\";" >> $config_pm;
+echo "our \$build = \"$build_dir\";" >> $config_pm;
+echo "1;" >> $config_pm;
