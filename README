@@ -10,6 +10,9 @@ export SUDO_PASSWORD=<user-sudo-password>
 
 Use the following password for mysql-server: "root"
 
+mkdir ../tars
+cd ../tars && wget http://www.cse.iitd.ernet.in/~sbansal/software/tars/* && cd -
+
 Build:
 -----
 make build
