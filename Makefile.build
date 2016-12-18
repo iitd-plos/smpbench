@@ -25,6 +25,49 @@ SNTHREADS?=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 SPLASH_PROGS=radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity cholesky hpcc
 RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2 randfile.10.3 randfile.10.4 randfile.10.5 randfile.10.6 randfile.40.1 randfile.100.2 randfile.200.1 randfile 200.1 randfile.400.1
 
+SUPEROPT_PROGS=ctests string_opcodes
+SUPEROPT_PROGS_GCC=$(SUPEROPT_PROGS) $(SUPEROPT_GCC_CLANG_ICC_PROGS)
+SUPEROPT_PROGS_CLANG=$(SUPEROPT_PROGS) $(SUPEROPT_GCC_CLANG_ICC_PROGS)
+SUPEROPT_PROGS_ICC=$(SUPEROPT_PROGS) $(SUPEROPT_GCC_CLANG_ICC_PROGS)
+SUPEROPT_PROGS_CCOMP=$(SUPEROPT_PROGS)
+
+EMIT_RELOCS_FLAG=-Wl,--emit-relocs
+COMPCERT_DIR=$(build)/installs/$(COMPCERT)
+COMPCERT_INSTALL=$(COMPCERT_DIR)-install
+CCOMP_I386=$(COMPCERT_INSTALL)/bin/ccomp -fvararg-calls -fno-fpu -funprototyped -fstruct-return -fno-tailcalls -L$(COMPCERT_INSTALL)/lib/compcert $(EMIT_RELOCS_FLAG)
+
+HOSTGCC4_8_O0_PROGS = $(addsuffix .gcc48.O0, $(GCC_PROGS))
+HOSTGCC4_8_O2_PROGS = $(addsuffix .gcc48.O2, $(GCC_PROGS))
+HOSTGCC4_8_O3_PROGS = $(addsuffix .gcc48.O3, $(GCC_PROGS))
+CLANG3_6_O0_PROGS = $(addsuffix .clang36.O0, $(CLANG_PROGS))
+CLANG3_6_O2_PROGS = $(addsuffix .clang36.O2, $(CLANG_PROGS))
+CLANG3_6_O3_PROGS = $(addsuffix .clang36.O3, $(CLANG_PROGS))
+ICC_O0_PROGS = $(addsuffix .icc.O0, $(ICC_PROGS))
+ICC_O2_PROGS = $(addsuffix .icc.O2, $(ICC_PROGS))
+#ICC_O2U_PROGS = $(addsuffix .icc.O2U, $(ICC_PROGS))
+CCOMP_O2_PROGS = $(addsuffix .ccomp.O2, $(CCOMP_PROGS))
+CCOMP_O0_PROGS = $(addsuffix .ccomp.O0, $(CCOMP_PROGS))
+
+
+I386_HOSTGCC4_8_O0_PROGS = $(addsuffix .i386, $(HOSTGCC4_8_O0_PROGS))
+I386_HOSTGCC4_8_O2_PROGS = $(addsuffix .i386, $(HOSTGCC4_8_O2_PROGS))
+I386_HOSTGCC4_8_O3_PROGS = $(addsuffix .i386, $(HOSTGCC4_8_O3_PROGS))
+I386_CLANG3_6_O0_PROGS = $(addsuffix .i386, $(CLANG3_6_O0_PROGS))
+I386_CLANG3_6_O2_PROGS = $(addsuffix .i386, $(CLANG3_6_O2_PROGS))
+I386_CLANG3_6_O3_PROGS = $(addsuffix .i386, $(CLANG3_6_O3_PROGS))
+I386_ICC_O0_PROGS = $(addsuffix .i386, $(ICC_O0_PROGS))
+I386_ICC_O2_PROGS = $(addsuffix .i386, $(ICC_O2_PROGS))
+I386_ICC_O2U_PROGS = $(addsuffix .i386, $(ICC_O2U_PROGS))
+I386_CCOMP_O0_PROGS = $(addsuffix .i386, $(CCOMP_O0_PROGS))
+I386_CCOMP_O2_PROGS = $(addsuffix .i386, $(CCOMP_O2_PROGS))
+I386_ASPROGS = hello_world.AS.i386 fibo.AS.i386 one_bbl.AS.i386 sum8.AS.i386 \
+               image_diff.AS.i386 fibo_rec.AS.i386 one_bbl_unroll_loops.AS.i386\
+               one_bbl_stack_analysis.AS.i386 link_list_double.AS.i386
+PPC_ASPROGS = hello_world.AS.ppc fibo.AS.ppc one_bbl.AS.ppc ascom.AS.ppc
+ARM_ASPROGS = hello_world.AS.arm fibo_rec.AS.arm
+
+
+
 help:
 	echo "Make targets: $(MAKE_TARGETS)"
 
