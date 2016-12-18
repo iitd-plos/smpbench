@@ -1,0 +1,87 @@
+OCAML_DIR=$(build)/installs/$(OCAML)
+MENHIR_DIR=$(build)/installs/$(MENHIR)
+COMPCERT_DIR=$(build)/installs/$(COMPCERT)
+COQ_DIR=$(build)/installs/$(COQ)
+
+OCAML_INSTALL=$(OCAML_DIR)-install
+MENHIR_INSTALL=$(MENHIR_DIR)-install
+COMPCERT_INSTALL=$(COMPCERT_DIR)-install
+COQ_INSTALL=$(COQ_DIR)-install
+
+ML_INCLUDES = -I $(OCAML_INSTALL)/lib/ocaml -I $(Z3_DIR)/build/api/ml -I $(abuild)/ml
+
+OCAMLC=$(OCAML_INSTALL)/bin/ocamlc #ocamlc
+OCAMLOPT = $(OCAML_INSTALL)/bin/ocamlopt  #ocamlopt
+
+#OCAML_LIBS = unix.cmxa $(STP_DIR)/src/ocaml-wrapper/stpvc.cmx \
+#             $(STP_DIR)/src/ocaml-wrapper/libstp.cmx
+OCAML_LIBS = nums.cmxa unix.cmxa $(Z3_DIR)/build/api/ml/z3.cmxa
+
+OCAML_LDFLAGS = -p -cc "$(CPP)" \
+    -cclib -lm -cclib -lbfd -cclib -liberty \
+    -ccopt -pg \
+    -cclib -L$(Z3_DIR)/build \
+    -cclib -lz3 \
+    -cclib -L$(YICES_MOD_DIR)/build/x86_64-unknown-linux-gnu-release/lib \
+    -cclib -lyices \
+    -cclib -lgmp\
+    -cclib -lstdc++ \
+    -cclib -lcamlidl\
+    -cclib -lboost_iostreams
+    #-cclib -L$(Z3_DIR)/build/api/ml \
+    #-cclib -lz3ml \
+    #-cclib -lstp \
+    #-cclib -melf_i386
+    #-cclib $(STP_DIR)/src/ocaml-wrapper/libstpvc_stubs.a \
+    #-cclib -L$(STP_DIR)/lib \
+    #-cclib -L$(BINUTILS_INSTALL)/lib \
+    #-cclib -L$(BINUTILS_INSTALL)/lib32 \
+    #-cclib -L$(BINUTILS_INSTALL)/../lib32 \
+    #-cclib $(ELFIO_DIR)/elfio/libELFIO.a \
+    #-cclib -lz
+		#-cclib -L$(ZCHAFF) -cclib -lsat
+		#-cclib -lncurses
+
+	
+
+compcert: $(COMPCERT_INSTALL)/bin/ccomp
+
+$(COMPCERT_INSTALL)/bin/ccomp: $(MENHIR_INSTALL)/bin/menhir $(COQ_INSTALL)/bin/coqc
+	rm -rf $(COMPCERT_DIR)
+	mkdir -p $(build)/installs
+	cd $(build)/installs && tar xf $(SRCDIR)/../tars/$(COMPCERT).tgz && mv $(COMPCERT_CAPS_FIRST_FOURTH_LETTER) $(COMPCERT) && cd -
+	cd $(COMPCERT_DIR) && PATH=$(COQ_INSTALL)/bin:$(OCAML_INSTALL)/bin:$(MENHIR_INSTALL)/bin:$$PATH ./configure -prefix $(COMPCERT_INSTALL) ia32-linux && PATH=$(COQ_INSTALL)/bin:$(OCAML_INSTALL)/bin:$(MENHIR_INSTALL)/bin:$$PATH make && make install && cd -
+
+menhir: $(MENHIR_INSTALL)/bin/menhir
+$(MENHIR_INSTALL)/bin/menhir: $(OCAMLOPT)
+	rm -rf $(MENHIR_DIR)
+	mkdir -p $(build)/installs
+	cd $(build)/installs && tar xf $(SRCDIR)/../tars/$(MENHIR).tar.gz && cd -
+	cd $(MENHIR_DIR) && make PATH=$(OCAML_INSTALL)/bin:$$PATH PREFIX=$(MENHIR_INSTALL) all install
+
+$(COQ_INSTALL)/bin/coqc: $(OCAMLOPT)
+	rm -rf $(COQ_DIR)
+	mkdir -p $(build)/installs
+	cd $(build)/installs && tar xf $(SRCDIR)/../tars/$(COQ).tar.gz && cd -
+	cd $(COQ_DIR) && ./configure -prefix $(COQ_INSTALL) && make && make install && cd -
+
+HOST_TYPE=`uname -m`
+
+ifeq ($(HOST_TYPE), x86_64)
+ELF_TYPE=elf64-x86-64
+else
+ELF_TYPE=elf32-i386
+endif
+
+$(OCAMLOPT):
+	mkdir -p $(build)/installs
+	rm -rf $(OCAML_DIR)
+	echo "Compiling for $(HOST_TYPE) . . ."
+	cd $(build)/installs && tar xzf $(SRCDIR)/../tars/$(OCAML).tar.gz
+	cd $(OCAML_DIR) \
+	&& ./configure --prefix $(OCAML_INSTALL) --host $(HOST_TYPE)-pc-gnu \
+		-cc "gcc" -aspp "gcc -c" -as "as" \
+		--partialld "ld -r --format $(ELF_TYPE)"
+	cd $(OCAML_DIR) && make world && (make opt || echo make opt failed) && make install
+
+

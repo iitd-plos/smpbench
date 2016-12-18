@@ -4,6 +4,20 @@ CROSSTOOL_PPC_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.ppc/powerpc-405
 CROSSTOOL_I386_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/bin
 CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/lib
 
+GCC_I386_FLAGS=-m32 -fno-inline -fno-inline-functions -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -g
+
+HOSTGCC48_I386_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks
+HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks
+
+GCC_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-gcc
+GCC_X86=gcc
+GCC_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-gcc $(GCC_I386_FLAGS)
+HOSTGCC_I386=gcc $(GCC_I386_FLAGS)
+HOSTGCC4_4_I386=gcc-4.4 $(GCC_I386_FLAGS)
+HOSTGCC4_6_I386=gcc-4.6 $(GCC_I386_FLAGS)
+HOSTGCC4_7_I386=gcc-4.7 $(GCC_I386_FLAGS)
+HOSTGCC4_8_I386=gcc-4.8 $(HOSTGCC48_I386_FLAGS)
+
 AS_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-as
 LD_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-ld
 AS_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-as --32

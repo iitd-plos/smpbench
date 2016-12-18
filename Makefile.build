@@ -25,8 +25,10 @@ SNTHREADS?=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 SPLASH_PROGS=radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity cholesky hpcc
 RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2 randfile.10.3 randfile.10.4 randfile.10.5 randfile.10.6 randfile.40.1 randfile.100.2 randfile.200.1 randfile 200.1 randfile.400.1
 
-CINT_GCC_CLANG_ICC_PROGS = small array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
-CINT_PROGS=ctests string_opcodes
+CINT_GCC_CLANG_ICC_PROG_NAMES = array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
+CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
+CINT_PROG_NAMES=ctests
+CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
 CINT_PROGS_GCC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_CLANG=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_ICC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
@@ -97,7 +99,7 @@ CINT_I386_PROGS = \
   $(CINT_I386_CCOMP_O2_PROGS) \
   $(CINT_I386_ICC_O0_PROGS) \
   $(CINT_I386_ICC_O2_PROGS) \
-  $(CINT_I386_ICC_O3_PROGS) \
+  $(CINT_I386_ICC_O3_PROGS)
 
 cint: $(CINT_I386_PROGS)
 
@@ -382,5 +384,6 @@ distclean:: clean
 
 include $(SRCDIR)/Makefile.cint
 include $(SRCDIR)/Makefile.crosstool
+include $(SRCDIR)/Makefile.compcert
 
 -include $(OBJS:.o=.d)
