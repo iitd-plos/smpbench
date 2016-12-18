@@ -97,9 +97,9 @@ CINT_I386_PROGS = \
   $(CINT_I386_CLANG3_6_O3_PROGS) \
   $(CINT_I386_CCOMP_O0_PROGS) \
   $(CINT_I386_CCOMP_O2_PROGS) \
-  $(CINT_I386_ICC_O0_PROGS) \
-  $(CINT_I386_ICC_O2_PROGS) \
-  $(CINT_I386_ICC_O3_PROGS)
+  #$(CINT_I386_ICC_O0_PROGS) \
+  #$(CINT_I386_ICC_O2_PROGS) \
+  #$(CINT_I386_ICC_O3_PROGS)
 
 cint: $(CINT_I386_PROGS)
 
@@ -382,8 +382,8 @@ clean::
 distclean:: clean
 	rm -f $(RANDOM_FILES)
 
-include $(SRCDIR)/Makefile.cint
 include $(SRCDIR)/Makefile.crosstool
 include $(SRCDIR)/Makefile.compcert
+include $(SRCDIR)/Makefile.cint
 
 -include $(OBJS:.o=.d)
