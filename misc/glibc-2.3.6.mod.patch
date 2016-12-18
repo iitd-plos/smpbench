@@ -1,0 +1,118 @@
+diff -Nur glibc-2.3.6/configure glibc-2.3.6.mod/configure
+--- glibc-2.3.6/configure	2005-11-04 06:37:15.000000000 +0600
++++ glibc-2.3.6.mod/configure	2013-04-19 12:07:46.000000000 +0530
+@@ -6304,7 +6304,8 @@
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; } ||
+-   { ac_try='$libc_unwind_check -lgcc_eh -lgcc >&5'
++   #{ ac_try='$libc_unwind_check -lgcc_eh -lgcc >&5'
++   { ac_try='$libc_unwind_check -lgcc >&5'
+   { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+   (eval $ac_try) 2>&5
+   ac_status=$?
+diff -Nur glibc-2.3.6/elf/Makefile glibc-2.3.6.mod/elf/Makefile
+--- glibc-2.3.6/elf/Makefile	2005-07-18 07:19:48.000000000 +0600
++++ glibc-2.3.6.mod/elf/Makefile	2013-04-19 12:07:46.000000000 +0530
+@@ -285,7 +285,7 @@
+ 		  $(LDFLAGS-rtld) -Wl,-z,defs -Wl,--verbose 2>&1 |	\
+ 		  LC_ALL=C \
+ 		  sed -e '/^=========/,/^=========/!d;/^=========/d'	\
+-		      -e 's/\. = 0 + SIZEOF_HEADERS;/& _begin = . - SIZEOF_HEADERS;/' \
++		      -e 's/\. = .* + SIZEOF_HEADERS;/& _begin = . - SIZEOF_HEADERS;/' \
+ 		  > $@.lds
+ 	$(LINK.o) -nostdlib -nostartfiles -shared -o $@			\
+ 		  $(LDFLAGS-rtld) -Wl,-z,defs $(z-now-$(bind-now))	\
+diff -Nur glibc-2.3.6/Makeconfig glibc-2.3.6.mod/Makeconfig
+--- glibc-2.3.6/Makeconfig	2005-02-16 16:50:19.000000000 +0600
++++ glibc-2.3.6.mod/Makeconfig	2013-04-19 12:07:46.000000000 +0530
+@@ -503,12 +503,14 @@
+   libunwind = -lunwind
+ endif
+ ifneq ($(have-as-needed),yes)
+- libgcc_eh := -lgcc_eh $(libunwind)
++#libgcc_eh := -lgcc_eh $(libunwind)
++ libgcc_eh := $(libunwind)
+ else
+  libgcc_eh := -Wl,--as-needed -lgcc_s$(libgcc_s_suffix) $(libunwind) -Wl,--no-as-needed
+ endif
+ gnulib := -lgcc $(libgcc_eh)
+-static-gnulib := -lgcc -lgcc_eh $(libunwind)
++#static-gnulib := -lgcc -lgcc_eh $(libunwind)
++static-gnulib := -lgcc $(libunwind)
+ libc.so-gnulib := -lgcc
+ endif
+ ifeq ($(elf),yes)
+diff -Nur glibc-2.3.6/nptl/sysdeps/unix/sysv/linux/i386/dl-sysdep.h glibc-2.3.6.mod/nptl/sysdeps/unix/sysv/linux/i386/dl-sysdep.h
+--- glibc-2.3.6/nptl/sysdeps/unix/sysv/linux/i386/dl-sysdep.h	2003-06-16 11:28:46.000000000 +0600
++++ glibc-2.3.6.mod/nptl/sysdeps/unix/sysv/linux/i386/dl-sysdep.h	2013-04-19 12:07:46.000000000 +0530
+@@ -42,7 +42,8 @@
+    sysenter/syscall is not useful on i386 through i586, but the dynamic
+    linker and dl code in libc.a has to be able to load i686 compiled
+    libraries.  */
+-#define NEED_DL_SYSINFO	1
++//#define NEED_DL_SYSINFO	1
++#undef NEED_DL_SYSINFO
+ #undef USE_DL_SYSINFO
+ 
+ #if defined NEED_DL_SYSINFO && !defined __ASSEMBLER__
+diff -Nur glibc-2.3.6/nptl/sysdeps/unix/sysv/linux/i386/i686/dl-sysdep.h glibc-2.3.6.mod/nptl/sysdeps/unix/sysv/linux/i386/i686/dl-sysdep.h
+--- glibc-2.3.6/nptl/sysdeps/unix/sysv/linux/i386/i686/dl-sysdep.h	2003-06-16 11:28:33.000000000 +0600
++++ glibc-2.3.6.mod/nptl/sysdeps/unix/sysv/linux/i386/i686/dl-sysdep.h	2013-04-19 12:07:46.000000000 +0530
+@@ -39,8 +39,10 @@
+    sysenter/syscall instructions.  To signal the presence and where to
+    find the code the kernel passes an AT_SYSINFO value in the
+    auxiliary vector to the application.  */
+-#define NEED_DL_SYSINFO	1
+-#define USE_DL_SYSINFO	1
++//#define NEED_DL_SYSINFO	1
++#undef NEED_DL_SYSINFO
++//#define USE_DL_SYSINFO	1
++#undef USE_DL_SYSINFO
+ 
+ #if defined NEED_DL_SYSINFO && !defined __ASSEMBLER__
+ extern void _dl_sysinfo_int80 (void) attribute_hidden;
+diff -Nur glibc-2.3.6/sysdeps/i386/bsd-_setjmp.S glibc-2.3.6.mod/sysdeps/i386/bsd-_setjmp.S
+--- glibc-2.3.6/sysdeps/i386/bsd-_setjmp.S	2003-01-01 02:37:23.000000000 +0600
++++ glibc-2.3.6.mod/sysdeps/i386/bsd-_setjmp.S	2013-04-26 08:39:14.000000000 +0530
+@@ -33,7 +33,7 @@
+ #define SIGMSK	JMPBUF+PTR_SIZE
+ 
+ ENTRY (BP_SYM (_setjmp))
+-	ENTER
++	/*ENTER*/
+ 
+ 	xorl %eax, %eax
+ 	movl JMPBUF(%esp), %edx
+@@ -43,14 +43,14 @@
+ 	movl %ebx, (JB_BX*4)(%edx)
+ 	movl %esi, (JB_SI*4)(%edx)
+ 	movl %edi, (JB_DI*4)(%edx)
+-	leal JMPBUF(%esp), %ecx	/* Save SP as it will be after we return.  */
++	leal (%esp), %ecx	/* Save SP as it will be after we return.  */
+      	movl %ecx, (JB_SP*4)(%edx)
+-	movl PCOFF(%esp), %ecx	/* Save PC we are returning to now.  */
+-     	movl %ecx, (JB_PC*4)(%edx)
+-	LEAVE
++	#movl PCOFF(%esp), %ecx	/* Save PC we are returning to now.  */
++     	movl $.ljmppoint, (JB_PC*4)(%edx)
++	/*LEAVE*/
+ 	movl %ebp, (JB_BP*4)(%edx) /* Save caller's frame pointer.  */
+ 
+ 	movl %eax, JB_SIZE(%edx) /* No signal mask set.  */
+-	ret
++.ljmppoint:	ret
+ END (BP_SYM (_setjmp))
+ libc_hidden_def (_setjmp)
+diff -Nur glibc-2.3.6/sysdeps/i386/fpu/ftestexcept.c glibc-2.3.6.mod/sysdeps/i386/fpu/ftestexcept.c
+--- glibc-2.3.6/sysdeps/i386/fpu/ftestexcept.c	2004-03-05 16:14:48.000000000 +0600
++++ glibc-2.3.6.mod/sysdeps/i386/fpu/ftestexcept.c	2013-04-19 12:07:46.000000000 +0530
+@@ -26,7 +26,7 @@
+ int
+ fetestexcept (int excepts)
+ {
+-  int temp;
++  short temp;
+   int xtemp = 0;
+ 
+   /* Get current exceptions.  */

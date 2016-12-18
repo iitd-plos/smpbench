@@ -1,0 +1,200 @@
+CROSSTOOL_DIR=$(build)/installs/$(CROSSTOOL)
+CROSSTOOL_INSTALL=$(CROSSTOOL_DIR)-install
+CROSSTOOL_PPC_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.ppc/powerpc-405-linux-gnu/bin
+CROSSTOOL_I386_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/bin
+CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/lib
+
+AS_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-as
+LD_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-ld
+AS_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-as --32
+LD_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-ld -melf_i386
+AS_I386_SYSTEM=/usr/bin/as --32
+#AS_I386_SYSTEM=$(AS_I386)
+LD_I386_SYSTEM=/usr/bin/ld -melf_i386
+#LD_I386_SYSTEM=$(LD_I386)
+AS_PPC_SYSTEM=$(AS_PPC)
+LD_PPC_SYSTEM=$(LD_PPC)
+
+%.gcc.O0.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g -O0 $< -o $@
+
+%.gcc.O2.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g -O2 $< -o $@
+
+%.gcc.O2U.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g -O2 -funroll-loops $< -o $@
+
+%.gcc.O0.le.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g -O0 -mlittle $< -o $@
+
+%.gcc.O2.le.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g -O2 -mlittle $< -o $@
+
+%.gcc.O2U.le.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g -O2 -funroll-loops -mlittle $< -o $@
+
+%.gcc.O0.arm: %.c
+	$(GCC_ARM) $(CFLAGS) -g -O0 $< -o $@
+
+%.gcc.O2.arm: %.c
+	$(GCC_ARM) $(CFLAGS) -g -O2 $< -o $@
+
+%.gcc.O2U.arm: %.c
+	$(GCC_ARM) $(CFLAGS) -g -O2 -funroll-loops $< -o $@
+
+#%.gcc.O0.x86: %.c
+#	$(GCC_X86) -g -O0 $< -o $@
+#
+#%.gcc.O2.x86: %.c
+#	$(GCC_X86) -g -O2 $< -o $@
+#
+#%.gcc.O2U.x86: %.c
+#	$(GCC_X86) -g -O2 -funroll-loops $< -o $@
+
+%.gcc.O0.i386: %.c
+	$(HOSTGCC_I386) $(CFLAGS) -g -O0 $< -o $@
+
+%.gcc.O2.i386: %.c
+	$(HOSTGCC_I386) $(CFLAGS) -g -O2 $< -o $@
+
+%.gcc.O3.i386: %.c
+	$(HOSTGCC_I386) $(CFLAGS) -g -O3 $< -o $@
+
+%.gcc44.O0.i386: %.c
+	$(HOSTGCC4_4_I386) $(CFLAGS) -g -O0 $< -o $@
+
+%.gcc44.O2.i386: %.c
+	$(HOSTGCC4_4_I386) $(CFLAGS) -g -O2 $< -o $@
+
+%.gcc44.O3.i386: %.c
+	$(HOSTGCC4_4_I386) $(CFLAGS) -g -O3 $< -o $@
+
+%.gcc46.O0.i386: %.c
+	$(HOSTGCC4_6_I386) $(CFLAGS) -g -O0 $< -o $@
+
+%.gcc46.O2.i386: %.c
+	$(HOSTGCC4_6_I386) $(CFLAGS) -g -O2 $< -o $@
+
+%.gcc46.O3.i386: %.c
+	$(HOSTGCC4_6_I386) $(CFLAGS) -g -O3 $< -o $@
+
+%.gcc47.O0.i386: %.c
+	$(HOSTGCC4_7_I386) $(CFLAGS) -g -O0 $< -o $@
+
+%.gcc47.O2.i386: %.c
+	$(HOSTGCC4_7_I386) $(CFLAGS) -g -O2 $< -o $@
+
+%.gcc47.O3.i386: %.c
+	$(HOSTGCC4_7_I386) $(CFLAGS) -g -O3 $< -o $@
+
+%.gcc48.O0.i386: %.c
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g -O0 $< -o $@
+
+%.gcc48.O2.i386: %.c
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g -O2 $< -o $@
+
+%.gcc48.O3.i386: %.c
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g -O3 $< -o $@
+
+
+
+%.gcc.O0.i386: %.c
+	$(GCC_I386) $(CFLAGS) -g -O0 $< -o $@
+
+%.gcc.O2.i386: %.c
+	$(GCC_I386) $(CFLAGS) -g -O2 $< -o $@
+
+%.gcc.O3.i386: %.c
+	$(GCC_I386) $(CFLAGS) -g -O3 $< -o $@
+
+%.clang.O0.i386: %.c
+	$(CLANG_I386) $(CFLAGS) -g -O0 $< -o $@
+%.clang.O2.i386: %.c
+	$(CLANG_I386) $(CFLAGS) -g -O2 $< -o $@
+%.clang.O3.i386: %.c
+	$(CLANG_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+
+%.clang33.O0.i386: %.c
+	$(CLANG3_3_I386) $(CFLAGS) -g -O0 $< -o $@
+%.clang33.O2.i386: %.c
+	$(CLANG3_3_I386) $(CFLAGS) -g -O2 $< -o $@
+%.clang33.O3.i386: %.c
+	$(CLANG3_3_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+
+%.clang34.O0.i386: %.c
+	$(CLANG3_4_I386) $(CFLAGS) -g -O0 $< -o $@
+%.clang34.O2.i386: %.c
+	$(CLANG3_4_I386) $(CFLAGS) -g -O2 $< -o $@
+%.clang34.O3.i386: %.c
+	$(CLANG3_4_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+
+%.clang35.O0.i386: %.c
+	$(CLANG3_5_I386) $(CFLAGS) -g -O0 $< -o $@
+%.clang35.O2.i386: %.c
+	$(CLANG3_5_I386) $(CFLAGS) -g -O2 $< -o $@
+%.clang35.O3.i386: %.c
+	$(CLANG3_5_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+
+%.clang36.O0.i386: %.c
+	$(CLANG3_6_I386) $(CFLAGS) -g -O0 $< -o $@
+%.clang36.O2.i386: %.c
+	$(CLANG3_6_I386) $(CFLAGS) -g -O2 $< -o $@
+%.clang36.O3.i386: %.c
+	$(CLANG3_6_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+
+%.icc.O0.i386: %.c
+	$(ICC_I386) $(CFLAGS) -g -O0 $< -o $@
+
+%.icc.O2.i386: %.c
+	$(ICC_I386) $(CFLAGS) -g -O2 $< -o $@
+
+%.icc.O2U.i386: %.c
+	$(ICC_I386) $(CFLAGS) -g -O2 -funroll-loops $< -o $@
+
+%.ccomp.O2.i386: %.c
+	$(CCOMP_I386) $(CFLAGS) -O2 $< -o $@
+
+%.ccomp.O0.i386: %.c
+	$(CCOMP_I386) $(CFLAGS) -O0 $< -o $@
+
+%.gcc.O0.i386.o: %.c
+	$(HOSTGCC_I386) -c $(CFLAGS) -O0 $< -o $@
+
+%.gcc.O2.i386.o: %.c
+	$(HOSTGCC_I386) -c $(CFLAGS) -O2 $< -o $@
+
+%.gcc.O3.i386.o: %.c
+	$(HOSTGCC_I386) -c $(CFLAGS) -O3 $< -o $@
+
+%.gcc48.O0.i386.o: %.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -O0 $< -o $@
+
+%.gcc48.O2.i386.o: %.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -O2 $< -o $@
+
+%.gcc48.O3.i386.o: %.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -O3 $< -o $@
+
+%.gcc.O0.i386.o: %.c
+	$(GCC_I386) -c $(CFLAGS) -O0 $< -o $@
+
+%.gcc.O2.i386.o: %.c
+	$(GCC_I386) -c $(CFLAGS) -O2 $< -o $@
+
+%.gcc.O3.i386.o: %.c
+	$(GCC_I386) -c $(CFLAGS) -O3 $< -o $@
+
+$(CINT_PPC_ASPROGS): %.AS.ppc: %.ppc.s
+	$(AS_PPC) $< -o $@.o
+	$(LD_PPC) $@.o -o $@
+
+$(CINT_ARM_ASPROGS): %.AS.arm: %.arm.s
+	$(AS_ARM) $< -o $@.o
+	$(LD_ARM) $@.o -o $@
+
+$(CINT_I386_ASPROGS): %.AS.i386: %.i386.s
+	$(AS_I386) $< -o $@.o
+	#$(LD_I386) -g $@.o -T $(SRCDIR)/benches/ld.script -o $@
+	$(LD_I386) -g $@.o -o $@
+
+

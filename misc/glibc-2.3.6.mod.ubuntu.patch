@@ -1,0 +1,12 @@
+diff -Nur glibc-2.3.6/csu/Makefile glibc-2.3.6.mod/csu/Makefile
+--- glibc-2.3.6/csu/Makefile	2005-02-16 15:04:09.000000000 +0530
++++ glibc-2.3.6.mod/csu/Makefile	2011-11-17 18:15:26.962574004 +0530
+@@ -241,7 +241,7 @@
+ 	 esac; \
+ 	 files="$(all-Banner-files)";				\
+ 	 if test -n "$$files"; then				\
+-	   echo "\"Available extensions:\\n\"";			\
++	   echo "\"Available extensions:\\\\n\"\n";			\
+ 	   sed -e '/^#/d' -e 's/^[[:space:]]*/	/'		\
+ 	       -e 's/^\(.*\)$$/\"\1\\n\"/' $$files;		\
+ 	 fi) > $@T

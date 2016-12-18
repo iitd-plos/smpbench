@@ -1,0 +1,2 @@
+#!/bin/bash
+(test "$1" = -v && echo GNU assembler 2.13) || (test "$1" = --version && echo GNU assembler 2.13) || /usr/bin/as "$@"

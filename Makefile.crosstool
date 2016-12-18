@@ -1,0 +1,53 @@
+CROSSTOOL_DEMO_FILE_i386=demo-i686.sh
+CROSSTOOL_DEMO_FILE_ppc=demo-powerpc-405.sh
+CROSSTOOL_DEMO_FILE_arm=demo-arm.sh
+
+src_archs=i386
+
+$(foreach src_arch, $(src_archs), $(eval crosstool: crosstool-$(src_arch)))
+$(foreach src_arch, $(src_archs), $(eval crosstool-$(src_arch): src_arch=$(src_arch)))
+$(foreach src_arch, $(src_archs), \
+  $(eval crosstool-$(src_arch): crosstool_file=$(CROSSTOOL_DEMO_FILE_$(src_arch))))
+$(foreach src_arch, $(src_archs), \
+  $(eval crosstool-$(src_arch): $(SRCDIR)/../tars/gcc-3.3.6.mod.$(src_arch).tar.bz2))
+$(foreach src_arch, $(src_archs), \
+  $(eval crosstool-$(src_arch): $(SRCDIR)/../tars/glibc-2.3.6.mod.$(src_arch).tar.bz2))
+
+crosstool-common:
+	mkdir -p $(build)/installs
+	rm -rf $(CROSSTOOL_DIR)
+
+$(addprefix crosstool-, $(src_archs)): crosstool-common
+	cd $(build)/installs && tar xzf $(SRCDIR)/../tars/$(CROSSTOOL).tar.gz \
+		&& patch -p0 < $(SRCDIR)/misc/$(CROSSTOOL).mod.$(src_arch).patch
+	cd $(CROSSTOOL_DIR) && export ESCAPED_SRCDIR=`echo $(SRCDIR)/../tars \
+		| sed "s/\//\\\\\\\\\//g"` \
+		&& sed "s/^TARBALLS_DIR=\S*/TARBALLS_DIR=$$ESCAPED_SRCDIR/g" $(crosstool_file)\
+		> a1 \
+		&& export ESCAPED_CROSSTOOL_DIR=`echo $(CROSSTOOL_DIR) | sed "s/\//\\\\\\\\\//g"` \
+		&& sed "s/^RESULT_TOP=\S*/RESULT_TOP=$$ESCAPED_CROSSTOOL_DIR-install/g" a1 \
+		> $(crosstool_file) \
+		&& rm -f a1; \
+	cd $(CROSSTOOL_DIR) && export AS=$(SRCDIR)/misc/as && export LD=$(SRCDIR)/misc/ld \
+		&& export CC=$(SRCDIR)/misc/gcc && export HOSTCC=$(SRCDIR)/misc/gcc \
+		&& export AR=ar && bash $(crosstool_file); \
+
+$(SRCDIR)/../tars/gcc-3.3.6.mod.%.tar.bz2::
+	mkdir -p $(build)/installs
+	cd $(build)/installs && tar xjf $(SRCDIR)/../tars/gcc-3.3.6.tar.bz2 && cd -
+	cd $(build)/installs && patch -p0 < $(SRCDIR)/misc/gcc-3.3.6.mod.patch && cd -
+	cd $(build)/installs && rm -rf gcc-3.3.6.mod.$(src_arch) && mv gcc-3.3.6 gcc-3.3.6.mod.$(src_arch) && cd -
+	cd $(build)/installs && tar cjf $@ gcc-3.3.6.mod.$(src_arch) && cd -
+
+$(SRCDIR)/../tars/glibc-2.3.6.mod.%.tar.bz2::
+	cd $(build)/installs && tar xjf $(SRCDIR)/../tars/glibc-2.3.6.tar.bz2 && cd -
+	cd $(build)/installs && patch -p0 < $(SRCDIR)/misc/glibc-2.3.6.mod.patch && cd -
+	#Uncomment following for Ubuntu only
+	cd $(build)/installs && patch -p0 < $(SRCDIR)/misc/glibc-2.3.6.mod.ubuntu.patch && cd -
+	if [ $(src_arch) != "i386" ]; then \
+	  cd $(build)/installs && patch -p0 < $(SRCDIR)/misc/glibc-2.3.6.mod.nonx86.patch && cd -; \
+	fi
+	cd $(build)/installs && rm -rf glibc-2.3.6.mod.$(src_arch) && mv glibc-2.3.6 glibc-2.3.6.mod.$(src_arch) && cd -
+	cd $(build)/installs && tar cjf $@ glibc-2.3.6.mod.$(src_arch) && cd -
+
+

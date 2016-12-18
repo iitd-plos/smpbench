@@ -1,0 +1,36 @@
+diff -Nur glibc-2.3.6/sysdeps/unix/sysv/linux/bind.S glibc-2.3.6.mod/sysdeps/unix/sysv/linux/bind.S
+--- glibc-2.3.6/sysdeps/unix/sysv/linux/bind.S	2002-05-15 05:47:25.000000000 +0530
++++ glibc-2.3.6.mod/sysdeps/unix/sysv/linux/bind.S	2011-11-17 18:24:34.572574003 +0530
+@@ -2,4 +2,4 @@
+ #define	NARGS	3
+ #define NO_WEAK_ALIAS	1
+ #include <socket.S>
+-weak_alias (bind, __bind)
++#weak_alias (bind, __bind)
+diff -Nur glibc-2.3.6/sysdeps/unix/sysv/linux/getsockname.S glibc-2.3.6.mod/sysdeps/unix/sysv/linux/getsockname.S
+--- glibc-2.3.6/sysdeps/unix/sysv/linux/getsockname.S	2002-05-15 05:47:58.000000000 +0530
++++ glibc-2.3.6.mod/sysdeps/unix/sysv/linux/getsockname.S	2011-11-17 18:32:07.462574003 +0530
+@@ -2,4 +2,4 @@
+ #define	NARGS	3
+ #define NO_WEAK_ALIAS	1
+ #include <socket.S>
+-weak_alias (getsockname, __getsockname)
++#weak_alias (getsockname, __getsockname)
+diff -Nur glibc-2.3.6/sysdeps/unix/sysv/linux/listen.S glibc-2.3.6.mod/sysdeps/unix/sysv/linux/listen.S
+--- glibc-2.3.6/sysdeps/unix/sysv/linux/listen.S	2002-05-15 05:48:37.000000000 +0530
++++ glibc-2.3.6.mod/sysdeps/unix/sysv/linux/listen.S	2011-11-17 18:32:32.162574003 +0530
+@@ -2,4 +2,4 @@
+ #define	NARGS	2
+ #define NO_WEAK_ALIAS	1
+ #include <socket.S>
+-weak_alias (listen, __listen)
++#weak_alias (listen, __listen)
+diff -Nur glibc-2.3.6/sysdeps/unix/sysv/linux/setsockopt.S glibc-2.3.6.mod/sysdeps/unix/sysv/linux/setsockopt.S
+--- glibc-2.3.6/sysdeps/unix/sysv/linux/setsockopt.S	2002-05-15 05:49:09.000000000 +0530
++++ glibc-2.3.6.mod/sysdeps/unix/sysv/linux/setsockopt.S	2011-11-17 18:40:51.322574002 +0530
+@@ -2,4 +2,4 @@
+ #define	NARGS	5
+ #define NO_WEAK_ALIAS	1
+ #include <socket.S>
+-weak_alias (setsockopt, __setsockopt)
++#weak_alias (setsockopt, __setsockopt)

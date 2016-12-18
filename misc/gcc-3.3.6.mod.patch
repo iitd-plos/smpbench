@@ -1,0 +1,30 @@
+diff -ur gcc-3.3.6/gcc/collect2.c gcc-3.3.6.mod/gcc/collect2.c
+--- gcc-3.3.6/gcc/collect2.c	2003-12-09 00:32:39.000000000 +0530
++++ gcc-3.3.6.mod/gcc/collect2.c	2012-04-08 00:46:13.000000000 +0530
+@@ -1572,7 +1572,7 @@
+   if (redir)
+     {
+       /* Open response file.  */
+-      redir_handle = open (redir, O_WRONLY | O_TRUNC | O_CREAT);
++      redir_handle = open (redir, O_WRONLY | O_TRUNC | O_CREAT, 666);
+ 
+       /* Duplicate the stdout and stderr file handles
+ 	 so they can be restored later.  */
+diff -ur gcc-3.3.6/gcc/flow.c gcc-3.3.6.mod/gcc/flow.c
+--- gcc-3.3.6/gcc/flow.c	2004-12-04 06:06:35.000000000 +0530
++++ gcc-3.3.6.mod/gcc/flow.c	2012-04-09 03:04:34.000000000 +0530
+@@ -1949,11 +1949,13 @@
+ 			    bb_false->global_live_at_start, BITMAP_XOR))
+ 	{
+ 	  rtx reg = XEXP (cond_true, 0);
++    enum rtx_code inv_cond;
+ 
+ 	  if (GET_CODE (reg) == SUBREG)
+ 	    reg = SUBREG_REG (reg);
+ 
+-	  if (GET_CODE (reg) != REG)
++ 	  inv_cond = reversed_comparison_code (cond_true, BB_END (bb));
++	  if (GET_CODE (reg) != REG || inv_cond == UNKNOWN)
+ 	    abort ();
+ 
+ 	  SET_REGNO_REG_SET (pbi->reg_cond_reg, REGNO (reg));
