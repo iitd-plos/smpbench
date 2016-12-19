@@ -15,4 +15,11 @@ cd ../tars && wget http://www.cse.iitd.ernet.in/~sbansal/software/tars/* && cd -
 
 Build:
 -----
-./configure && make build
+./configure
+make crosstool
+
+For CINT:
+make cint
+
+For others:
+make build
