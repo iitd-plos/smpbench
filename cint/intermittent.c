@@ -25,6 +25,11 @@ int check_pt(int num_NV, int num_V, ...)
 
 }
 
+int main_exp0(){
+ check_pt(0,2);
+ return 0;
+}
+
 int main_exp1(){
  int s,c;
  s = rand()%2;
@@ -52,6 +57,7 @@ int
 main(int argc, char **argv)
 {
   printf("foo(1) = %d\n", foo(1));
+  printf("main_exp0() = %d\n", main_exp0());
   printf("main_exp1() = %d\n", main_exp1());
   return 1;
 }
