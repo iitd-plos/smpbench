@@ -16,6 +16,7 @@
 #define FALSE	0
 #define NOT_IMPLEMENTED() assert(0)
 
+#define CP_MAGIC 7524
 
 int __NV_c1 =0 , __NV_c2 = 0, __NV_total = 0;
 
@@ -25,9 +26,17 @@ int check_pt(int num_NV, int num_V, ...)
 
 }
 
-int main_exp0(){
- check_pt(0,2);
- return 0;
+int check_pt1(int magic, int num_NV, int num_V, void* v, unsigned s)
+{
+  printf("Inside Check Point -- Num NV vars = %d Num V vars = %d \n",num_NV, num_V);
+}
+
+int main_exp0()
+{
+  int a = 5;
+  check_pt1(CP_MAGIC, 0, 1, &a, sizeof(a));
+  ++a;
+  return a;
 }
 
 int main_exp1(){
