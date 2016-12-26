@@ -31,12 +31,26 @@ int check_pt1(int magic, int num_NV, int num_V, void* v, unsigned s)
   printf("Inside Check Point -- Num NV vars = %d Num V vars = %d \n",num_NV, num_V);
 }
 
+int check_pt2(int magic, int num_NV, int num_V, void* v1, unsigned s1, void* v2, unsigned s2)
+{
+  printf("Inside Check Point -- Num NV vars = %d Num V vars = %d \n",num_NV, num_V);
+}
+
 int main_exp0()
 {
   int a = 5;
   check_pt1(CP_MAGIC, 0, 1, &a, sizeof(a));
   ++a;
   return a;
+}
+
+int main_exp01()
+{
+  int a = 5;
+  check_pt2(CP_MAGIC, 1, 1, &__NV_c1, sizeof(__NV_c1), &a, sizeof(a));
+  ++a;
+  __NV_c1++;
+  return a + __NV_c1;
 }
 
 int main_exp1(){
