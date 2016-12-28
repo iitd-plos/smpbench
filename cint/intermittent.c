@@ -41,6 +41,11 @@ int check_pt21(int magic, int num_NV, int num_V, void* v1, unsigned s1, void* v2
   printf("Inside Check Point -- Num NV vars = %d Num V vars = %d \n",num_NV, num_V);
 }
 
+int check_pt31(int magic, int num_NV, int num_V, void* v1, unsigned s1, void* v2, unsigned s2, void* v3, unsigned sv3, void* v4, unsigned sv4)
+{
+  printf("Inside Check Point -- Num NV vars = %d Num V vars = %d \n",num_NV, num_V);
+}
+
 int main_exp0()
 {
   int a = 5;
@@ -61,17 +66,17 @@ int main_exp01()
 int main_exp1(){
  int s;
  s = rand()%2;
- check_pt21(CP_MAGIC, 2, 1, &__NV_c1, sizeof(__NV_c1), &__NV_c2, sizeof(__NV_c2), &s, sizeof(s));
+ check_pt31(CP_MAGIC, 3, 1, &__NV_total, sizeof(__NV_total), &__NV_c1, sizeof(__NV_c1), &__NV_c2, sizeof(__NV_c2), &s, sizeof(s));
  if( s == 0 ){
- check_pt21(CP_MAGIC, 2, 1, &__NV_c1, sizeof(__NV_c1), &__NV_c2, sizeof(__NV_c2), &s, sizeof(s));
+ check_pt31(CP_MAGIC, 3, 1, &__NV_total, sizeof(__NV_total), &__NV_c1, sizeof(__NV_c1), &__NV_c2, sizeof(__NV_c2), &s, sizeof(s));
  __NV_c1++;
  }
  else{
- check_pt21(CP_MAGIC, 2, 1, &__NV_c1, sizeof(__NV_c1), &__NV_c2, sizeof(__NV_c2), &s, sizeof(s));
+ check_pt31(CP_MAGIC, 3, 1, &__NV_total, sizeof(__NV_total), &__NV_c1, sizeof(__NV_c1), &__NV_c2, sizeof(__NV_c2), &s, sizeof(s));
    __NV_c2++;
  }
  __NV_total++;
- assert(__NV_total==__NV_c1+__NV_c2);
+ //assert(__NV_total==__NV_c1+__NV_c2);
   return __NV_total+__NV_c1+__NV_c2+s;
 }
 
