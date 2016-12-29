@@ -4,7 +4,7 @@ include Make.conf
 all:: $(build) $(build)/Makefile
 	make -C $(build)
 
-$(MAKE_TARGETS) crosstool compcert lmem_run cint: $(build) $(build)/Makefile
+$(MAKE_TARGETS) crosstool compcert lmem_run cint:: $(build) $(build)/Makefile
 	make -C $(build) $@
 
 $(build):
