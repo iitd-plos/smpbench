@@ -20,7 +20,7 @@
 
 int __NV_c1 =0 , __NV_c2 = 0, __NV_total = 0;
 
-int check_pt(int num_NV, int num_V, ...)
+int check_pt(int magic, int num_NV, int num_V, ...)
 {
     printf("Inside Check Point -- Num NV vars = %d Num V vars = %d \n",num_NV, num_V);
 
