@@ -1753,6 +1753,31 @@ int int8_add(int a, int b, int c, int d, int e, int f, int g, int h)
   return 2 * (a + b + c + d + e + f + g + h);
 }
 
+int sum_positive_g[144];
+int sum_positive_sum = 0;
+
+void sum_positive_globals(int n) {
+  int *ptr = sum_positive_g;
+  int i;
+  for (i = 0; i < n; i++, ptr++) {
+    if (*ptr > 0) {
+      sum_positive_sum = sum_positive_sum + *ptr;
+    }
+  }
+}
+
+void sum_positive_arg(int *a, int n) {
+  int *ptr = a;
+  int i;
+  for (i = 0; i < n; i++, ptr++) {
+    if (*ptr > 0) {
+      sum_positive_sum = sum_positive_sum + *ptr;
+    }
+  }
+}
+
+
+
 /*
 int int16_add(int a, int b, int c, int d, int e, int f, int g, int h,
     int i, int j, int k, int l, int m, int n, int o, int p)
@@ -1828,6 +1853,8 @@ int main()
   printf("start tests\n");
   char* a = (char*)mymalloc(100);
   char* b = (char*)mymalloc(100);
+  sum_positive_globals(100);
+  sum_positive_arg(sum_positive_g, 144);
   int ret =  
         main_ddec() +
         main_chomp() + main_fannkuch(atoi("0"), atoi("0")) + 
@@ -1848,7 +1875,8 @@ int main()
         tiling_dst(atoi("0")) +
         int1(2) + int2_add(3,4) + int3_add(3, 4, 5) + int4_add(3, 4, 5, 6) +
         int5_add(3, 4, 5, 6, 7) + int6_add(3, 4, 5, 6, 7, 8) +
-        int7_add(3, 4, 5, 6, 7, 8, 9) + int8_add(3, 4, 5, 6, 7, 8, 9, 10) 
+        int7_add(3, 4, 5, 6, 7, 8, 9) + int8_add(3, 4, 5, 6, 7, 8, 9, 10) +
+        sum_positive_sum
         //int16_add(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
         /*aliasing_example(100) +
         big_struct_return_function(100).a*/;
