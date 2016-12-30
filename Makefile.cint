@@ -48,31 +48,31 @@ AS_ARM=$(ARM_PREFIX)/arm-elf-as
 LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 
 %.gcc.O0.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g -O0 $< -o $@
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@
 
 %.gcc.O2.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g -O2 $< -o $@
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 $< -o $@
 
 %.gcc.O2U.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g -O2 -funroll-loops $< -o $@
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -funroll-loops $< -o $@
 
 %.gcc.O0.le.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g -O0 -mlittle $< -o $@
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 -mlittle $< -o $@
 
 %.gcc.O2.le.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g -O2 -mlittle $< -o $@
+	$(GCC_PPC) $(CFLAGS) -g  $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -mlittle $< -o $@
 
 %.gcc.O2U.le.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g -O2 -funroll-loops -mlittle $< -o $@
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -funroll-loops -mlittle $< -o $@
 
 %.gcc.O0.arm: %.c
-	$(GCC_ARM) $(CFLAGS) -g -O0 $< -o $@
+	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O0 $< -o $@
 
 %.gcc.O2.arm: %.c
-	$(GCC_ARM) $(CFLAGS) -g -O2 $< -o $@
+	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 $< -o $@
 
 %.gcc.O2U.arm: %.c
-	$(GCC_ARM) $(CFLAGS) -g -O2 -funroll-loops $< -o $@
+	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 -funroll-loops $< -o $@
 
 #%.gcc.O0.x86: %.c
 #	$(GCC_X86) -g -O0 $< -o $@
@@ -84,137 +84,146 @@ LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 #	$(GCC_X86) -g -O2 -funroll-loops $< -o $@
 
 %.gcc.O0.i386: %.c
-	$(HOSTGCC_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(HOSTGCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc.O2.i386: %.c
-	$(HOSTGCC_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(HOSTGCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc.O3.i386: %.c
-	$(HOSTGCC_I386) $(CFLAGS) -g -O3 $< -o $@
+	$(HOSTGCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.gcc44.O0.i386: %.c
-	$(HOSTGCC4_4_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(HOSTGCC4_4_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc44.O2.i386: %.c
-	$(HOSTGCC4_4_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(HOSTGCC4_4_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc44.O3.i386: %.c
-	$(HOSTGCC4_4_I386) $(CFLAGS) -g -O3 $< -o $@
+	$(HOSTGCC4_4_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.gcc46.O0.i386: %.c
-	$(HOSTGCC4_6_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(HOSTGCC4_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc46.O2.i386: %.c
-	$(HOSTGCC4_6_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(HOSTGCC4_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc46.O3.i386: %.c
-	$(HOSTGCC4_6_I386) $(CFLAGS) -g -O3 $< -o $@
+	$(HOSTGCC4_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.gcc47.O0.i386: %.c
-	$(HOSTGCC4_7_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(HOSTGCC4_7_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc47.O2.i386: %.c
-	$(HOSTGCC4_7_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(HOSTGCC4_7_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc47.O3.i386: %.c
-	$(HOSTGCC4_7_I386) $(CFLAGS) -g -O3 $< -o $@
+	$(HOSTGCC4_7_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.gcc48.O0.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc48.O2.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc48.O3.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g -O3 $< -o $@
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 
 
 %.gcc.O0.i386: %.c
-	$(GCC_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc.O2.i386: %.c
-	$(GCC_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc.O3.i386: %.c
-	$(GCC_I386) $(CFLAGS) -g -O3 $< -o $@
+	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.clang.O0.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 %.clang.O2.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 %.clang.O3.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
 
 %.clang33.O0.i386: %.c
-	$(CLANG3_3_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(CLANG3_3_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 %.clang33.O2.i386: %.c
-	$(CLANG3_3_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(CLANG3_3_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 %.clang33.O3.i386: %.c
-	$(CLANG3_3_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+	$(CLANG3_3_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
 
 %.clang34.O0.i386: %.c
-	$(CLANG3_4_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(CLANG3_4_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 %.clang34.O2.i386: %.c
-	$(CLANG3_4_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(CLANG3_4_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 %.clang34.O3.i386: %.c
-	$(CLANG3_4_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+	$(CLANG3_4_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
 
 %.clang35.O0.i386: %.c
-	$(CLANG3_5_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(CLANG3_5_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 %.clang35.O2.i386: %.c
-	$(CLANG3_5_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(CLANG3_5_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 %.clang35.O3.i386: %.c
-	$(CLANG3_5_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+	$(CLANG3_5_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
 
 %.clang36.O0.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 %.clang36.O2.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 %.clang36.O3.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g -O3 -funroll-loops $< -o $@
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
 
 %.icc.O0.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g -O0 $< -o $@
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.icc.O2.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g -O2 $< -o $@
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.icc.O2U.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g -O2 -funroll-loops $< -o $@
+	$(ICC_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 -funroll-loops $< -o $@
 
 %.ccomp.O2.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
-	$(CCOMP_I386) $(CFLAGS) -O2 $< -o $@
+	$(CCOMP_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.ccomp.O0.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
-	$(CCOMP_I386) $(CFLAGS) -O0 $< -o $@
+	$(CCOMP_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc.O0.i386.o: %.c
-	$(HOSTGCC_I386) -c $(CFLAGS) -O0 $< -o $@
+	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc.O2.i386.o: %.c
-	$(HOSTGCC_I386) -c $(CFLAGS) -O2 $< -o $@
+	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc.O3.i386.o: %.c
-	$(HOSTGCC_I386) -c $(CFLAGS) -O3 $< -o $@
+	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.gcc48.O0.i386.o: %.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) -O0 $< -o $@
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc48.O2.i386.o: %.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) -O2 $< -o $@
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc48.O3.i386.o: %.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) -O3 $< -o $@
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.gcc.O0.i386.o: %.c
-	$(GCC_I386) -c $(CFLAGS) -O0 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc.O2.i386.o: %.c
-	$(GCC_I386) -c $(CFLAGS) -O2 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.gcc.O3.i386.o: %.c
-	$(GCC_I386) -c $(CFLAGS) -O3 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+
+%.msp430-gcc.O0: %.c
+	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O0 $< -o $@
+
+%.msp430-gcc.O2: %.c
+	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O2 $< -o $@
+
+%.msp430-gcc.O3: %.c
+	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O3 $< -o $@
 
 $(CINT_PPC_ASPROGS): %.AS.ppc: %.ppc.s
 	$(AS_PPC) $< -o $@.o
