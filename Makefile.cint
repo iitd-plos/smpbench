@@ -184,10 +184,10 @@ LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 	$(ICC_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 -funroll-loops $< -o $@
 
 %.ccomp.O2.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
-	$(CCOMP_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
 %.ccomp.O0.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
-	$(CCOMP_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
 
 %.gcc.O0.i386.o: %.c
 	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@

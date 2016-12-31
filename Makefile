@@ -10,7 +10,7 @@ $(MAKE_TARGETS) crosstool compcert lmem_run cint cint-msp430:: $(build) $(build)
 $(build):
 	mkdir -p $@
 
-$(build)/Makefile: Makefile.build
+$(build)/Makefile: Makefile.build Makefile.cint Makefile.compcert Makefile.crosstool Make.conf
 	cp $< $@
 
 tar:: cleansrc
