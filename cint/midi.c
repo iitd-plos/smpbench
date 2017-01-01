@@ -234,7 +234,7 @@ void initializeNVData() {
 //}
 
 __attribute__((section(".init9"), aligned(2)))
-int main(void){
+int main_midi(void){
 
 //  WDTCTL = WDTPW | WDTHOLD;  // Stop watchdog timer
 //  PM5CTL0 &= ~LOCKLPM5;
@@ -280,9 +280,13 @@ int main(void){
 
   }
 
-  return 0;
+  return MIDIBuf.msg0.seqNum;
 //  P1OUT |= BIT0;
 //  while(1){};
 
 
+}
+
+int main(void){
+  return main_midi();
 }
