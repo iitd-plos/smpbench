@@ -1776,7 +1776,13 @@ void sum_positive_arg(int *a, int n) {
   }
 }
 
-
+void sum_all_globals(int n) {
+  int *ptr = sum_positive_g;
+  int i;
+  for (i = 0; i < n; i++, ptr++) {
+    sum_positive_sum = sum_positive_sum + *ptr;
+  }
+}
 
 /*
 int int16_add(int a, int b, int c, int d, int e, int f, int g, int h,
@@ -1855,6 +1861,7 @@ int main()
   char* b = (char*)mymalloc(100);
   sum_positive_globals(100);
   sum_positive_arg(sum_positive_g, 144);
+  sum_all_globals(100);
   int ret =  
         main_ddec() +
         main_chomp() + main_fannkuch(atoi("0"), atoi("0")) + 
