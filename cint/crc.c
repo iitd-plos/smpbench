@@ -17,17 +17,17 @@ unsigned short crc16_ccitt(volatile unsigned char *data, unsigned short n) {
 
     crc_16 = 0xFFFFu; // Equivalent Preset to 0x1D0F
     for (i=0; i<n; i++) {
-        CHECKPOINT;
         crc_16^=data[i] << 8;
         for (j = 0; j < 8; ++j) {
-            CHECKPOINT;
             if (crc_16 & 0x8000) {
                 crc_16 <<= 1;
                 crc_16 ^= 0x1021; // (CCITT) x16 + x12 + x5 + 1
             } else {
                 crc_16 <<= 1;
             }
+            CHECKPOINT;
         }
+        CHECKPOINT;
     }
     return(crc_16^0xFFFFu);
 }
