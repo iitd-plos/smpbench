@@ -239,8 +239,7 @@ int main_midi(void){
 //  WDTCTL = WDTPW | WDTHOLD;  // Stop watchdog timer
 //  PM5CTL0 &= ~LOCKLPM5;
 
-  CHECKPOINT;
-  reboots++;
+  //reboots++;
   initializeHardware();
 
   if( inErrorState == 0xBEEE ){
