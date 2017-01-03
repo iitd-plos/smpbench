@@ -11,7 +11,10 @@
  * licensing information accompanied the code snippet.
  * </quote>
  **/
-unsigned short crc16_ccitt(volatile unsigned char *data, unsigned short n) {
+
+char data[100000];
+
+unsigned short crc16_ccitt(/*volatile unsigned char *data,*/ unsigned short n) {
     register unsigned short i, j;
     unsigned short crc_16;
 
@@ -37,7 +40,7 @@ void do_crc (void) {
     volatile unsigned short accumulator = 0;
     unsigned int i;
     for (i = 0; i < 8; ++i)
-        accumulator += crc16_ccitt((unsigned char *)(0xE000 + i*512), 0x100);
+        accumulator += crc16_ccitt(/*(unsigned char *)(0xE000 + i*512), */0x100);
 }
 
 //MEMENTOS_MAIN_ATTRIBUTES
