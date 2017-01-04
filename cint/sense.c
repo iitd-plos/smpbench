@@ -117,6 +117,7 @@ unsigned divide (unsigned numerator, unsigned denominator) {
         if (sampval < min) min = sampval;\
         if (sampval > max) max = sampval;\
         mean = divide(((i-1) * mean) + sampval, i);\
+        CHECKPOINT;\
     }\
     sampmean = mean;\
     sampmax = max;\
@@ -125,6 +126,7 @@ unsigned divide (unsigned numerator, unsigned denominator) {
     for (i = 0; i < NUMSAMPLES; ++i) {\
         diff = (samples[i] - mean);\
         sumdiffs += diff * diff;\
+        CHECKPOINT;\
     }\
     sampstddev = fast_sqrt(sumdiffs / NUMSAMPLES);\
 }
@@ -140,6 +142,7 @@ unsigned divide (unsigned numerator, unsigned denominator) {
 
 //MEMENTOS_MAIN_ATTRIBUTES
 int main_sense (void) {
+    CHECKPOINT;
 #ifdef __MSP430__
     WDTCTL = WDTPW + WDTHOLD; // stop WDT
     setup();

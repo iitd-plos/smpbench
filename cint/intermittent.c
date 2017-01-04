@@ -56,6 +56,17 @@ int main_exp03()
   return a + __NV_c1;
 }
 
+int main_exp04()
+{
+  CHECKPOINT;
+  if(__NV_c1 != 1)
+  {
+    __NV_c2 = 200;
+  }
+  __NV_c1 = 1;
+  return __NV_c1+__NV_c2;
+}
+
 int main_exp1(){
  int s;
  s = rand()%2;
