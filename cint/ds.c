@@ -361,7 +361,7 @@ void initializeNVData() {
 }
 
 __attribute__((section(".init9"), aligned(2)))
-int main(void){
+int main_ds(void){
 
 //  WDTCTL = WDTPW | WDTHOLD;  // Stop watchdog timer
 //  PM5CTL0 &= ~LOCKLPM5;
@@ -421,4 +421,15 @@ int main(void){
 //#endif
 //  while( 1 ){ }
 
+  return __NV_dataBin[0] + 
+  __NV_dataBin[1] + 
+  __NV_dataBin[2] + 
+  __NV_dataBin[3] + 
+  __NV_dataBin[4] + 
+  __NV_dataBin[5];
+}
+
+int main(void){
+  printf("%d", main_ds());
+  return 0;
 }

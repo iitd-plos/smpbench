@@ -173,8 +173,7 @@ int main_ar()
       (__NV_stationaryCount)++;
     }
 
-    return 1;
-
+    return __NV_totalCount + __NV_walkingCount + __NV_stationaryCount;
   
   
 }
