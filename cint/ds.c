@@ -8,136 +8,130 @@
 //#include "data_bins.h"
 //#include "data_thresholds.h"
 
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh0;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh1;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh2;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh3;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh4;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh5;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh6;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh7;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh8;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh9;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh10;
-unsigned __histo_read__NV_dataThresh(unsigned i){
-  if( i == 0 ){
-    return __NV_dataThresh0;
-  }else if( i == 1 ){
-    return __NV_dataThresh1;
-  }else if( i == 2 ){
-    return __NV_dataThresh2;
-  }else if( i == 3 ){
-    return __NV_dataThresh3;
-  }else if( i == 4 ){
-    return __NV_dataThresh4;
-  }else if( i == 5 ){
-    return __NV_dataThresh5;
-  }else if( i == 6 ){
-    return __NV_dataThresh6;
-  }else if( i == 7 ){
-    return __NV_dataThresh7;
-  }else if( i == 8 ){
-    return __NV_dataThresh8;
-  }else if( i == 9 ){
-    return __NV_dataThresh9;
-  }else if( i == 10 ){
-    return __NV_dataThresh10;
-  }else { /*should never get here!*/ return 0; }
-}
-void __histo_write__NV_dataThresh(unsigned i,unsigned v){
-  if( i == 0 ){
-    __NV_dataThresh0 = v;
-  }else if( i == 1 ){
-    __NV_dataThresh1 = v;
-  }else if( i == 2 ){
-    __NV_dataThresh2 = v;
-  }else if( i == 3 ){
-    __NV_dataThresh3 = v;
-  }else if( i == 4 ){
-    __NV_dataThresh4 = v;
-  }else if( i == 5 ){
-    __NV_dataThresh5 = v;
-  }else if( i == 6 ){
-    __NV_dataThresh6 = v;
-  }else if( i == 7 ){
-    __NV_dataThresh7 = v;
-  }else if( i == 8 ){
-    __NV_dataThresh8 = v;
-  }else if( i == 9 ){
-    __NV_dataThresh9 = v;
-  }else if( i == 10 ){
-    __NV_dataThresh10 = v;
-  }else { /*should never get here!*/ return; }
-}
 
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin0;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin1;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin2;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin3;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin4;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin5;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin6;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin7;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin8;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin9;
-volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin10;
-unsigned __histo_read__NV_dataBin(unsigned i){
-  if( i == 0 ){
-    return __NV_dataBin0;
-  }else if( i == 1 ){
-    return __NV_dataBin1;
-  }else if( i == 2 ){
-    return __NV_dataBin2;
-  }else if( i == 3 ){
-    return __NV_dataBin3;
-  }else if( i == 4 ){
-    return __NV_dataBin4;
-  }else if( i == 5 ){
-    return __NV_dataBin5;
-  }else if( i == 6 ){
-    return __NV_dataBin6;
-  }else if( i == 7 ){
-    return __NV_dataBin7;
-  }else if( i == 8 ){
-    return __NV_dataBin8;
-  }else if( i == 9 ){
-    return __NV_dataBin9;
-  }else if( i == 10 ){
-    return __NV_dataBin10;
-  }else { /*should never get here!*/ return 0; }
-}
-void __histo_write__NV_dataBin(unsigned i,unsigned v){
-  if( i == 0 ){
-    __NV_dataBin0 = v;
-  }else if( i == 1 ){
-    __NV_dataBin1 = v;
-  }else if( i == 2 ){
-    __NV_dataBin2 = v;
-  }else if( i == 3 ){
-    __NV_dataBin3 = v;
-  }else if( i == 4 ){
-    __NV_dataBin4 = v;
-  }else if( i == 5 ){
-    __NV_dataBin5 = v;
-  }else if( i == 6 ){
-    __NV_dataBin6 = v;
-  }else if( i == 7 ){
-    __NV_dataBin7 = v;
-  }else if( i == 8 ){
-    __NV_dataBin8 = v;
-  }else if( i == 9 ){
-    __NV_dataBin9 = v;
-  }else if( i == 10 ){
-    __NV_dataBin10 = v;
-  }else { /*should never get here!*/ return; }
-}
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh0;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh1;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh2;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh3;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh4;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh5;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh6;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh7;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh8;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh9;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataThresh10;
+//unsigned __histo_read__NV_dataThresh(unsigned i){
+//  if( i == 0 ){
+//    return __NV_dataThresh0;
+//  }else if( i == 1 ){
+//    return __NV_dataThresh1;
+//  }else if( i == 2 ){
+//    return __NV_dataThresh2;
+//  }else if( i == 3 ){
+//    return __NV_dataThresh3;
+//  }else if( i == 4 ){
+//    return __NV_dataThresh4;
+//  }else if( i == 5 ){
+//    return __NV_dataThresh5;
+//  }else if( i == 6 ){
+//    return __NV_dataThresh6;
+//  }else if( i == 7 ){
+//    return __NV_dataThresh7;
+//  }else if( i == 8 ){
+//    return __NV_dataThresh8;
+//  }else if( i == 9 ){
+//    return __NV_dataThresh9;
+//  }else if( i == 10 ){
+//    return __NV_dataThresh10;
+//  }else { /*should never get here!*/ return 0; }
+//}
+//void __histo_write__NV_dataThresh(unsigned i,unsigned v){
+//  if( i == 0 ){
+//    __NV_dataThresh0 = v;
+//  }else if( i == 1 ){
+//    __NV_dataThresh1 = v;
+//  }else if( i == 2 ){
+//    __NV_dataThresh2 = v;
+//  }else if( i == 3 ){
+//    __NV_dataThresh3 = v;
+//  }else if( i == 4 ){
+//    __NV_dataThresh4 = v;
+//  }else if( i == 5 ){
+//    __NV_dataThresh5 = v;
+//  }else if( i == 6 ){
+//    __NV_dataThresh6 = v;
+//  }else if( i == 7 ){
+//    __NV_dataThresh7 = v;
+//  }else if( i == 8 ){
+//    __NV_dataThresh8 = v;
+//  }else if( i == 9 ){
+//    __NV_dataThresh9 = v;
+//  }else if( i == 10 ){
+//    __NV_dataThresh10 = v;
+//  }else { /*should never get here!*/ return; }
+//}
 
-
-
-
-
-
-
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin0;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin1;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin2;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin3;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin4;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin5;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin6;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin7;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin8;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin9;
+//volatile __attribute__((section("FRAMVARS"))) unsigned int __NV_dataBin10;
+//unsigned __histo_read__NV_dataBin(unsigned i){
+//  if( i == 0 ){
+//    return __NV_dataBin0;
+//  }else if( i == 1 ){
+//    return __NV_dataBin1;
+//  }else if( i == 2 ){
+//    return __NV_dataBin2;
+//  }else if( i == 3 ){
+//    return __NV_dataBin3;
+//  }else if( i == 4 ){
+//    return __NV_dataBin4;
+//  }else if( i == 5 ){
+//    return __NV_dataBin5;
+//  }else if( i == 6 ){
+//    return __NV_dataBin6;
+//  }else if( i == 7 ){
+//    return __NV_dataBin7;
+//  }else if( i == 8 ){
+//    return __NV_dataBin8;
+//  }else if( i == 9 ){
+//    return __NV_dataBin9;
+//  }else if( i == 10 ){
+//    return __NV_dataBin10;
+//  }else { /*should never get here!*/ return 0; }
+//}
+//void __histo_write__NV_dataBin(unsigned i,unsigned v){
+//  if( i == 0 ){
+//    __NV_dataBin0 = v;
+//  }else if( i == 1 ){
+//    __NV_dataBin1 = v;
+//  }else if( i == 2 ){
+//    __NV_dataBin2 = v;
+//  }else if( i == 3 ){
+//    __NV_dataBin3 = v;
+//  }else if( i == 4 ){
+//    __NV_dataBin4 = v;
+//  }else if( i == 5 ){
+//    __NV_dataBin5 = v;
+//  }else if( i == 6 ){
+//    __NV_dataBin6 = v;
+//  }else if( i == 7 ){
+//    __NV_dataBin7 = v;
+//  }else if( i == 8 ){
+//    __NV_dataBin8 = v;
+//  }else if( i == 9 ){
+//    __NV_dataBin9 = v;
+//  }else if( i == 10 ){
+//    __NV_dataBin10 = v;
+//  }else { /*should never get here!*/ return; }
+//}
 
 
 
@@ -148,6 +142,9 @@ void __histo_write__NV_dataBin(unsigned i,unsigned v){
 #define SAMPLE_MAX 100 /*max expected value of a sample*/
 #undef USE_LEDS
 #undef FLASH_ON_BOOT
+
+unsigned int __NV_dataThresh[NUM_BINS+1];
+unsigned int __NV_dataBin[NUM_BINS+1];
 
 #define SAMPLE_TASK 0
 #define BIN_TASK 1
@@ -228,86 +225,50 @@ void abortWithError(){
              __NV_dataThresh[].
 
 */
-void addToBin(unsigned data){
+//void addToBin(unsigned data){
+#define addToBin(data){\
+  unsigned i;\
+  unsigned thresh = 0xffff;\
+  for( i = 0; i < NUM_BINS; i++){\
+    if( data < thresholds[i] ){\
+      thresh = thresholds[i];\
+      break;\
+    }\
+  } \
+  unsigned j; \
+  for( j = 0; j < NUM_BINS; j++ ){\
+    unsigned tInd = __NV_dataThresh[j];\
+    unsigned t = thresholds[tInd];\
+    if( t == thresh ){\
+      ++ __NV_dataBin[j];\
+    }\
+  }\
+  abortWithError();\
+}\
 
-  /*Fill this out so we pass a value in and get a bin back*/
-  unsigned i;
-  unsigned thresh = 0xffff;
-  for( i = 0; i < NUM_BINS; i++){
+//void swapBins(int binI, int binJ){
+#define swapBins(binI, binJ){\
+  numSwaps++;\
+  unsigned tmpBinVal = __NV_dataBin[binI];\
+  unsigned tmpThrVal = __NV_dataThresh[binI];\
+  __NV_dataBin[binI] = __NV_dataBin[binJ];\
+  __NV_dataThresh[binI] =__NV_dataThresh[binJ];\
+  __NV_dataBin[binJ] = __NV_dataBin[binI];\
+  __NV_dataThresh[binJ] =__NV_dataThresh[binI];\
+}\
 
-    /*Look through the sorted list of histogram thresholds...*/
-    if( data < thresholds[i] ){
-
-      /*thresholds[i] is the threshold for this measurment*/
-      thresh = thresholds[i];
-      break;
-
-    }
-
-  } 
-
-  unsigned j; 
-  /*Find this threshold in the unsorted list of histogram keys*/
-  for( j = 0; j < NUM_BINS; j++ ){
-
-    unsigned tInd = __histo_read__NV_dataThresh(j);//the index for this key 
-    unsigned t = thresholds[tInd];//the key itself
-
-    /*This key (t) matches the threshold 
-      for this measurement (thresholds[i]).*/
-    if( t == thresh ){
-
-      /*Increment the found key's bin's value*/
-      unsigned binVal = __histo_read__NV_dataBin(j);
-      __histo_write__NV_dataBin(j, binVal+1);
-
-      return;
-
-    }
-
-  }
-
-  /*If we get here, the measurement has no bin in
-    the histogram, which is an error*/
-  abortWithError();
-
-}
-
-void swapBins(int binI, int binJ){
-
-  if(binI >= NUM_BINS ||
-     binJ >= NUM_BINS ){
-    return;
-  }
-  numSwaps++;
-  unsigned tmpBinVal = __histo_read__NV_dataBin(binI);
-  unsigned tmpThrVal = __histo_read__NV_dataThresh(binI);
-  
-  __histo_write__NV_dataThresh(binI, __histo_read__NV_dataThresh(binJ)); 
-  __histo_write__NV_dataBin(binI, __histo_read__NV_dataBin(binJ)); 
-  /*A failure here leaves the data structure corrupted!*/
-  __histo_write__NV_dataBin(binJ, tmpBinVal); 
-  __histo_write__NV_dataThresh(binJ, tmpThrVal); 
-   
-}
-
-void sortBinsByFrequency(void){
-
-  unsigned i = 0;
-  for( i = 1; i < NUM_BINS; i++ ){
-   
-    unsigned j = i;
-    while( j > 0 && __histo_read__NV_dataBin(j - 1) > 
-                    __histo_read__NV_dataBin(j) ) {
-
-        swapBins(j,j-1);
-        j--;
-
-    }
-
-  }
-
-}  
+//void sortBinsByFrequency(void){
+#define sortBinsByFrequency() {\
+  unsigned i = 0;\
+  for( i = 1; i < NUM_BINS; i++ ){\
+    unsigned j = i;\
+    while( j > 0 && __NV_dataBin[j - 1] > \
+                    __NV_dataBin[j] ) {\
+        swapBins(j,j-1);\
+        j--;\
+    }\
+  }\
+}  \
 
 
 void checkInvariants(void){
@@ -320,7 +281,7 @@ void checkInvariants(void){
   }
   for( i = 0; i < NUM_BINS; i++ ){
 
-    unsigned key = __histo_read__NV_dataThresh(i);
+    unsigned key = __NV_dataThresh[i];
 
     if( keysFound[key] == 0 ){
 
@@ -387,11 +348,10 @@ void checkInvariants(void){
 void initializeNVData() {
   if(initialized != 0xBEEE){
     for(int i = 0; i < NUM_BINS; i++){
-      __histo_write__NV_dataBin(i,0x0);
+      __NV_dataBin[i] = 0x0;
       /*The bin corresponding to the ith 
         threshold is in the ith position to start*/
-      __histo_write__NV_dataThresh(i,i);
-      
+      __NV_dataThresh[i] = i;
     }
     reboots = 0;
     numSamples = 0;
@@ -436,12 +396,11 @@ int main(void){
 
       //DINO_TASK_BOUNDARY(SAMPLE_TASK,NULL);
       CHECKPOINT;
-      unsigned samp = getOneSample();
+      unsigned samp = rand() % SAMPLE_MAX;
       //DINO_TASK_BOUNDARY(BIN_TASK,NULL);
       CHECKPOINT;
       addToBin(samp);
       numSamples++;
-
     }
 
     //DINO_TASK_BOUNDARY(SORT_TASK,NULL);
