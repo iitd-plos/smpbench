@@ -4,6 +4,7 @@ include Make.conf
 all:: $(build) $(build)/Makefile
 	make -C $(build)
 
+.PHONY: cint
 $(MAKE_TARGETS) crosstool compcert lmem_run cint cint-msp430:: $(build) $(build)/Makefile
 	make -C $(build) $@
 
