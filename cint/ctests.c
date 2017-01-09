@@ -1854,11 +1854,23 @@ int main_ddec()
   return ret;
 }
 
+char **address_taken_local_var_callee(char **a)
+{
+  return a + 2;
+}
+
+char **address_taken_local_var_caller(char **a)
+{
+  char *b = *a;
+  return address_taken_local_var_callee(&b);
+}
+
 int main()
 {
   printf("start tests\n");
   char* a = (char*)mymalloc(100);
   char* b = (char*)mymalloc(100);
+  char *aa = address_taken_local_var_callee(&a);
   sum_positive_globals(100);
   sum_positive_arg(sum_positive_g, 144);
   sum_all_globals(100);
