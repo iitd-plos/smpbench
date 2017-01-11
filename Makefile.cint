@@ -183,6 +183,9 @@ LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 %.icc.O2U.i386: %.c
 	$(ICC_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 -funroll-loops $< -o $@
 
+%.icc.O3.i386: %.c
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+
 %.ccomp.O2.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
 	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
