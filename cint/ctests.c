@@ -1876,13 +1876,13 @@ int main()
   sum_all_globals(100);
   int ret =  
         main_ddec() +
-        main_chomp() + main_fannkuch(atoi("0"), atoi("0")) + 
+        main_chomp() + main_fannkuch(atoi("0"), (char **)atoi("0")) + 
         main_knucleotide() + 
-        main_lists(atoi("0"), atoi("0")) + 
-        main_nsievebits(atoi("0"), atoi("0")) + 
-        main_nsieve(atoi("0"), atoi("0")) + 
-        main_qsort(atoi("0"), atoi("0")) + 
-        main_sha1(atoi("0"), atoi("0")) + 
+        main_lists(atoi("0"), (char **)atoi("0")) + 
+        main_nsievebits(atoi("0"), (char **)atoi("0")) + 
+        main_nsieve(atoi("0"), (char **)atoi("0")) + 
+        main_qsort(atoi("0"), (char **)atoi("0")) + 
+        main_sha1(atoi("0"), (char **)atoi("0")) + 
         nested_loops2_1(atoi("100"), atoi("100")) + nested_loops2(atoi("100")) + 
         nested_loops3(atoi("100"), atoi("100"), a, b) + 
         quicksort_char(atoi("0"), atoi("100"), a) +

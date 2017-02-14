@@ -1,6 +1,6 @@
 Prepare:
 -------
-sudo apt-get install libtool mysql-server libmysqlclient15-dev gfortran mpi libevent-dev libevent1-dev automake libboost-all-dev libbz2-dev libatlas-base-dev libtiff-dev
+sudo apt-get install libtool mysql-server libmysqlclient15-dev gfortran mpi libevent-dev libevent1-dev automake libboost-all-dev libbz2-dev libatlas-base-dev libtiff-dev gcc-4.8 g++-4.8 gcc-4.8-multilib g++-4.8-multilib clang-3.6
 
 Put your user password in the environment variable as follows (change the
 password to something insecure before doing this, your password will be
