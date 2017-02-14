@@ -6,8 +6,8 @@ CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unkn
 
 GCC_I386_FLAGS=-m32 -fno-inline -fno-inline-functions -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -g
 
-HOSTGCC48_I386_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks
-HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks
+HOSTGCC48_I386_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -fno-mudflap --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
+HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -fno-mudflap --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
 
 GCC_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-gcc
 GCC_X86=gcc
@@ -29,7 +29,7 @@ LD_I386_SYSTEM=/usr/bin/ld -melf_i386
 AS_PPC_SYSTEM=$(AS_PPC)
 LD_PPC_SYSTEM=$(LD_PPC)
 
-CLANG_I386_OPTS= -g -fno-inline -fno-inline-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -Xclang -msoft-float -Xclang -no-implicit-float -fwrapv -fno-strict-overflow -fno-unroll-loops -std=c11 -ffreestanding -U__GNUC__
+CLANG_I386_OPTS= -g -fno-inline -fno-inline-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -fno-mudflap -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -Xclang -msoft-float -Xclang -no-implicit-float -fwrapv -fno-strict-overflow -fno-unroll-loops -std=c11 -ffreestanding -U__GNUC__ -D_FORTIFY_SOURCE=0
 
 CLANG_I386=$(SRCDIR)/misc/clang32 $(CLANG_I386_OPTS)
 CLANG3_3_I386=$(SRCDIR)/misc/clang32 -v3.3 $(CLANG_I386_OPTS)

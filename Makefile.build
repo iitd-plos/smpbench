@@ -387,7 +387,7 @@ $(RANDOM_FILES): %: gen_randfile.pl
 	perl -I$(SRCDIR) -I$(DATA_RANDOM)/lib $(SRCDIR)/gen_randfile.pl $@
 
 clean::
-	rm -rf *.o utils/*.o mytime $(SYSBENCH) $(PFSCAN) $(PBZIP2) $(SPLASH) $(HPCC) $(GRAPH500) $(PARSEC) $(MEMCACHED) $(LINUX)
+	rm -rf *.o utils/*.o mytime $(SYSBENCH) $(PFSCAN) $(PBZIP2) $(SPLASH) $(HPCC) $(GRAPH500) $(PARSEC) $(MEMCACHED) $(LINUX) cint/*
 
 distclean:: clean
 	rm -f $(RANDOM_FILES)
