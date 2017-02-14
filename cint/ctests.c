@@ -1854,15 +1854,20 @@ int main_ddec()
   return ret;
 }
 
-size_t address_taken_local_var_callee(char **a, char **b)
+size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d)
 {
-  return b - a + 2;
+  return b - a + (d - c) + 2;
 }
 
 size_t address_taken_local_var_caller(char **a)
 {
   char *b = *a;
-  return sum_positive_sum + address_taken_local_var_callee(&b, a);
+  char **c = &b;
+  char **d = &b;
+  if (sum_positive_sum) {
+    d = a;
+  }
+  return sum_positive_sum + address_taken_local_var_callee(&b, a, c, d);
 }
 
 int main()
