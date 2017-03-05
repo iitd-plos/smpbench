@@ -59,6 +59,75 @@ GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc
 AS_ARM=$(ARM_PREFIX)/arm-elf-as
 LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 
+cint/ctests.gcc48.O0.i386.o: cint/ctests.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.gcc48.O0.i386.o: cint/ctests_helper.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests.gcc48.O0.i386: cint/ctests.gcc48.O0.i386.o cint/ctests_helper.gcc48.O0.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/ctests.gcc48.O2.i386.o: cint/ctests.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests_helper.gcc48.O2.i386.o: cint/ctests_helper.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests.gcc48.O2.i386: cint/ctests.gcc48.O2.i386.o cint/ctests_helper.gcc48.O2.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+cint/ctests.gcc48.O3.i386.o: cint/ctests.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests_helper.gcc48.O3.i386.o: cint/ctests_helper.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests.gcc48.O3.i386: cint/ctests.gcc48.O3.i386.o cint/ctests_helper.gcc48.O3.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+
+
+cint/ctests.clang36.O0.i386.o: cint/ctests.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.clang36.O0.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests.clang36.O0.i386: cint/ctests.clang36.O0.i386.o cint/ctests_helper.clang36.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/ctests.clang36.O2.i386.o: cint/ctests.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests_helper.clang36.O2.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests.clang36.O2.i386: cint/ctests.clang36.O2.i386.o cint/ctests_helper.clang36.O2.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+cint/ctests.clang36.O3.i386.o: cint/ctests.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests_helper.clang36.O3.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests.clang36.O3.i386: cint/ctests.clang36.O3.i386.o cint/ctests_helper.clang36.O3.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+
+cint/ctests.icc.O0.i386.o: cint/ctests.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.icc.O0.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests.icc.O0.i386: cint/ctests.icc.O0.i386.o cint/ctests_helper.icc.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/ctests.icc.O2.i386.o: cint/ctests.c
+	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests_helper.icc.O2.i386.o: cint/ctests_helper.c
+	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests.icc.O2.i386: cint/ctests.icc.O2.i386.o cint/ctests_helper.icc.O2.i386.o
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+cint/ctests.icc.O3.i386.o: cint/ctests.c
+	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
+	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests.icc.O3.i386: cint/ctests.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+
+
+
 %.gcc.O0.ppc: %.c
 	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@
 
@@ -131,14 +200,16 @@ LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 %.gcc47.O3.i386: %.c
 	$(HOSTGCC4_7_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
-%.gcc48.O0.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#%.gcc48.O0.i386: %.c
+#	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#
+#%.gcc48.O2.i386: %.c
+#	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#
+#%.gcc48.O3.i386: %.c
+#	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
-%.gcc48.O2.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
-%.gcc48.O3.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 
 
@@ -179,24 +250,24 @@ LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 %.clang35.O3.i386: %.c
 	$(CLANG3_5_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
 
-%.clang36.O0.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-%.clang36.O2.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-%.clang36.O3.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
-
-%.icc.O0.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-
-%.icc.O2.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-
-%.icc.O2U.i386: %.c
-	$(ICC_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 -funroll-loops $< -o $@
-
-%.icc.O3.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+#%.clang36.O0.i386: %.c
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#%.clang36.O2.i386: %.c
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#%.clang36.O3.i386: %.c
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
+#
+#%.icc.O0.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#
+#%.icc.O2.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#
+#%.icc.O2U.i386: %.c
+#	$(ICC_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 -funroll-loops $< -o $@
+#
+#%.icc.O3.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.ccomp.O2.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
 	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@

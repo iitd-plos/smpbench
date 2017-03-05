@@ -5,40 +5,18 @@
 
 //const char interp_section[] __attribute__((section(".interp"))) = "/path/to/dynamic/linker";
 
-void myexit(int ec)
-{
-  exit(ec);
-}
+void myexit(int ec);
 
 #define NDATA (int *)mymalloc(ncol * sizeof(int))
 #define NLIST (struct _list *)mymalloc(sizeof(struct _list))
 #define NPLAY (struct _play *)mymalloc(sizeof(struct _play))
-void mymemset(void *s, int c, size_t n)
-{
-  memset(s,c,n);
-}
+void mymemset(void *s, int c, size_t n);
+void *mymemcpy(void *a, const void *b, size_t sz);
+int mymemcmp(const void *a, const void *b, size_t sz);
+int mystrcmp(const char *s1, const char *s2);
+int mystrncmp(const char *s1, const char *s2, size_t n);
 
-void *mymemcpy(void *a, const void *b, size_t sz)
-{
-  return memcpy(a, b, sz);
-}
-
-int mymemcmp(const void *a, const void *b, size_t sz)
-{
-  return memcmp(a, b, sz);
-}
-
-int mystrcmp(const char *s1, const char *s2)
-{
-  return strcmp(s1,s2);
-}
-
-int mystrncmp(const char *s1, const char *s2, size_t n)
-{
-  return strncmp(s1,s2,n);
-}
-
-#define mymalloc abcmall
+//#define mymalloc abcmall
 #define memset mymemset
 #define memcpy mymemcpy
 #define memcmp mymemcmp
@@ -63,10 +41,7 @@ struct _play
 
 int nrow = 3,ncol = 5;      /* global so as to avoid passing them all over the place */
 
-int *mymalloc(size_t size)
-{
-  return (int *)malloc(size);
-}
+int *mymalloc(size_t size);
 
 
 
@@ -1854,10 +1829,10 @@ int main_ddec()
   return ret;
 }
 
-size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d)
+/*size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d)
 {
   return b - a + (d - c) + 2;
-}
+}*/
 
 size_t address_taken_local_var_caller(char **a)
 {
