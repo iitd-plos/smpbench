@@ -6,7 +6,7 @@ CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unkn
 
 LINKER_SCRIPT=$(SRCDIR)/misc/ld.script
 
-DATA_SECTIONS_FLAG=-fdata-sections -Wl,-T,$(LINKER_SCRIPT)
+#DATA_SECTIONS_FLAG=-fdata-sections -Wl,-T,$(LINKER_SCRIPT)
 EMIT_RELOCS_FLAG=-Wl,--emit-relocs
 DEBUG_FLAG=-g
 
@@ -17,9 +17,9 @@ EQCHECKER_DEFINES= -Dalloca=myalloca -D_FORTIFY_SOURCE=0 -Dexit=myexit -Dabort=m
 
 GCC_I386_FLAGS=-m32 -fno-inline -fno-inline-functions -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -g
 
-HOSTGCC48_I386_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
+#HOSTGCC48_I386_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
 #HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -fno-mudflap --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
-HOSTGCC48_I386_EQCHECKER_FLAGS= -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS)
+HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS)
 
 GCC_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-gcc
 GCC_X86=gcc
