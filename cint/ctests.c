@@ -1085,6 +1085,7 @@ main_nsievebits(int ac, char **av)
 	if (n >= 2)
 		test(n - 2);
 	//exit(0);
+        return 0;
 }
 /****
  build & benchmark results
@@ -1829,10 +1830,7 @@ int main_ddec()
   return ret;
 }
 
-/*size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d)
-{
-  return b - a + (d - c) + 2;
-}*/
+size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d);
 
 size_t address_taken_local_var_caller(char **a)
 {
