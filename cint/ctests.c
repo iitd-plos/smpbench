@@ -15,8 +15,10 @@ void *mymemcpy(void *a, const void *b, size_t sz);
 int mymemcmp(const void *a, const void *b, size_t sz);
 int mystrcmp(const char *s1, const char *s2);
 int mystrncmp(const char *s1, const char *s2, size_t n);
+int my_atoi(char const *s);
 
 //#define mymalloc abcmall
+#define atoi my_atoi
 #define memset mymemset
 #define memcpy mymemcpy
 #define memcmp mymemcmp

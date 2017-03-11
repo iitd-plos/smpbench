@@ -43,6 +43,12 @@ int *mymalloc(size_t size)
   return (int *)malloc(size);
 }
 
+int
+my_atoi(char const *s)
+{
+  return atoi(s);
+}
+
 size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d)
 {
   return b - a + (d - c) + 2;
