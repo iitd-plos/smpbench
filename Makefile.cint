@@ -4,10 +4,22 @@ CROSSTOOL_PPC_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.ppc/powerpc-405
 CROSSTOOL_I386_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/bin
 CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/lib
 
+LINKER_SCRIPT=$(SRCDIR)/misc/ld.script
+
+#DATA_SECTIONS_FLAG=-fdata-sections -Wl,-T,$(LINKER_SCRIPT)
+EMIT_RELOCS_FLAG=-Wl,--emit-relocs
+DEBUG_FLAG=-g
+
+
+EQCHECKER_NO_BUILTINS=-fno-builtin-printf -fno-builtin-malloc -fno-builtin-abort -fno-builtin-exit -fno-builtin-fscanf -fno-builtin-abs -fno-builtin-acos -fno-builtin-asin -fno-builtin-atan2 -fno-builtin-atan -fno-builtin-calloc -fno-builtin-ceil -fno-builtin-cosh -fno-builtin-cos -fno-builtin-exit -fno-builtin-exp -fno-builtin-fabs -fno-builtin-floor -fno-builtin-fmod -fno-builtin-fprintf -fno-builtin-fputs -fno-builtin-frexp -fno-builtin-fscanf -fno-builtin-isalnum -fno-builtin-isalpha -fno-builtin-iscntrl -fno-builtin-isdigit -fno-builtin-isgraph -fno-builtin-islower -fno-builtin-isprint -fno-builtin-ispunct -fno-builtin-isspace -fno-builtin-isupper -fno-builtin-isxdigit -fno-builtin-tolower -fno-builtin-toupper -fno-builtin-labs -fno-builtin-ldexp -fno-builtin-log10 -fno-builtin-log -fno-builtin-malloc -fno-builtin-memchr -fno-builtin-memcmp -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-modf -fno-builtin-pow -fno-builtin-printf -fno-builtin-putchar -fno-builtin-puts -fno-builtin-scanf -fno-builtin-sinh -fno-builtin-sin -fno-builtin-snprintf -fno-builtin-sprintf -fno-builtin-sqrt -fno-builtin-sscanf -fno-builtin-strcat -fno-builtin-strchr -fno-builtin-strcmp -fno-builtin-strcpy -fno-builtin-strcspn -fno-builtin-strlen -fno-builtin-strncat -fno-builtin-strncmp -fno-builtin-strncpy -fno-builtin-strpbrk -fno-builtin-strrchr -fno-builtin-strspn -fno-builtin-strstr -fno-builtin-tanh -fno-builtin-tan -fno-builtin-vfprintf -fno-builtin-vsprintf -fno-builtin
+
+EQCHECKER_DEFINES= -Dalloca=myalloca -D_FORTIFY_SOURCE=0 -Dexit=myexit -Dabort=myabort -D__noreturn__=__no_reorder__
+
 GCC_I386_FLAGS=-m32 -fno-inline -fno-inline-functions -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -g
 
-HOSTGCC48_I386_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
-HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -fno-mudflap --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
+#HOSTGCC48_I386_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
+#HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -fno-mudflap --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
+HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS)
 
 GCC_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-gcc
 GCC_X86=gcc
@@ -16,7 +28,7 @@ HOSTGCC_I386=gcc $(GCC_I386_FLAGS)
 HOSTGCC4_4_I386=gcc-4.4 $(GCC_I386_FLAGS)
 HOSTGCC4_6_I386=gcc-4.6 $(GCC_I386_FLAGS)
 HOSTGCC4_7_I386=gcc-4.7 $(GCC_I386_FLAGS)
-HOSTGCC4_8_I386=gcc-4.8 $(HOSTGCC48_I386_FLAGS)
+HOSTGCC4_8_I386=gcc-4.8 $(HOSTGCC48_I386_EQCHECKER_FLAGS)
 
 AS_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-as
 LD_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-ld
@@ -46,6 +58,75 @@ ARM_PREFIX=/localhome/sbansal/gnuarm-4.0.2/bin
 GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc
 AS_ARM=$(ARM_PREFIX)/arm-elf-as
 LD_ARM=$(ARM_PREFIX)/arm-elf-ld
+
+cint/ctests.gcc48.O0.i386.o: cint/ctests.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.gcc48.O0.i386.o: cint/ctests_helper.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests.gcc48.O0.i386: cint/ctests.gcc48.O0.i386.o cint/ctests_helper.gcc48.O0.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/ctests.gcc48.O2.i386.o: cint/ctests.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests_helper.gcc48.O2.i386.o: cint/ctests_helper.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests.gcc48.O2.i386: cint/ctests.gcc48.O2.i386.o cint/ctests_helper.gcc48.O2.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+cint/ctests.gcc48.O3.i386.o: cint/ctests.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests_helper.gcc48.O3.i386.o: cint/ctests_helper.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests.gcc48.O3.i386: cint/ctests.gcc48.O3.i386.o cint/ctests_helper.gcc48.O3.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+
+
+cint/ctests.clang36.O0.i386.o: cint/ctests.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.clang36.O0.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests.clang36.O0.i386: cint/ctests.clang36.O0.i386.o cint/ctests_helper.clang36.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/ctests.clang36.O2.i386.o: cint/ctests.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests_helper.clang36.O2.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests.clang36.O2.i386: cint/ctests.clang36.O2.i386.o cint/ctests_helper.clang36.O2.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+cint/ctests.clang36.O3.i386.o: cint/ctests.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests_helper.clang36.O3.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests.clang36.O3.i386: cint/ctests.clang36.O3.i386.o cint/ctests_helper.clang36.O3.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+
+cint/ctests.icc.O0.i386.o: cint/ctests.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.icc.O0.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests.icc.O0.i386: cint/ctests.icc.O0.i386.o cint/ctests_helper.icc.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/ctests.icc.O2.i386.o: cint/ctests.c
+	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests_helper.icc.O2.i386.o: cint/ctests_helper.c
+	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests.icc.O2.i386: cint/ctests.icc.O2.i386.o cint/ctests_helper.icc.O2.i386.o
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+cint/ctests.icc.O3.i386.o: cint/ctests.c
+	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
+	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests.icc.O3.i386: cint/ctests.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+
+
 
 %.gcc.O0.ppc: %.c
 	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@
@@ -119,14 +200,16 @@ LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 %.gcc47.O3.i386: %.c
 	$(HOSTGCC4_7_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
-%.gcc48.O0.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#%.gcc48.O0.i386: %.c
+#	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#
+#%.gcc48.O2.i386: %.c
+#	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#
+#%.gcc48.O3.i386: %.c
+#	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
-%.gcc48.O2.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
 
-%.gcc48.O3.i386: %.c
-	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 
 
@@ -167,24 +250,24 @@ LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 %.clang35.O3.i386: %.c
 	$(CLANG3_5_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
 
-%.clang36.O0.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-%.clang36.O2.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-%.clang36.O3.i386: %.c
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
-
-%.icc.O0.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-
-%.icc.O2.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-
-%.icc.O2U.i386: %.c
-	$(ICC_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 -funroll-loops $< -o $@
-
-%.icc.O3.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+#%.clang36.O0.i386: %.c
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#%.clang36.O2.i386: %.c
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#%.clang36.O3.i386: %.c
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
+#
+#%.icc.O0.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#
+#%.icc.O2.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#
+#%.icc.O2U.i386: %.c
+#	$(ICC_I386) $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 -funroll-loops $< -o $@
+#
+#%.icc.O3.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
 
 %.ccomp.O2.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
 	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
