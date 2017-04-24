@@ -41,7 +41,7 @@ LD_I386_SYSTEM=/usr/bin/ld -melf_i386
 AS_PPC_SYSTEM=$(AS_PPC)
 LD_PPC_SYSTEM=$(LD_PPC)
 
-CLANG_I386_OPTS= -g -fno-inline -fno-inline-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -fno-mudflap -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -Xclang -msoft-float -Xclang -no-implicit-float -fwrapv -fno-strict-overflow -fno-unroll-loops -std=c11 -ffreestanding -U__GNUC__ -D_FORTIFY_SOURCE=0
+CLANG_I386_OPTS= -g -fno-inline -fno-inline-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -Xclang -msoft-float -Xclang -no-implicit-float -fwrapv -fno-strict-overflow -fno-unroll-loops -std=c11 -ffreestanding -U__GNUC__ -D_FORTIFY_SOURCE=0
 
 CLANG_I386=$(SRCDIR)/misc/clang32 $(CLANG_I386_OPTS)
 CLANG3_3_I386=$(SRCDIR)/misc/clang32 -v3.3 $(CLANG_I386_OPTS)
@@ -118,12 +118,15 @@ cint/ctests_helper.icc.O2.i386.o: cint/ctests_helper.c
 cint/ctests.icc.O2.i386: cint/ctests.icc.O2.i386.o cint/ctests_helper.icc.O2.i386.o
 	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
 
-cint/ctests.icc.O3.i386.o: cint/ctests.c
-	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
-	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/ctests.icc.O3.i386: cint/ctests.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+#cint/ctests.icc.O3.i386.o: cint/ctests.c
+#	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+#cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
+#	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+#cint/ctests.icc.O3.i386: cint/ctests.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+cint/ctests.bc.O0: cint/ctests.c #cint/ctests_helper.c
+	clang-3.6 -m32 -O0 -emit-llvm $^ -c -o $@
 
 
 
