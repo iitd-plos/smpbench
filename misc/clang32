@@ -11,7 +11,7 @@ use POSIX;
 use POSIX ":sys_wait_h";
 use POSIX qw(setsid);
 use POSIX qw(:errno_h :fcntl_h);
-use Unix::Mknod qw(:all);
+#use Unix::Mknod qw(:all);
 use Fcntl qw(:mode);
 
 
