@@ -1845,6 +1845,17 @@ size_t address_taken_local_var_caller(char **a)
   return sum_positive_sum + address_taken_local_var_callee(&b, a, c, d);
 }
 
+size_t one_function_call(int x)
+{
+  sum_positive_sum = x + 1;
+  if (x > 0) {
+    x = ddec(10, x);
+  } else {
+    x = 10;
+  }
+  return sum_positive_sum - x;
+}
+
 int main()
 {
   printf("start tests\n");
