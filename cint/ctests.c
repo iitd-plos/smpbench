@@ -1856,6 +1856,29 @@ size_t one_function_call(int x)
   return sum_positive_sum - x;
 }
 
+void display_ratio(num, den, file)
+    long num;
+    long den;
+    FILE *file;
+{
+    long ratio;  /* 1000 times the compression ratio */
+
+    if (den == 0) {
+        ratio = 0; /* no compression */
+    } else if (den < 2147483L) { /* (2**31 -1)/1000 */
+        ratio = 1000L*num/den;
+    } else {
+        ratio = num/(den/1000L);
+    }
+    if (ratio < 0) {
+        putc('-', file);
+        ratio = -ratio;
+    } else {
+        putc(' ', file);
+    }
+    fprintf(file, "%2ld.%1ld%%", ratio / 10L, ratio % 10L);
+}
+
 int main()
 {
   printf("start tests\n");
