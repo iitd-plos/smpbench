@@ -1879,6 +1879,18 @@ void display_ratio(num, den, file)
     fprintf(file, "%2ld.%1ld%%", ratio / 10L, ratio % 10L);
 }
 
+long long div_i64(long long a, long long b)
+{
+  return a/b;
+}
+
+unsigned long long div_u64(unsigned long long a, unsigned long long b)
+{
+  return a/b;
+}
+
+
+
 int main()
 {
   printf("start tests\n");
