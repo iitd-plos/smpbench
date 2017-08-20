@@ -67,7 +67,7 @@ CINT_I386_ICC_O3_PROGS = $(addsuffix .i386, $(CINT_ICC_O3_PROGS))
 CINT_I386_ICC_O2U_PROGS = $(addsuffix .i386, $(CINT_ICC_O2U_PROGS))
 CINT_I386_CCOMP_O0_PROGS = $(addsuffix .i386, $(CINT_CCOMP_O0_PROGS))
 CINT_I386_CCOMP_O2_PROGS = $(addsuffix .i386, $(CINT_CCOMP_O2_PROGS))
-CINT_I386_ASPROGS_NAMES = hello_world.AS.i386 fibo.AS.i386 one_bbl.AS.i386 sum8.AS.i386 \
+CINT_I386_ASPROGS_NAMES = hello_world.AS.i386 fibo.AS.i386 one_bbl.AS.i386 irreducible_cfg.AS.i386 sum8.AS.i386 \
                image_diff.AS.i386 fibo_rec.AS.i386 one_bbl_unroll_loops.AS.i386\
                one_bbl_stack_analysis.AS.i386 link_list_double.AS.i386
 CINT_I386_ASPROGS = $(addprefix cint/, $(CINT_I386_ASPROGS_NAMES))
@@ -99,12 +99,12 @@ CINT_I386_PROGS = \
   $(CINT_I386_CLANG3_6_O2_PROGS) \
   $(CINT_I386_CLANG3_6_O3_PROGS) \
   $(CINT_BC_O0_PROGS) \
+  $(CINT_I386_ASPROGS) \
   #$(CINT_I386_ICC_O0_PROGS) \
   #$(CINT_I386_ICC_O2_PROGS) \
   #$(CINT_I386_ICC_O3_PROGS)
   #$(CINT_I386_CCOMP_O0_PROGS) \
   #$(CINT_I386_CCOMP_O2_PROGS) \
-  #$(CINT_I386_ASPROGS) \
 
 CINT_MSP430_PROGS = \
   $(CINT_MSP430_GCC_O0_PROGS) \
