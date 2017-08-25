@@ -126,10 +126,10 @@ cint/ctests.icc.O2.i386: cint/ctests.icc.O2.i386.o cint/ctests_helper.icc.O2.i38
 #	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
 cint/ctests.c.O0.bc: cint/ctests.c
-	clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@
+	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@
 
 cint/ctests_helper.c.O0.bc: cint/ctests_helper.c
-	clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@
+	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@
 
 cint/ctests.bc.O0: cint/ctests.c.O0.bc cint/ctests_helper.c.O0.bc
 	llvm-link-3.6 $^ -o $@
