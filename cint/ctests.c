@@ -1856,6 +1856,30 @@ size_t address_taken_local_var_caller(char **a)
   return sum_positive_sum + address_taken_local_var_callee(&b, a, c, d);
 }
 
+int a[5];
+int b[100];
+void foo(int* ptr) {
+  int l[20];
+  ptr = l;
+  while (rand() > 100) {
+    if (rand() < 2) {
+      ptr = b;
+    } else {
+      ptr = a;
+    }
+  }
+  *ptr = 1;
+  b[0] = 2;
+  *a = 9;
+  l[0] = a[1];
+}
+
+int main_foo() {
+  int foo_;
+  foo(&foo_);
+  return foo_;
+}
+
 size_t one_function_call(int x)
 {
   sum_positive_sum = x + 1;
@@ -1932,6 +1956,7 @@ int main()
         int1(2) + int2_add(3,4) + int3_add(3, 4, 5) + int4_add(3, 4, 5, 6) +
         int5_add(3, 4, 5, 6, 7) + int6_add(3, 4, 5, 6, 7, 8) +
         int7_add(3, 4, 5, 6, 7, 8, 9) + int8_add(3, 4, 5, 6, 7, 8, 9, 10) +
+        main_foo() +
         sum_positive_sum
         //int16_add(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
         /*aliasing_example(100) +
