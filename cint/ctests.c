@@ -87,6 +87,17 @@ void melt_data(int *data1,int *data2) /* melts 2 _data's into the first one. */
     }
 }
 
+void melt_data_simple(int *data1,int *data2) /* melts 2 _data's into the first one. */
+{
+  int counter = ncol;
+  while (counter --)     /* do every column */
+    {
+      data1[counter] = data2[counter]; /* put in first _data */
+    }
+}
+
+
+
 int equal_data(int *data1,int *data2) /* check if both _data's are equal */
 {
   int counter = ncol;
