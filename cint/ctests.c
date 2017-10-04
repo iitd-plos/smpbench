@@ -124,8 +124,8 @@ void dump_list(struct _list *list) /* same for a _list structure */
   if (list != NULL)
     {
       dump_list(list -> next); /* dump the rest of it */
-      free(list -> data); /* and its _data structure */
-      free(list);
+      myfree(list -> data); /* and its _data structure */
+      myfree(list);
     }
 }
 
@@ -135,8 +135,8 @@ __attribute__((noinline)) void dump_play(struct _play *play) /* and for the enti
     {
       dump_play(play -> next);  /* dump the rest of the _play */
       dump_list(play -> first); /* its _list */
-      free(play -> state); /* and its _data */
-      free(play);
+      myfree(play -> state); /* and its _data */
+      myfree(play);
     }
 }
 
@@ -250,11 +250,11 @@ struct _list *make_list(int *data,int *value,int *all) /* create the whole _list
 	      if (col == 0) row = nrow - 1; /* break out if at first column */
 	      col = ncol - 1;               /* but make sure you break out */
 	    }                               /* of the col for-loop anyway */
-	  free(temp); /* dump this unneeded space */
+	  myfree(temp); /* dump this unneeded space */
 	}
     }
   current = head -> next; /* skip first element */
-  free(head); /* dump it */
+  myfree(head); /* dump it */
   if (current != NULL) *value = 1 - *value; /* invert value if its */
   return current;                           /* not the empty board */
 }
@@ -284,13 +284,13 @@ __attribute__((noinline)) struct _play *make_play(int all) /* make up the entire
 	  current = current -> next;      /* advance pointer */
 	  if (all == 2)                   /* if found flag is on */
 	    {
-	      free(temp);            /* dump current temp */
+	      myfree(temp);            /* dump current temp */
 	      temp = make_data(nrow,ncol); /* and create one that will break */
 	    }
 	}
     }
   current = head -> next; /* skip first element */
-  free(head);             /* dump it */
+  myfree(head);             /* dump it */
   return current;         /* and return pointer to start of list */
 }
 
@@ -325,11 +325,11 @@ void make_wanted(int *data) /* makes up the list of positions from the full boar
 	      if (col == 0) row = nrow - 1;
 	      col = ncol - 1;
 	    }
-	  free(temp);
+	  myfree(temp);
 	}
     }
   current = head -> next;
-  free(head);
+  myfree(head);
   wanted = current;
 }
 
@@ -393,7 +393,7 @@ int main_chomp(void)
           /* print it out nicely */
           printf("player %d plays at (%d,%d)\n",player,row,col);
           player = 1 - player; /* next player to do the same */
-          free(current);  /* dump for memory management */
+          myfree(current);  /* dump for memory management */
         }
       current = temp; /* update board */
     }
@@ -523,9 +523,9 @@ long fannkuch( int n )
 
     if( n < 1 ) return 0;
 
-    perm  = calloc(n, sizeof(*perm ));
-    perm1 = calloc(n, sizeof(*perm1));
-    count = calloc(n, sizeof(*count));
+    perm  = mycalloc(n, sizeof(*perm ));
+    perm1 = mycalloc(n, sizeof(*perm1));
+    count = mycalloc(n, sizeof(*count));
 
     init_perm1(perm1, n);
 
@@ -673,7 +673,7 @@ __attribute__((noinline)) struct ht_ht *ht_create(int size) {
     struct ht_ht *ht = (struct ht_ht *)mymalloc(sizeof(struct ht_ht));
     while (ht_prime_list[i] < size) { i++; }
     ht->size = ht_prime_list[i];
-    ht->tbl = (struct ht_node **)calloc(ht->size, sizeof(struct ht_node *));
+    ht->tbl = (struct ht_node **)mycalloc(ht->size, sizeof(struct ht_node *));
     ht->iter_index = 0;
     ht->iter_next = 0;
     ht->items = 0;
@@ -705,8 +705,8 @@ void ht_destroy(struct ht_ht *ht) {
 	while (next) {
 	    cur = next;
 	    next = next->next;
-	    free(cur->key);
-	    free(cur);
+	    myfree(cur->key);
+	    myfree(cur);
 #ifdef HT_DEBUG
 	    chain_len++;
 #endif /* HT_DEBUG */
@@ -716,8 +716,8 @@ void ht_destroy(struct ht_ht *ht) {
 	    max_chain_len = chain_len;
 #endif /* HT_DEBUG */
     }
-    free(ht->tbl);
-    free(ht);
+    myfree(ht->tbl);
+    myfree(ht);
 #ifdef HT_DEBUG
     fprintf(stderr, " HT: density         %d\n", density);
     fprintf(stderr, " HT: max chain len   %d\n", max_chain_len);
@@ -844,7 +844,7 @@ write_frequencies (int fl, char *buffer, long buflen)
       total = total + nd->val;
       size++;
     }
-  s = calloc (size, sizeof (sorter));
+  s = mycalloc (size, sizeof (sorter));
   i = 0;
   for (nd = ht_first (ht); nd != NULL; nd = ht_next (ht))
     {
@@ -863,7 +863,7 @@ write_frequencies (int fl, char *buffer, long buflen)
     printf ("%s %.3f\n", s[i].string, 100 * (float) s[i].num / total);
   printf ("\n");*/
   ht_destroy (ht);
-  free (s);
+  myfree (s);
 }
 
 void
@@ -891,13 +891,13 @@ main_knucleotide ()
   seqlen = 0;
   nothree = 1;
 
-  f = fopen("knucleotide-input.txt", "r");
+  f = myfopen("knucleotide-input.txt", "r");
   if (f == NULL) return 2;
 
   while (nothree && fgets (line, 255, f))
     if (line[0] == '>' && line[1] == 'T' && line[2] == 'H')
       nothree = 0;
-  free (line);
+  myfree (line);
 
   buflen = 10240;
   buffer = mymalloc (buflen + 1);
@@ -921,7 +921,7 @@ main_knucleotide ()
 	      if (seqlen + 512 >= buflen)
 		{
 		  buflen = buflen + 10240;
-		  tmp = realloc (buffer, buflen + 1);
+		  tmp = myrealloc (buffer, buflen + 1);
 		  if (tmp == NULL)
 		    return 2;
 		  buffer = tmp;
@@ -942,8 +942,8 @@ main_knucleotide ()
   write_count ("GGTATT", buffer, seqlen);
   write_count ("GGTATTTTAATT", buffer, seqlen);
   write_count ("GGTATTTTAATTTATAGT", buffer, seqlen);
-  free (buffer);
-  fclose (f);
+  myfree (buffer);
+  myfclose (f);
   return 0;
 }
 
@@ -1145,7 +1145,7 @@ unsigned int nsievebits(int m) {
                 if (flags[j]) flags[j] = 0;
     }
 
-    free(flags);
+    myfree(flags);
     return count;
 }
 

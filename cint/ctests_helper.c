@@ -38,10 +38,46 @@ int mystrncmp(const char *s1, const char *s2, size_t n)
   return strncmp(s1,s2,n);
 }
 
-int *mymalloc(size_t size)
+void *mymalloc(size_t size)
 {
-  return (int *)malloc(size);
+  return (void *)malloc(size);
 }
+
+void *mycalloc(size_t nmemb, size_t size)
+{
+  return (void *)calloc(nmemb, size);
+}
+
+void *myrealloc(void *ptr, size_t size)
+{
+  return (void *)realloc(ptr, size);
+}
+
+FILE *myfopen(char const *path, char const *mode)
+{
+  return fopen(path, mode);
+}
+
+FILE *myfdopen(int fd, char const *mode)
+{
+  return fdopen(fd, mode);
+}
+
+FILE *myfreopen(char const *path, char const *mode, FILE *stream)
+{
+  return freopen(path, mode, stream);
+}
+
+int myfclose(FILE *fp)
+{
+  return fclose(fp);
+}
+
+void myfree(void *ptr)
+{
+  free(ptr);
+}
+
 
 int
 my_atoi(char const *s)
