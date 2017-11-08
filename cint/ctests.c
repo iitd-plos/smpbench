@@ -1926,19 +1926,18 @@ unsigned long long div_u64(unsigned long long a, unsigned long long b)
 
 char maplocals_example1(void)
 {
-  char local0 = 0, local1 = 0;
-  char *ptr = NULL;
-  int local3 = 0;
-  do {
-    local3 = rand();
+  int local0 = 0, local1 = 1;
+  int *ptr = &local0;
+  int local3 = rand();
+  while (!(local3 & 0x2)) {
+    local3 = local3 * 1234567;
     if (local3 & 0x1) {
       ptr = &local1;
     } else {
       ptr = &local0;
     }
-  } while (!(local3 & 0x2));
-  *ptr = 1;
-  return local0;
+  }
+  return *ptr;
 }
 
 
