@@ -99,3 +99,14 @@ size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d)
 {
   return b - a + (d - c) + 2;
 }
+
+int myrand_char()
+{
+  return rand() % 255;
+}
+
+void
+myprint_char(char c)
+{
+  printf("%c", c);
+}

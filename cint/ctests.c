@@ -19,6 +19,8 @@ int mystrncmp(const char *s1, const char *s2, size_t n);
 int my_atoi(char const *s);
 int myrand();
 char my_char_inc(char const *i);
+int myrand_char();
+void myprint_char(char c);
 
 //#define mymalloc abcmall
 #define atoi my_atoi
@@ -1980,6 +1982,20 @@ char maplocals_example4(char *ptr, int i, int b)
   local2 = my_char_inc(ptr);
   return local0 + local1[0] + local2;
 }
+
+void maplocals_example5(void)
+{
+#define N 42
+  char local0[N];
+  char *ptr = local0;
+  while (ptr <= &local0[N]) {
+    *ptr = myrand_char();
+    ptr++;
+  }
+  int i = myrand();
+  myprint_char(local0[i]);
+}
+
 
 
 int maplocals_example12(int *ptr)
