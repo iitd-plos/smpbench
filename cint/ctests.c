@@ -16,6 +16,7 @@ int mymemcmp(const void *a, const void *b, size_t sz);
 int mystrcmp(const char *s1, const char *s2);
 int mystrncmp(const char *s1, const char *s2, size_t n);
 int my_atoi(char const *s);
+int myrand();
 
 //#define mymalloc abcmall
 #define atoi my_atoi
@@ -1861,8 +1862,8 @@ int b[100];
 void foo(int* ptr) {
   int l[20];
   ptr = l;
-  while (rand() > 100) {
-    if (rand() < 2) {
+  while (myrand() > 100) {
+    if (myrand() < 2) {
       ptr = b;
     } else {
       ptr = a;
@@ -1928,7 +1929,7 @@ char maplocals_example1(void)
 {
   int local0 = 0, local1 = 0;
   int *ptr = &local0;
-  int local3 = rand();
+  int local3 = myrand();
   while (!(local3 & 0x2)) {
     local3 = local3 * 1234567;
     if (local3 & 0x1) {
@@ -1948,12 +1949,24 @@ int maplocals_example2()
   if (!ptr) {
     ptr = &local0;
   }
-  int local3 = rand();
+  int local3 = myrand();
   while (!(*ptr & 0x2)) {
     *ptr += local3;
-    local3 = rand();
+    local3 = myrand();
   }
   return local0;
+}
+
+int maplocals_example3(int n)
+{
+  int a[42];
+  mymemset(a, sizeof a, 0);
+  int i;
+  for (i = 0; i < n; i++) {
+    int j = myrand();
+    a[j]++;
+  }
+  return a[0];
 }
 
 int maplocals_example12(int *ptr)
@@ -1962,10 +1975,10 @@ int maplocals_example12(int *ptr)
   if (!ptr) {
     ptr = &local0;
   }
-  int local3 = rand();
+  int local3 = myrand();
   while (!(*ptr & 0x2)) {
     *ptr += local3;
-    local3 = rand();
+    local3 = myrand();
   }
   return local0;
 }
@@ -1974,7 +1987,7 @@ char maplocals_example11(void)
 {
   int local0 = 0, local1 = 1;
   int *ptr = &local0;
-  int local3 = rand();
+  int local3 = myrand();
   while (!(local3 & 0x2)) {
     local3 = local3 * 1234567;
     if (local3 & 0x1) {
