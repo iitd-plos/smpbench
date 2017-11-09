@@ -1941,20 +1941,36 @@ char maplocals_example1(void)
   return local0;
 }
 
-void maplocals_example2(int *ptr)
+int maplocals_example2()
+{
+  int local0 = 0, local1 = 0;
+  int *ptr = mymalloc(4);
+  if (!ptr) {
+    ptr = &local0;
+  }
+  int local3 = rand();
+  while (!(*ptr & 0x2)) {
+    *ptr += local3;
+    local3 = rand();
+  }
+  return local0;
+}
+
+int maplocals_example12(int *ptr)
 {
   int local0 = 0, local1 = 0;
   if (!ptr) {
     ptr = &local0;
   }
   int local3 = rand();
-  while (!(local3 & 0x2)) {
+  while (!(*ptr & 0x2)) {
     *ptr += local3;
     local3 = rand();
   }
+  return local0;
 }
 
-char maplocals_example10(void)
+char maplocals_example11(void)
 {
   int local0 = 0, local1 = 1;
   int *ptr = &local0;
