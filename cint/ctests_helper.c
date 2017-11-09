@@ -90,6 +90,11 @@ int myrand()
   return rand();
 }
 
+char my_char_inc(char const *i)
+{
+  return *i + 1;
+}
+
 size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d)
 {
   return b - a + (d - c) + 2;

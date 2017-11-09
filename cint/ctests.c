@@ -2,6 +2,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 //const char interp_section[] __attribute__((section(".interp"))) = "/path/to/dynamic/linker";
 
@@ -17,6 +18,7 @@ int mystrcmp(const char *s1, const char *s2);
 int mystrncmp(const char *s1, const char *s2, size_t n);
 int my_atoi(char const *s);
 int myrand();
+char my_char_inc(char const *i);
 
 //#define mymalloc abcmall
 #define atoi my_atoi
@@ -1968,6 +1970,17 @@ int maplocals_example3(int n)
   }
   return a[0];
 }
+
+char maplocals_example4(char *ptr, int i, int b)
+{
+  char local0 = 0, local1[42], local2;
+  if (b != 0) {
+    ptr = &local1;
+  }
+  local2 = my_char_inc(ptr);
+  return local0 + local1[0] + local2;
+}
+
 
 int maplocals_example12(int *ptr)
 {
