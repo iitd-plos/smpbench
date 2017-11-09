@@ -1941,6 +1941,19 @@ char maplocals_example1(void)
   return local0;
 }
 
+void maplocals_example2(int *ptr)
+{
+  int local0 = 0, local1 = 0;
+  if (!ptr) {
+    ptr = &local0;
+  }
+  int local3 = rand();
+  while (!(local3 & 0x2)) {
+    *ptr += local3;
+    local3 = rand();
+  }
+}
+
 char maplocals_example10(void)
 {
   int local0 = 0, local1 = 1;
