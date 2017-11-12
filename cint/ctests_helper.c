@@ -110,3 +110,9 @@ myprint_char(char c)
 {
   printf("%c", c);
 }
+
+void
+myprint_int(int c)
+{
+  printf("%d", c);
+}
