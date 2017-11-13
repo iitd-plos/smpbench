@@ -125,6 +125,8 @@ cint/ctests.icc.O2.i386: cint/ctests.icc.O2.i386.o cint/ctests_helper.icc.O2.i38
 #cint/ctests.icc.O3.i386: cint/ctests.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
 #	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
+
+
 cint/ctests.c.O0.bc: cint/ctests.c
 	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@
 
@@ -134,7 +136,8 @@ cint/ctests_helper.c.O0.bc: cint/ctests_helper.c
 cint/ctests.bc.O0: cint/ctests.c.O0.bc cint/ctests_helper.c.O0.bc
 	llvm-link-3.6 $^ -o $@
 
-
+cint/ctests.bc.O0.s: cint/ctests.bc.O0
+	llvm-dis-3.6 < $< > $@
 
 %.gcc.O0.ppc: %.c
 	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 //const char interp_section[] __attribute__((section(".interp"))) = "/path/to/dynamic/linker";
 
@@ -16,6 +17,11 @@ int mymemcmp(const void *a, const void *b, size_t sz);
 int mystrcmp(const char *s1, const char *s2);
 int mystrncmp(const char *s1, const char *s2, size_t n);
 int my_atoi(char const *s);
+int myrand();
+char my_char_inc(char const *i);
+int myrand_char();
+void myprint_char(char c);
+void myprint_int(int c);
 
 //#define mymalloc abcmall
 #define atoi my_atoi
@@ -1861,8 +1867,8 @@ int b[100];
 void foo(int* ptr) {
   int l[20];
   ptr = l;
-  while (rand() > 100) {
-    if (rand() < 2) {
+  while (myrand() > 100) {
+    if (myrand() < 2) {
       ptr = b;
     } else {
       ptr = a;
@@ -1924,6 +1930,107 @@ unsigned long long div_u64(unsigned long long a, unsigned long long b)
   return a/b;
 }
 
+char maplocals_example1(void)
+{
+  int local0 = 0, local1 = 0;
+  int *ptr = &local0;
+  int local3 = myrand();
+  while (!(local3 & 0x2)) {
+    local3 = local3 * 1234567;
+    if (local3 & 0x1) {
+      ptr = &local1;
+    } else {
+      ptr = &local0;
+    }
+  }
+  *ptr = 1;
+  return local0;
+}
+
+int maplocals_example2()
+{
+  int local0 = 0;
+  int *ptr = mymalloc(4);
+  if (!ptr) {
+    ptr = &local0;
+  }
+  int local3 = myrand();
+  while (!(*ptr & 0x2)) {
+    *ptr += local3;
+    local3 = myrand();
+  }
+  return local0;
+}
+
+int maplocals_example3(int n)
+{
+  int a[42];
+  a[0] = 123;
+  mymemset(a, sizeof a, 0);
+  int i;
+  for (i = 0; i < n; i++) {
+    int j = myrand();
+    a[j]++;
+  }
+  return a[0];
+}
+
+char maplocals_example4(char *ptr, int i, int b)
+{
+  char local0 = 121, local1[42], local2 = 77;
+  local1[0] = 123;
+  if (b != 0) {
+    ptr = &local1;
+  }
+  local2 = my_char_inc(ptr);
+  return local0 + local1[0] + local2;
+}
+
+void maplocals_example5(void)
+{
+#define N 42
+  char local0[N];
+  local0[0] = 123;
+  char *ptr = local0;
+  while (ptr <= &local0[N]) {
+    *ptr = myrand_char();
+    ptr++;
+  }
+  int i = myrand();
+  myprint_int((int)local0[i]);
+}
+
+
+
+int maplocals_example12(int *ptr)
+{
+  int local0 = 0, local1 = 0;
+  if (!ptr) {
+    ptr = &local0;
+  }
+  int local3 = myrand();
+  while (!(*ptr & 0x2)) {
+    *ptr += local3;
+    local3 = myrand();
+  }
+  return local0;
+}
+
+char maplocals_example11(void)
+{
+  int local0 = 0, local1 = 1;
+  int *ptr = &local0;
+  int local3 = myrand();
+  while (!(local3 & 0x2)) {
+    local3 = local3 * 1234567;
+    if (local3 & 0x1) {
+      ptr = &local1;
+    } else {
+      ptr = &local0;
+    }
+  }
+  return *ptr;
+}
 
 
 int main()
