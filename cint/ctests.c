@@ -2031,7 +2031,35 @@ char maplocals_example11(void)
   }
   return *ptr;
 }
+/** Added as linear guessing test cases **/
 
+int sum_new;
+__attribute__((noinline)) int init_new()
+{
+  int i;
+  sum_new = 1;
+  for( i=0 ; i<10 ; ++i )  sum_new += sum_new;	
+  return sum_new;
+}
+
+int array_2D[5][5] = {{1, 2, 3, 4, 5},
+                      {6, 7, 8, 9, 10},
+                      {11, 12, 13, 14, 15},
+                      {16, 17, 18, 19, 20},
+                      {21, 22, 23, 24, 25}
+		     };  
+
+__attribute__((noinline)) int add_2D_arr(int row, int col)
+{
+  int i,j;
+  int sum =0;
+  for(i=0; i< row; i++)
+  {
+    for(j=0; j< col; j++)
+      array_2D[i][j] = array_2D[i][j]*2;
+  }
+  return 0;
+}
 
 int main()
 {
@@ -2064,7 +2092,9 @@ int main()
         int5_add(3, 4, 5, 6, 7) + int6_add(3, 4, 5, 6, 7, 8) +
         int7_add(3, 4, 5, 6, 7, 8, 9) + int8_add(3, 4, 5, 6, 7, 8, 9, 10) +
         main_foo() +
-        sum_positive_sum
+        sum_positive_sum + 
+        init_new() +
+	add_2D_arr(5,5)
         //int16_add(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
         /*aliasing_example(100) +
         big_struct_return_function(100).a*/;
