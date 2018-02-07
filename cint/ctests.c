@@ -2062,13 +2062,79 @@ __attribute__((noinline)) int add_2D_arr(int row, int col)
 
 
 int g[144]; int avg=0; 
-void array_average( ) 
+__attribute__((noinline)) void array_average( ) 
 {
 int *ptr = g; int sum =0;
 for(int i = 0; i < 144; i++,ptr++)
   sum = sum + *ptr;
 
 avg = sum/144; 
+}
+
+int x,y;
+__attribute__((noinline)) void ddai(int n)
+{
+x=0; y=0; 
+int i=0; 
+while (i < n)
+{ 
+  y = y+1; 
+  x = x+y; 
+  i++;
+}
+}
+
+int lerner1a(int x, int n)
+{
+  int i, k = 0;
+  for (i=0; i!=n; ++i)
+  { 
+    x += k*5; 
+    k += 1;
+    if (i >= 5) 
+      k += 3;
+  } 
+  return x; 
+}
+
+int lerner1b(int x, int n)
+{
+  int i, k = 0;
+  for (i=0; i!=n; ++i)
+  { 
+    x += k; 
+    k += 5;
+    if (i >= 5) 
+      k += 15;
+  } 
+  return x; 
+}
+
+int sum_ler_3b3c;
+int lerner3b( )
+{
+  int i,j;
+  int sum =0;
+  for (i = 0; i < 10; i++) 
+  {
+    for (j = 0; j < 10; j++)
+    {
+       sum++;
+       sum_ler_3b3c += sum;
+    }
+  }
+}
+
+int lerner3c( )
+{
+  int i,j;
+  for (i = 0; i < 10; i++) 
+  {
+    for (j = 0; j < 10; j++)
+    {
+       sum_ler_3b3c += i*10 + j;
+    }
+  }
 }
 
 /*__attribute__((noinline)) int div_2pow_n(int x, int n)
