@@ -1750,13 +1750,14 @@ int int8_add(int a, int b, int c, int d, int e, int f, int g, int h)
 
 int sum_positive_g[144];
 int sum_positive_sum = 0;
+int const sum_positive_const = 123;
 
 void sum_positive_globals(int n) {
   int *ptr = sum_positive_g;
   int i;
   for (i = 0; i < n; i++, ptr++) {
     if (*ptr > 0) {
-      sum_positive_sum = sum_positive_sum + *ptr;
+      sum_positive_sum = sum_positive_sum + sum_positive_const * (*ptr);
     }
   }
 }
@@ -1766,7 +1767,7 @@ void sum_positive_arg(int *a, int n) {
   int i;
   for (i = 0; i < n; i++, ptr++) {
     if (*ptr > 0) {
-      sum_positive_sum = sum_positive_sum + *ptr;
+      sum_positive_sum = sum_positive_sum + sum_positive_const * (*ptr);
     }
   }
 }
@@ -1775,7 +1776,7 @@ void sum_all_globals(int n) {
   int *ptr = sum_positive_g;
   int i;
   for (i = 0; i < n; i++, ptr++) {
-    sum_positive_sum = sum_positive_sum + *ptr;
+    sum_positive_sum = sum_positive_sum + sum_positive_const * (*ptr);
   }
 }
 
