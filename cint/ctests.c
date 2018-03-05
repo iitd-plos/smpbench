@@ -2032,8 +2032,116 @@ char maplocals_example11(void)
   }
   return *ptr;
 }
+/** Added as linear guessing test cases **/
+
+int sum_new;
+__attribute__((noinline)) int init_new(int n)
+{
+  int i;
+  sum_new = 1;
+  for( i=0 ; i<10 ; i++ )  sum_new += sum_new;	
+  return sum_new;
+}
+
+char array_2D[5][5] = {{1, 2, 3, 4, 5},
+                      {6, 7, 8, 9, 10},
+                      {11, 12, 13, 14, 15},
+                      {16, 17, 18, 19, 20},
+                      {21, 22, 23, 24, 25}
+		     };  
+
+__attribute__((noinline)) int add_2D_arr(int row, int col)
+{
+  int i,j;
+  for(i=0; i< row; i++)
+  {
+    for(j=0; j< col; j++)
+      array_2D[i][j] = array_2D[i][j]*2;
+  }
+  return 1;
+}
 
 
+int g[144]; int avg=0; 
+__attribute__((noinline)) void array_average( ) 
+{
+int *ptr = g; int sum =0;
+for(int i = 0; i < 144; i++,ptr++)
+  sum = sum + *ptr;
+
+avg = sum/144; 
+}
+
+int x,y;
+__attribute__((noinline)) void ddai(int n)
+{
+x=0; y=0; 
+int i=0; 
+while (i < n)
+{ 
+  y = y+1; 
+  x = x+y; 
+  i++;
+}
+}
+
+int lerner1a(int x, int n)
+{
+  int i, k = 0;
+  for (i=0; i!=n; ++i)
+  { 
+    x += k*5; 
+    k += 1;
+    if (i >= 5) 
+      k += 3;
+  } 
+  return x; 
+}
+
+int lerner1b(int x, int n)
+{
+  int i, k = 0;
+  for (i=0; i!=n; ++i)
+  { 
+    x += k; 
+    k += 5;
+    if (i >= 5) 
+      k += 15;
+  } 
+  return x; 
+}
+
+int sum_ler_3b3c;
+int lerner3b( )
+{
+  int i,j;
+  int sum =0;
+  for (i = 0; i < 10; i++) 
+  {
+    for (j = 0; j < 10; j++)
+    {
+       sum++;
+       sum_ler_3b3c += sum;
+    }
+  }
+}
+
+int lerner3c( )
+{
+  int i,j;
+  for (i = 0; i < 10; i++) 
+  {
+    for (j = 0; j < 10; j++)
+    {
+       sum_ler_3b3c += i*10 + j;
+    }
+  }
+}
+
+/*__attribute__((noinline)) int div_2pow_n(int x, int n)
+{
+  return (x/pow(2,n));
+}*/
 int main()
 {
   printf("start tests\n");
@@ -2065,7 +2173,8 @@ int main()
         int5_add(3, 4, 5, 6, 7) + int6_add(3, 4, 5, 6, 7, 8) +
         int7_add(3, 4, 5, 6, 7, 8, 9) + int8_add(3, 4, 5, 6, 7, 8, 9, 10) +
         main_foo() +
-        sum_positive_sum
+        sum_positive_sum + 
+        add_2D_arr(5,5)
         //int16_add(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
         /*aliasing_example(100) +
         big_struct_return_function(100).a*/;
