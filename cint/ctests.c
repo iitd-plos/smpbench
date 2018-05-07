@@ -1845,7 +1845,8 @@ big_struct_return_function(int n)
 int main_ddec()
 {
   int ret = 0;
-  for(int i = 0; i < LOOP_N; ++i)
+  int i;
+  for(i = 0; i < LOOP_N; ++i)
     ret += ddec(i, i);
   return ret;
 }
@@ -2068,7 +2069,8 @@ int g[144]; int avg=0;
 __attribute__((noinline)) void array_average( ) 
 {
 int *ptr = g; int sum =0;
-for(int i = 0; i < 144; i++,ptr++)
+int i;
+for(i = 0; i < 144; i++,ptr++)
   sum = sum + *ptr;
 
 avg = sum/144; 

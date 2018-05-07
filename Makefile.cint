@@ -119,6 +119,12 @@ cint/ctests.gcc48.O3.i386: cint/ctests.gcc48.O3.i386.o cint/ctests_helper.gcc48.
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
 
+cint/ctests.gcc.O0.i386.o: cint/ctests.c
+	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.gcc.O0.i386.o: cint/ctests_helper.c
+	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests.gcc.O0.i386: cint/ctests.gcc.O0.i386.o cint/ctests_helper.gcc.O0.i386.o
+	$(GCC_I386) $(CFLAGS) -g -O0 $^ -o $@
 
 cint/ctests.clang36.O0.i386.o: cint/ctests.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
