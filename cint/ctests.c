@@ -1867,7 +1867,9 @@ int a[5];
 int b[100];
 void foo(int* ptr) {
   int l[20];
-  ptr = l;
+  if (!ptr) {
+    ptr = l;
+  }
   while (myrand() > 100) {
     if (myrand() < 2) {
       ptr = b;
