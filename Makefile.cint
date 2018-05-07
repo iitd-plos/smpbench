@@ -47,7 +47,8 @@ CLANG_I386=$(SRCDIR)/misc/clang32 $(CLANG_I386_OPTS)
 CLANG3_3_I386=$(SRCDIR)/misc/clang32 -v3.3 $(CLANG_I386_OPTS)
 CLANG3_4_I386=$(SRCDIR)/misc/clang32 -v3.4 $(CLANG_I386_OPTS)
 CLANG3_5_I386=$(SRCDIR)/misc/clang32 -v3.5 $(CLANG_I386_OPTS)
-CLANG3_6_I386=$(SRCDIR)/misc/clang32 -v3.6 $(CLANG_I386_OPTS)
+#CLANG3_6_I386=$(SRCDIR)/misc/clang32 -v3.6 $(CLANG_I386_OPTS)
+CLANG3_6_I386=/usr/bin/clang-3.6 -m32 $(CLANG_I386_OPTS)
 
 ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c11 -ffreestanding -U__GNUC__
 
