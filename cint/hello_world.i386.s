@@ -5,6 +5,7 @@ hw:
 .string "Hello, world!\n"
 len = . - hw    # length of our dear string
 .text
+.type _start,@function
 .globl _start
 .type _start, STT_FUNC
 _start:
