@@ -21,12 +21,14 @@ my $opt0 = 0;
 my $opt2 = 0;
 my $static_link = 0;
 my $debugging_on = 0;
+my $disable_tail_calls = 0;
 my $object_file_output = 0;
 my $spec_cpu2000 = 0;
 my @defines;
 my @includes;
 my @warnings;
 my @f_options;
+my @m_options;
 my @X_options;
 my @linklibs;
 my @linkdirs;
@@ -64,6 +66,8 @@ GetOptions(
   "W=s" => \@warnings,
   "l=s" => \@linklibs,
   "L=s" => \@linkdirs,
+  "m=s" => \@m_options,
+  "mdisable-tail-calls" => \$disable_tail_calls,
   "std=s" => \$std_str,
 );
 
@@ -110,6 +114,10 @@ if ($opt0) {
   $opt_str = "";
 }
 
+if ($disable_tail_calls) {
+  $opt_str = " -mdisable-tail-calls";
+}
+
 my $object_file_output_str;
 if ($object_file_output) {
   $object_file_output_str = "-c";
@@ -133,6 +141,9 @@ foreach my $w (@warnings) {
 }
 foreach my $f (@f_options) {
   $define_str .= " -f$f";
+}
+foreach my $m (@m_options) {
+  $define_str .= " -m$m";
 }
 
 foreach my $X (@X_options) {
@@ -174,8 +185,7 @@ if ($compile == 1) {
   if ($opt2) {
     psystem("opt$ver $opt_options $prog.bc -o $prog.opt.bc");
     psystem("llc$ver $prog.opt.bc -march=x86 -mcpu=i386 -o $prog.S");
-  }
-  else {
+  } else {
     psystem("llc$ver $prog.bc -march=x86 -mcpu=i386 -o $prog.S");
   }
   psystem("$gcc $prog.S -m32 $debug_str $static_link_str $object_file_output_str -o $output_file");

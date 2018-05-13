@@ -1755,13 +1755,14 @@ int int8_add(int a, int b, int c, int d, int e, int f, int g, int h)
 
 int sum_positive_g[144];
 int sum_positive_sum = 0;
+int const sum_positive_const = 123;
 
 void sum_positive_globals(int n) {
   int *ptr = sum_positive_g;
   int i;
   for (i = 0; i < n; i++, ptr++) {
     if (*ptr > 0) {
-      sum_positive_sum = sum_positive_sum + *ptr;
+      sum_positive_sum = sum_positive_sum + sum_positive_const * (*ptr);
     }
   }
 }
@@ -1771,7 +1772,7 @@ void sum_positive_arg(int *a, int n) {
   int i;
   for (i = 0; i < n; i++, ptr++) {
     if (*ptr > 0) {
-      sum_positive_sum = sum_positive_sum + *ptr;
+      sum_positive_sum = sum_positive_sum + sum_positive_const * (*ptr);
     }
   }
 }
@@ -1780,7 +1781,7 @@ void sum_all_globals(int n) {
   int *ptr = sum_positive_g;
   int i;
   for (i = 0; i < n; i++, ptr++) {
-    sum_positive_sum = sum_positive_sum + *ptr;
+    sum_positive_sum = sum_positive_sum + sum_positive_const * (*ptr);
   }
 }
 
@@ -1849,7 +1850,8 @@ big_struct_return_function(int n)
 int main_ddec()
 {
   int ret = 0;
-  for(int i = 0; i < LOOP_N; ++i)
+  int i;
+  for(i = 0; i < LOOP_N; ++i)
     ret += ddec(i, i);
   return ret;
 }
@@ -1871,7 +1873,9 @@ int a[5];
 int b[100];
 void foo(int* ptr) {
   int l[20];
-  ptr = l;
+  if (!ptr) {
+    ptr = l;
+  }
   while (myrand() > 100) {
     if (myrand() < 2) {
       ptr = b;
@@ -2070,7 +2074,8 @@ int g[144]; int avg=0;
 __attribute__((noinline)) void array_average( ) 
 {
 int *ptr = g; int sum =0;
-for(int i = 0; i < 144; i++,ptr++)
+int i;
+for(i = 0; i < 144; i++,ptr++)
   sum = sum + *ptr;
 
 avg = sum/144; 

@@ -17,9 +17,9 @@ EQCHECKER_DEFINES= -Dalloca=myalloca -D_FORTIFY_SOURCE=0 -Dexit=myexit -Dabort=m
 
 GCC_I386_FLAGS=-m32 -fno-inline -fno-inline-functions -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -g
 
-#HOSTGCC48_I386_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
-#HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fno-peel-loops -fipa-sra -fno-strict-overflow -fno-builtin -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -fno-mudflap --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -D_FORTIFY_SOURCE=0
-HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -std=gnu11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fkeep-inline-functions -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS)
+HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS)
+CLANG_I386_EQCHECKER_FLAGS= -m32 -g -std=c11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -Xclang -msoft-float -Xclang -no-implicit-float -fwrapv -fno-strict-overflow -fno-unroll-loops -std=c11 -ffreestanding -fno-unit-at-a-time --param scev-max-expr-size=0 -fno-zero-initialized-in-bss -fno-caller-saves -U__GNUC__ -D_FORTIFY_SOURCE=0
+
 
 GCC_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-gcc
 GCC_X86=gcc
@@ -41,13 +41,12 @@ LD_I386_SYSTEM=/usr/bin/ld -melf_i386
 AS_PPC_SYSTEM=$(AS_PPC)
 LD_PPC_SYSTEM=$(LD_PPC)
 
-CLANG_I386_OPTS= -g -fno-inline -fno-inline-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -Xclang -msoft-float -Xclang -no-implicit-float -fwrapv -fno-strict-overflow -fno-unroll-loops -std=c11 -ffreestanding -U__GNUC__ -D_FORTIFY_SOURCE=0
-
-CLANG_I386=$(SRCDIR)/misc/clang32 $(CLANG_I386_OPTS)
-CLANG3_3_I386=$(SRCDIR)/misc/clang32 -v3.3 $(CLANG_I386_OPTS)
-CLANG3_4_I386=$(SRCDIR)/misc/clang32 -v3.4 $(CLANG_I386_OPTS)
-CLANG3_5_I386=$(SRCDIR)/misc/clang32 -v3.5 $(CLANG_I386_OPTS)
-CLANG3_6_I386=$(SRCDIR)/misc/clang32 -v3.6 $(CLANG_I386_OPTS)
+#CLANG_I386=$(SRCDIR)/misc/clang32 $(CLANG_I386_OPTS)
+#CLANG3_3_I386=$(SRCDIR)/misc/clang32 -v3.3 $(CLANG_I386_OPTS)
+#CLANG3_4_I386=$(SRCDIR)/misc/clang32 -v3.4 $(CLANG_I386_OPTS)
+#CLANG3_5_I386=$(SRCDIR)/misc/clang32 -v3.5 $(CLANG_I386_OPTS)
+#CLANG3_6_I386=$(SRCDIR)/misc/clang32 -v3.6 $(CLANG_I386_OPTS)
+CLANG3_6_I386=/usr/bin/clang-3.6 $(CLANG_I386_EQCHECKER_FLAGS)
 
 ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c11 -ffreestanding -U__GNUC__
 
@@ -58,6 +57,45 @@ ARM_PREFIX=/localhome/sbansal/gnuarm-4.0.2/bin
 GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc
 AS_ARM=$(ARM_PREFIX)/arm-elf-as
 LD_ARM=$(ARM_PREFIX)/arm-elf-ld
+
+cint/count_ones32.gcc48.O0.i386.o: cint/count_ones32.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/count_ones32.gcc48.O0.i386: cint/count_ones32.gcc48.O0.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/count_ones32.gcc48.O2.i386.o: cint/count_ones32.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/count_ones32.gcc48.O2.i386: cint/count_ones32.gcc48.O2.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+cint/count_ones32.gcc48.O3.i386.o: cint/count_ones32.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/count_ones32.gcc48.O3.i386: cint/count_ones32.gcc48.O3.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+cint/count_ones32.clang36.O0.i386.o: cint/count_ones32.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/count_ones32.clang36.O0.i386: cint/count_ones32.clang36.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/count_ones32.clang36.O2.i386.o: cint/count_ones32.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/count_ones32.clang36.O2.i386: cint/count_ones32.clang36.O2.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+cint/count_ones32.clang36.O3.i386.o: cint/count_ones32.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/count_ones32.clang36.O3.i386: cint/count_ones32.clang36.O3.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+cint/count_ones32.c.O0.bc: cint/count_ones32.c
+	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	opt-3.6 -mem2reg -o $@ $@.tmp
+cint/count_ones32.bc.O0: cint/count_ones32.c.O0.bc
+	llvm-link-3.6 $^ -o $@
+cint/count_ones32.bc.O0.s: cint/count_ones32.bc.O0
+	llvm-dis-3.6 < $< > $@
+
 
 cint/ctests.gcc48.O0.i386.o: cint/ctests.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
@@ -81,6 +119,12 @@ cint/ctests.gcc48.O3.i386: cint/ctests.gcc48.O3.i386.o cint/ctests_helper.gcc48.
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
 
+cint/ctests.gcc.O0.i386.o: cint/ctests.c
+	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.gcc.O0.i386.o: cint/ctests_helper.c
+	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests.gcc.O0.i386: cint/ctests.gcc.O0.i386.o cint/ctests_helper.gcc.O0.i386.o
+	$(GCC_I386) $(CFLAGS) -g -O0 $^ -o $@
 
 cint/ctests.clang36.O0.i386.o: cint/ctests.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
@@ -151,10 +195,12 @@ cint/ctests.ccomp.O2.i386: cint/ctests.ccomp.O2.i386.o cint/ctests_helper.ccomp.
 
 
 cint/ctests.c.O0.bc: cint/ctests.c
-	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@
+	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	opt-3.6 -mem2reg -o $@ $@.tmp
 
 cint/ctests_helper.c.O0.bc: cint/ctests_helper.c
-	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@
+	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	opt-3.6 -mem2reg -o $@ $@.tmp
 
 cint/ctests.bc.O0: cint/ctests.c.O0.bc cint/ctests_helper.c.O0.bc
 	llvm-link-3.6 $^ -o $@
@@ -357,5 +403,3 @@ $(CINT_I386_ASPROGS): %.AS.i386: %.i386.s
 	$(AS_I386) $< -o $@.o
 	#$(LD_I386) -g $@.o -T $(SRCDIR)/benches/ld.script -o $@
 	$(LD_I386) -g $@.o -o $@
-
-

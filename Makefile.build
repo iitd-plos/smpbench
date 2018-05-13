@@ -27,7 +27,7 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 
 CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
-CINT_PROG_NAMES=ctests
+CINT_PROG_NAMES=ctests #count_ones32
 CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
 CINT_PROGS_GCC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_CLANG=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
@@ -39,9 +39,9 @@ COMPCERT_DIR=$(build)/installs/$(COMPCERT)
 COMPCERT_INSTALL=$(COMPCERT_DIR)-install
 CCOMP_I386=$(COMPCERT_INSTALL)/bin/ccomp -fvararg-calls -fno-fpu -funprototyped -fstruct-return -fno-tailcalls -L$(COMPCERT_INSTALL)/lib/compcert $(EMIT_RELOCS_FLAG)
 
-CINT_GCC_O0_PROGS = $(addsuffix .gcc.O0, $(CINT_PROGS_GCC))
-CINT_GCC_O2_PROGS = $(addsuffix .gcc.O2, $(CINT_PROGS_GCC))
-CINT_GCC_O3_PROGS = $(addsuffix .gcc.O3, $(CINT_PROGS_GCC))
+CINT_GCC_O0_PROGS = $(addsuffix .gcc.O0.i386, $(CINT_PROGS_GCC))
+CINT_GCC_O2_PROGS = $(addsuffix .gcc.O2.i386, $(CINT_PROGS_GCC))
+CINT_GCC_O3_PROGS = $(addsuffix .gcc.O3.i386, $(CINT_PROGS_GCC))
 CINT_HOSTGCC4_8_O0_PROGS = $(addsuffix .gcc48.O0, $(CINT_PROGS_GCC))
 CINT_HOSTGCC4_8_O2_PROGS = $(addsuffix .gcc48.O2, $(CINT_PROGS_GCC))
 CINT_HOSTGCC4_8_O3_PROGS = $(addsuffix .gcc48.O3, $(CINT_PROGS_GCC))
@@ -92,6 +92,7 @@ CINT_PPC_PROGS = $(CINT_PPC_O0_PROGS) $(CINT_PPC_O2_PROGS) $(CINT_PPC_O2U_PROGS)
             #$(PPC_LITTLE_O0_PROGS) $(PPC_LITTLE_O2_PROGS) $(PPC_LITTLE_O2U_PROGS)
 #X86_PROGS = $(X86_O0_PROGS) $(X86_O2_PROGS) $(X86_O2U_PROGS)
 CINT_I386_PROGS = \
+  $(CINT_GCC_O0_PROGS) \
   $(CINT_I386_HOSTGCC4_8_O0_PROGS) \
   $(CINT_I386_HOSTGCC4_8_O2_PROGS) \
   $(CINT_I386_HOSTGCC4_8_O3_PROGS) \
@@ -99,12 +100,13 @@ CINT_I386_PROGS = \
   $(CINT_I386_CLANG3_6_O2_PROGS) \
   $(CINT_I386_CLANG3_6_O3_PROGS) \
   $(CINT_BC_O0_PROGS) \
-  $(CINT_I386_ICC_O0_PROGS) \
-  $(CINT_I386_ICC_O2_PROGS) \
-  $(CINT_I386_ICC_O3_PROGS) \
-  $(CINT_I386_CCOMP_O0_PROGS) \
-  $(CINT_I386_CCOMP_O2_PROGS) \
-  #$(CINT_I386_ASPROGS) \
+  $(CINT_I386_ASPROGS) \
+  #$(CINT_I386_ICC_O0_PROGS) \
+  #$(CINT_I386_ICC_O2_PROGS) \
+  #$(CINT_I386_ICC_O3_PROGS) \
+  #$(CINT_I386_CCOMP_O0_PROGS) \
+  #$(CINT_I386_CCOMP_O2_PROGS) \
+
 
 CINT_MSP430_PROGS = \
   $(CINT_MSP430_GCC_O0_PROGS) \

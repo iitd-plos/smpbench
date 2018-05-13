@@ -54,12 +54,15 @@ BASE:
 
 .globl _start
 .global print
+.global fibo_claller
 .type _start, STT_FUNC
+.type fibo_caller, STT_FUNC
 _start:
   pushl $11
   call 1f
   1: addl $4, %esp
 #call _fibonacci
+fibo_caller:
   movl $_fibonacci, %eax
   call *%eax
   addl $4, %esp

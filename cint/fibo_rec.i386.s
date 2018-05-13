@@ -8,6 +8,7 @@ len_gt = . - greaterthan - 1
 
 .text
 .globl compute_fibo_rec
+.type compute_fibo_rec, STT_FUNC
 # fib(n) = fib(n-1) + fib(n-2)
 compute_fibo_rec:
   pushl %ebp
@@ -40,6 +41,7 @@ compute_fibo_rec:
   ret
 
 .globl _start
+.type _start, STT_FUNC
 _start:
   movl $10, %eax
   push %eax
