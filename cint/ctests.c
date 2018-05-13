@@ -22,6 +22,11 @@ char my_char_inc(char const *i);
 int myrand_char();
 void myprint_char(char c);
 void myprint_int(int c);
+void myfree(void *ptr);
+void *mycalloc(size_t nmemb, size_t size);
+char *mystrdup(char const *);
+FILE *myfopen(char const *path, char const *mode);
+void *myrealloc(void *ptr, size_t size);
 
 //#define mymalloc abcmall
 #define atoi my_atoi
@@ -664,7 +669,7 @@ struct ht_node *ht_node_create(char *key) {
 	perror("malloc ht_node");
 	exit(1);
     }
-    if ((newkey = (char *)strdup(key)) == 0) {
+    if ((newkey = (char *)mystrdup(key)) == 0) {
 	perror("strdup newkey");
 	exit(1);
     }

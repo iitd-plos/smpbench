@@ -118,3 +118,9 @@ myprint_int(int c)
 {
   printf("%d", c);
 }
+
+char *
+mystrdup(char const *s)
+{
+  return strdup(s);
+}
