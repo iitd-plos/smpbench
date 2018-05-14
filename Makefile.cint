@@ -162,6 +162,29 @@ cint/ctests_helper.icc.O2.i386.o: cint/ctests_helper.c
 cint/ctests.icc.O2.i386: cint/ctests.icc.O2.i386.o cint/ctests_helper.icc.O2.i386.o
 	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
 
+cint/ctests.icc.O3.i386.o: cint/ctests.c
+	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
+	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests.icc.O3.i386: cint/ctests.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+
+cint/ctests.ccomp.O0.i386.o: cint/ctests.c
+	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O0 $< -o $@
+cint/ctests_helper.ccomp.O0.i386.o: cint/ctests_helper.c
+	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O0 $< -o $@
+cint/ctests.ccomp.O0.i386: cint/ctests.ccomp.O0.i386.o cint/ctests_helper.ccomp.O0.i386.o
+	$(CCOMP_I386) $(CCOMP_CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+
+cint/ctests.ccomp.O2.i386.o: cint/ctests.c
+	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 $< -o $@
+cint/ctests_helper.ccomp.O2.i386.o: cint/ctests_helper.c
+	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 $< -o $@
+cint/ctests.ccomp.O2.i386: cint/ctests.ccomp.O2.i386.o cint/ctests_helper.ccomp.O2.i386.o
+	$(CCOMP_I386) $(CCOMP_CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+
+
+
 #cint/ctests.icc.O3.i386.o: cint/ctests.c
 #	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
 #cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
