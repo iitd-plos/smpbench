@@ -4,6 +4,9 @@ CROSSTOOL_PPC_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.ppc/powerpc-405
 CROSSTOOL_I386_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/bin
 CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/lib
 
+LLVM_AS=llvm-as-3.6
+LLVM_DIS=llvm-dis-3.6
+
 LINKER_SCRIPT=$(SRCDIR)/misc/ld.script
 
 #DATA_SECTIONS_FLAG=-fdata-sections -Wl,-T,$(LINKER_SCRIPT)
@@ -403,3 +406,7 @@ $(CINT_I386_ASPROGS): %.AS.i386: %.i386.s
 	$(AS_I386) $< -o $@.o
 	#$(LD_I386) -g $@.o -T $(SRCDIR)/benches/ld.script -o $@
 	$(LD_I386) -g $@.o -o $@
+
+$(CINT_LLVM_ASPROGS): %.AS.bc: %.ll
+	$(LLVM_AS) $< -o $@
+	$(LLVM_DIS) < $@ > $@.s
