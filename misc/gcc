@@ -1,2 +1,2 @@
 #!/bin/bash
-(test "$1" = "-print-prog-name=as" && echo $AS) || (test "$1" = "-print-prog-name=ld" && echo $LD) || (test "$1" = -v && echo gcc version 3.41) || /usr/bin/gcc -Wno-error=uninitialized -Wno-error=unused-but-set-parameter -Wno-error=unused-but-set-variable "$@"
+(test "$1" = "-print-prog-name=as" && echo $AS) || (test "$1" = "-print-prog-name=ld" && echo $LD) || (test "$1" = -v && echo gcc version 3.41) || /usr/bin/gcc -Wno-error=uninitialized -Wno-error=unused-but-set-parameter -Wno-error=unused-but-set-variable -Wno-error=unused-value -Wno-error=logical-not-parentheses -Wno-error=maybe-uninitialized "$@"

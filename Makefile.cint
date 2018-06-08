@@ -1,8 +1,8 @@
-CROSSTOOL_DIR=$(build)/installs/$(CROSSTOOL)
-CROSSTOOL_INSTALL=$(CROSSTOOL_DIR)-install
-CROSSTOOL_PPC_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.ppc/powerpc-405-linux-gnu/bin
-CROSSTOOL_I386_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/bin
-CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/lib
+#CROSSTOOL_DIR=$(build)/installs/$(CROSSTOOL)
+#CROSSTOOL_INSTALL=$(CROSSTOOL_DIR)-install
+#CROSSTOOL_PPC_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.ppc/powerpc-405-linux-gnu/bin
+#CROSSTOOL_I386_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/bin
+#CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/lib
 
 LLVM_AS=llvm-as-3.6
 LLVM_DIS=llvm-dis-3.6
@@ -24,19 +24,24 @@ HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-i
 CLANG_I386_EQCHECKER_FLAGS= -m32 -g -std=c11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -Xclang -msoft-float -Xclang -no-implicit-float -fwrapv -fno-strict-overflow -fno-unroll-loops -std=c11 -ffreestanding -fno-unit-at-a-time --param scev-max-expr-size=0 -fno-zero-initialized-in-bss -fno-caller-saves -U__GNUC__ -D_FORTIFY_SOURCE=0
 
 
-GCC_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-gcc
+#GCC_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-gcc
+GCC_PPC=powerpc-linux-gnu-gcc
 GCC_X86=gcc
-GCC_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-gcc $(GCC_I386_FLAGS)
+#GCC_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-gcc $(GCC_I386_FLAGS)
 HOSTGCC_I386=gcc $(GCC_I386_FLAGS)
 HOSTGCC4_4_I386=gcc-4.4 $(GCC_I386_FLAGS)
 HOSTGCC4_6_I386=gcc-4.6 $(GCC_I386_FLAGS)
 HOSTGCC4_7_I386=gcc-4.7 $(GCC_I386_FLAGS)
 HOSTGCC4_8_I386=gcc-4.8 $(HOSTGCC48_I386_EQCHECKER_FLAGS)
 
-AS_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-as
-LD_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-ld
-AS_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-as --32
-LD_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-ld -melf_i386
+#AS_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-as
+AS_PPC=powerpc-linux-gnu-as
+#LD_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-ld
+LD_PPC=powerpc-linux-gnu-ld
+#AS_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-as --32
+AS_I386=as --32
+#LD_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-ld -melf_i386
+LD_I386=ld -melf_i386
 AS_I386_SYSTEM=/usr/bin/as --32
 #AS_I386_SYSTEM=$(AS_I386)
 LD_I386_SYSTEM=/usr/bin/ld -melf_i386
