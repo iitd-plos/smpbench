@@ -4,9 +4,6 @@
 #CROSSTOOL_I386_BIN=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/bin
 #CROSSTOOL_I386_LIB=$(CROSSTOOL_INSTALL)/gcc-4.1.0-glibc-2.3.6.mod.i386/i686-unknown-linux-gnu/lib
 
-LLVM_AS=llvm-as-3.6
-LLVM_DIS=llvm-dis-3.6
-
 LINKER_SCRIPT=$(SRCDIR)/misc/ld.script
 
 #DATA_SECTIONS_FLAG=-fdata-sections -Wl,-T,$(LINKER_SCRIPT)

@@ -15,7 +15,3 @@ define i32 @main() {   ; i32()*
   call i32 @puts(i8 *%c2)
   ret i32 0
 }
-
-; Named metadata
-;!1 = metadata !{i32 42}
-;!foo = !{!1, !1}
