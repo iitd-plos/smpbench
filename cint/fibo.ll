@@ -6,12 +6,13 @@ target triple = "i386-pc-linux-gnu"
 ; External declaration of the printf function
 declare i32 @printf(i8*, ...) #2
 
-@N = constant i32 10
+; @N = constant i32 10
 
 ; Definition of main function
 define i32 @main() #0 {
   ; Convert [13 x i8]* to i8  *...
-  %n = load i32 *@N
+  ; %n = load i32 *@N
+  %n = add i32 0, 10
   br label %1
 
 ; <label>:1
