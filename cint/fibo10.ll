@@ -12,7 +12,7 @@ declare i32 @printf(i8*, ...) #2
 define i32 @main() #0 {
   ; Convert [13 x i8]* to i8  *...
   ; %n = load i32 *@N
-  %n = add i32 0, 20
+  %n = add i32 0, 4
   br label %1
 
 ; <label>:1
