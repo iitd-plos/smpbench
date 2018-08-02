@@ -75,7 +75,7 @@ CINT_PPC_ASPROGS_NAMES = hello_world.AS.ppc fibo.AS.ppc one_bbl.AS.ppc ascom.AS.
 CINT_PPC_ASPROGS = $(addprefix cint/, $(CINT_PPC_ASPROGS_NAMES))
 CINT_ARM_ASPROGS_NAMES = hello_world.AS.arm fibo_rec.AS.arm
 CINT_ARM_ASPROGS = $(addprefix cint/, $(CINT_ARM_ASPROGS_NAMES))
-CINT_LLVM_ASPROGS_NAMES = fibo10.AS.bc #hello_world.AS.bc fibo.AS.bc fibo10.AS.bc
+CINT_LLVM_ASPROGS_NAMES = hello_world.AS.bc fibo.AS.bc fibo10.AS.bc fibo10_fcall.AS.bc fibo10_fibo_fcall.AS.bc
 CINT_LLVM_ASPROGS = $(addprefix cint/, $(CINT_LLVM_ASPROGS_NAMES))
 
 
