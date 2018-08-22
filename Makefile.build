@@ -75,7 +75,7 @@ CINT_PPC_ASPROGS_NAMES = hello_world.AS.ppc fibo.AS.ppc one_bbl.AS.ppc ascom.AS.
 CINT_PPC_ASPROGS = $(addprefix cint/, $(CINT_PPC_ASPROGS_NAMES))
 CINT_ARM_ASPROGS_NAMES = hello_world.AS.arm fibo_rec.AS.arm
 CINT_ARM_ASPROGS = $(addprefix cint/, $(CINT_ARM_ASPROGS_NAMES))
-CINT_LLVM_ASPROGS_NAMES = fibo10_fibo_fcall_alloca.AS.bc #hello_world.AS.bc fibo.AS.bc fibo10.AS.bc fibo10_fcall.AS.bc fibo10_fibo_fcall.AS.bc fibo10_fibo_fcall_alloca.AS.bc fibo_rec.AS.bc
+CINT_LLVM_ASPROGS_NAMES = fibo_rec_switch.AS.bc #fibo10_fibo_fcall_alloca.AS.bc hello_world.AS.bc fibo.AS.bc fibo10.AS.bc fibo10_fcall.AS.bc fibo10_fibo_fcall.AS.bc fibo10_fibo_fcall_alloca.AS.bc fibo_rec.AS.bc fibo_rec_switch.AS.bc
 CINT_LLVM_ASPROGS = $(addprefix cint/, $(CINT_LLVM_ASPROGS_NAMES))
 
 
@@ -117,7 +117,7 @@ CINT_MSP430_PROGS = \
   $(CINT_MSP430_GCC_O2_PROGS) \
   $(CINT_MSP430_GCC_O3_PROGS) \
 
-cint: $(CINT_I386_PROGS) $(CINT_PPC_PROGS) $(CINT_LLVM_PROGS)
+cint: $(CINT_I386_PROGS) $(CINT_LLVM_PROGS) # $(CINT_PPC_PROGS)
 
 RED=`tput bold; tput setaf 1`
 GREEN=`tput bold; tput setaf 2`
