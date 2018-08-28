@@ -27,7 +27,7 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 
 CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
-CINT_PROG_NAMES=ctests #count_ones32
+CINT_PROG_NAMES=smalltest ctests #count_ones32
 CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
 CINT_PROGS_GCC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_CLANG=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
@@ -75,7 +75,7 @@ CINT_PPC_ASPROGS_NAMES = hello_world.AS.ppc fibo.AS.ppc one_bbl.AS.ppc ascom.AS.
 CINT_PPC_ASPROGS = $(addprefix cint/, $(CINT_PPC_ASPROGS_NAMES))
 CINT_ARM_ASPROGS_NAMES = hello_world.AS.arm fibo_rec.AS.arm
 CINT_ARM_ASPROGS = $(addprefix cint/, $(CINT_ARM_ASPROGS_NAMES))
-CINT_LLVM_ASPROGS_NAMES = fibo_rec_switch.AS.bc #fibo10_fibo_fcall_alloca.AS.bc hello_world.AS.bc fibo.AS.bc fibo10.AS.bc fibo10_fcall.AS.bc fibo10_fibo_fcall.AS.bc fibo10_fibo_fcall_alloca.AS.bc fibo_rec.AS.bc fibo_rec_switch.AS.bc
+CINT_LLVM_ASPROGS_NAMES = hello_world.AS.bc fibo.AS.bc fibo10.AS.bc fibo10_fcall.AS.bc fibo10_fibo_fcall.AS.bc fibo10_fibo_fcall_alloca.AS.bc fibo_rec.AS.bc fibo_rec_switch.AS.bc
 CINT_LLVM_ASPROGS = $(addprefix cint/, $(CINT_LLVM_ASPROGS_NAMES))
 
 
@@ -109,7 +109,7 @@ CINT_I386_PROGS = \
   #$(CINT_I386_CCOMP_O0_PROGS) \
   #$(CINT_I386_CCOMP_O2_PROGS) \
 
-CINT_LLVM_PROGS = $(CINT_LLVM_ASPROGS) #$(CINT_BC_O0_PROGS)
+CINT_LLVM_PROGS =  $(CINT_LLVM_ASPROGS) $(CINT_BC_O0_PROGS)
 
 
 CINT_MSP430_PROGS = \

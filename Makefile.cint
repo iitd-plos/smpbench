@@ -102,90 +102,90 @@ cint/count_ones32.bc.O0.s: cint/count_ones32.bc.O0
 	llvm-dis-3.6 < $< > $@
 
 
-cint/ctests.gcc48.O0.i386.o: cint/ctests.c
+cint/%.gcc48.O0.i386.o: cint/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/ctests_helper.gcc48.O0.i386.o: cint/ctests_helper.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/ctests.gcc48.O0.i386: cint/ctests.gcc48.O0.i386.o cint/ctests_helper.gcc48.O0.i386.o
+cint/%.gcc48.O0.i386: cint/%.gcc48.O0.i386.o cint/ctests_helper.gcc48.O0.i386.o
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
 
-cint/ctests.gcc48.O2.i386.o: cint/ctests.c
+cint/%.gcc48.O2.i386.o: cint/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
 cint/ctests_helper.gcc48.O2.i386.o: cint/ctests_helper.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
-cint/ctests.gcc48.O2.i386: cint/ctests.gcc48.O2.i386.o cint/ctests_helper.gcc48.O2.i386.o
+cint/%.gcc48.O2.i386: cint/%.gcc48.O2.i386.o cint/ctests_helper.gcc48.O2.i386.o
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
 
-cint/ctests.gcc48.O3.i386.o: cint/ctests.c
+cint/%.gcc48.O3.i386.o: cint/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
 cint/ctests_helper.gcc48.O3.i386.o: cint/ctests_helper.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/ctests.gcc48.O3.i386: cint/ctests.gcc48.O3.i386.o cint/ctests_helper.gcc48.O3.i386.o
+cint/%.gcc48.O3.i386: cint/%.gcc48.O3.i386.o cint/ctests_helper.gcc48.O3.i386.o
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
 
-cint/ctests.gcc.O0.i386.o: cint/ctests.c
+cint/%.gcc.O0.i386.o: cint/%.c
 	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/ctests_helper.gcc.O0.i386.o: cint/ctests_helper.c
 	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/ctests.gcc.O0.i386: cint/ctests.gcc.O0.i386.o cint/ctests_helper.gcc.O0.i386.o
+cint/%.gcc.O0.i386: cint/%.gcc.O0.i386.o cint/ctests_helper.gcc.O0.i386.o
 	$(GCC_I386) $(CFLAGS) -g -O0 $^ -o $@
 
-cint/ctests.clang36.O0.i386.o: cint/ctests.c
+cint/%.clang36.O0.i386.o: cint/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/ctests_helper.clang36.O0.i386.o: cint/ctests_helper.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/ctests.clang36.O0.i386: cint/ctests.clang36.O0.i386.o cint/ctests_helper.clang36.O0.i386.o
+cint/%.clang36.O0.i386: cint/%.clang36.O0.i386.o cint/ctests_helper.clang36.O0.i386.o
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
 
-cint/ctests.clang36.O2.i386.o: cint/ctests.c
+cint/%.clang36.O2.i386.o: cint/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
 cint/ctests_helper.clang36.O2.i386.o: cint/ctests_helper.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
-cint/ctests.clang36.O2.i386: cint/ctests.clang36.O2.i386.o cint/ctests_helper.clang36.O2.i386.o
+cint/%.clang36.O2.i386: cint/%.clang36.O2.i386.o cint/ctests_helper.clang36.O2.i386.o
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
 
-cint/ctests.clang36.O3.i386.o: cint/ctests.c
+cint/%.clang36.O3.i386.o: cint/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
 cint/ctests_helper.clang36.O3.i386.o: cint/ctests_helper.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/ctests.clang36.O3.i386: cint/ctests.clang36.O3.i386.o cint/ctests_helper.clang36.O3.i386.o
+cint/%.clang36.O3.i386: cint/%.clang36.O3.i386.o cint/ctests_helper.clang36.O3.i386.o
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
 
-cint/ctests.icc.O0.i386.o: cint/ctests.c
+cint/%.icc.O0.i386.o: cint/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/ctests_helper.icc.O0.i386.o: cint/ctests_helper.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/ctests.icc.O0.i386: cint/ctests.icc.O0.i386.o cint/ctests_helper.icc.O0.i386.o
+cint/%.icc.O0.i386: cint/%.icc.O0.i386.o cint/ctests_helper.icc.O0.i386.o
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
 
-cint/ctests.icc.O2.i386.o: cint/ctests.c
+cint/%.icc.O2.i386.o: cint/%.c
 	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@
 cint/ctests_helper.icc.O2.i386.o: cint/ctests_helper.c
 	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@
-cint/ctests.icc.O2.i386: cint/ctests.icc.O2.i386.o cint/ctests_helper.icc.O2.i386.o
+cint/%.icc.O2.i386: cint/%.icc.O2.i386.o cint/ctests_helper.icc.O2.i386.o
 	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
 
-cint/ctests.icc.O3.i386.o: cint/ctests.c
+cint/%.icc.O3.i386.o: cint/%.c
 	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
 cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
 	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/ctests.icc.O3.i386: cint/ctests.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
+cint/%.icc.O3.i386: cint/%.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
 	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
-cint/ctests.ccomp.O0.i386.o: cint/ctests.c
+cint/%.ccomp.O0.i386.o: cint/%.c
 	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O0 $< -o $@
 cint/ctests_helper.ccomp.O0.i386.o: cint/ctests_helper.c
 	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O0 $< -o $@
-cint/ctests.ccomp.O0.i386: cint/ctests.ccomp.O0.i386.o cint/ctests_helper.ccomp.O0.i386.o
+cint/%.ccomp.O0.i386: cint/%.ccomp.O0.i386.o cint/ctests_helper.ccomp.O0.i386.o
 	$(CCOMP_I386) $(CCOMP_CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
 
-cint/ctests.ccomp.O2.i386.o: cint/ctests.c
+cint/%.ccomp.O2.i386.o: cint/%.c
 	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 $< -o $@
 cint/ctests_helper.ccomp.O2.i386.o: cint/ctests_helper.c
 	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 $< -o $@
-cint/ctests.ccomp.O2.i386: cint/ctests.ccomp.O2.i386.o cint/ctests_helper.ccomp.O2.i386.o
+cint/%.ccomp.O2.i386: cint/%.ccomp.O2.i386.o cint/ctests_helper.ccomp.O2.i386.o
 	$(CCOMP_I386) $(CCOMP_CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
 
 
@@ -199,18 +199,18 @@ cint/ctests.ccomp.O2.i386: cint/ctests.ccomp.O2.i386.o cint/ctests_helper.ccomp.
 
 
 
-cint/ctests.c.O0.bc: cint/ctests.c
+cint/%.c.O0.bc: cint/%.c
 	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
 	opt-3.6 -mem2reg -o $@ $@.tmp
 
 cint/ctests_helper.c.O0.bc: cint/ctests_helper.c
 	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
-	opt-3.6 -mem2reg -o $@ $@.tmp
+	opt-3.6 -mem2reg -o $@.tmp2 $@.tmp
 
-cint/ctests.bc.O0: cint/ctests.c.O0.bc cint/ctests_helper.c.O0.bc
+cint/%.bc.O0: cint/%.c.O0.bc cint/ctests_helper.c.O0.bc
 	llvm-link-3.6 $^ -o $@
 
-cint/ctests.bc.O0.s: cint/ctests.bc.O0
+cint/%.bc.O0.s: cint/%.bc.O0
 	llvm-dis-3.6 < $< > $@
 
 %.gcc.O0.ppc: %.c
