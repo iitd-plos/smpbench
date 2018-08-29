@@ -6,23 +6,43 @@
 
 //const char interp_section[] __attribute__((section(".interp"))) = "/path/to/dynamic/linker";
 
-int sum_positive_g[144];
-int sum_positive_sum = 0;
-int sum_positive_const = 123;
+typedef unsigned char boolean;
 
-void sum_positive_globals(int n) {
-  int *ptr = sum_positive_g;
-  int i;
-  for (i = 0; i < n; i++, ptr++) {
-    if (*ptr > 0) {
-      sum_positive_sum = sum_positive_sum + sum_positive_const * (*ptr);
+unsigned int nsievebits(int m) {
+    unsigned int count = 0, i, j;
+    boolean * flags = (boolean *) mymalloc(m * sizeof(boolean));
+    memset(flags, 1, m);
+
+    for (i = 2; i < m; ++i)
+        if (flags[i]) {
+            ++count;
+            for (j = i << 1; j < m; j += i)
+                if (flags[j]) flags[j] = 0;
     }
-  }
+
+    myfree(flags);
+    return count;
 }
+
+
+
+int main_nsieve(int argc, char * argv[]) {
+    int m = argc < 2 ? 9 : atoi(argv[1]);
+    int i;
+    for (i = 0; i < 3; i++)
+    {
+        unsigned int count = nsievebits(10000 << (m-i));
+        printf("Primes up to %8u %8u\n", 10000 << (m-i), count);
+    }
+    return 0;
+}
+
+
+
 int main()
 {
   printf("start tests\n");
-  sum_positive_globals(100);
+  //sum_positive_globals(100);
   printf("finished\n");
   return 0;
 }
