@@ -25,7 +25,8 @@ my $i = 0;
 foreach my $command (@commands) {
   my $outfile = "out.$i";
   truncate $outfile, 0;
-  my $shcmd = "$command $command_args > $outfile 2>&1";
+  #my $shcmd = "time $command $command_args > $outfile 2>&1";
+  my $shcmd = "time $command $command_args > $outfile";
   print $shcmd."\n";
   system($shcmd);
   system("cat $outfile");

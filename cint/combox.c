@@ -9,17 +9,18 @@
 
 #define MAX_LEN 0x800000
 
-static uint8_t a[MAX_LEN];
-static uint8_t b[MAX_LEN];
-static uint8_t c[MAX_LEN];
-
 void
 usage (void)
 {
   printf ("Usage: combox <prog-name> <arguments>\n");
   printf ("\tprograms: emptyloop printloop fibo_rec fibo_rec2 fibo_iter bubsort hanoi sum8 image_diff min comparison xor sprite_copy memset memcpy memmove bcmp bcopy bzero memccpy memchr memcmp memfrob memmem\n");
-  exit (1);
 }
+
+#if 0
+static uint8_t a[MAX_LEN];
+static uint8_t b[MAX_LEN];
+static uint8_t c[MAX_LEN];
+
 
 int
 _sum8(uint8_t *a, int len)
@@ -781,11 +782,12 @@ fibo_rec(int argc, char **argv)
   n = atoi(argv[1]);
   return compute_fibo_rec(n);
 }
+#endif
 
-long long
+long
 compute_fibo_iter (int n)
 {
-  long long fibo_cur, fibo_prev;
+  long fibo_cur, fibo_prev;
   int i, tmp;
 
   if (n < 3)
@@ -804,7 +806,7 @@ compute_fibo_iter (int n)
   return fibo_cur;
 }
 
-long long
+long
 fibo_iter (int argc, char **argv)
 {
   int n;
@@ -812,7 +814,7 @@ fibo_iter (int argc, char **argv)
   if (argc < 2)
   {
     printf ("Usage: fibo_iter <n>\n");
-    exit (1);
+    return 0;
   }
  
   n = atoi (argv[1]);
@@ -820,6 +822,7 @@ fibo_iter (int argc, char **argv)
   return compute_fibo_iter (n);
 }
 
+#if 0
 int ll_compare(const void *_a, const void *_b)
 {
   long long *a = (long long *)_a;
@@ -1125,13 +1128,17 @@ closedhash_search (int argc, char **argv)
 
   return num_found;
 }
+#endif
 
 int
 main (int argc, char **argv)
 {
-  if (argc < 2)
+  if (argc < 2) {
       usage();
+      return 1;
+  }
 
+/*
   if (!strcmp (argv[1], "fibo_rec")) {
     long long ret;
     ret = fibo_rec (argc - 1, argv + 1);
@@ -1146,10 +1153,10 @@ main (int argc, char **argv)
     return 0;
   }
 
-  if (!strcmp(argv[1], "fibo_iter")) {
+  if (!strcmp(argv[1], "emptyloop")) {
     long long ret;
-    ret = fibo_iter(argc - 1, argv + 1);
-    printf("%lld\n", ret);
+    ret = emptyloop(argc - 1, argv + 1);
+    printf("Completed %lld iterations of empty loop.\n", ret);
     return 0;
   }
 
@@ -1159,14 +1166,15 @@ main (int argc, char **argv)
     printf("Completed %lld iterations of print loop.\n", ret);
     return 0;
   }
-
-  if (!strcmp(argv[1], "emptyloop")) {
-    long long ret;
-    ret = emptyloop(argc - 1, argv + 1);
-    printf("Completed %lld iterations of empty loop.\n", ret);
+*/
+  if (!strcmp(argv[1], "fibo_iter")) {
+    long ret;
+    ret = fibo_iter(argc - 1, argv + 1);
+    printf("%ld\n", ret);
     return 0;
   }
 
+/*
   if (!strcmp(argv[1], "bubsort")) {
     long long ret;
     ret = bubsort(argc - 1, argv + 1);
@@ -1300,25 +1308,25 @@ main (int argc, char **argv)
     printf("bzero (len = %d) done.\n", atoi(argv[2]));
   }
 
-  /*if (!strcmp(argv[1], "memccpy")) {
-    _memccpy(argc - 1, argv + 1);
-    printf("memccpy (len = %d) done.\n", atoi(argv[2]));
-  }
+  //if (!strcmp(argv[1], "memccpy")) {
+  //  _memccpy(argc - 1, argv + 1);
+  //  printf("memccpy (len = %d) done.\n", atoi(argv[2]));
+  //}
 
-  if (!strcmp(argv[1], "memchr")) {
-    _memchr(argc - 1, argv + 1);
-    printf("memchr (len = %d) done.\n", atoi(argv[2]));
-  }
+  //if (!strcmp(argv[1], "memchr")) {
+  //  _memchr(argc - 1, argv + 1);
+  //  printf("memchr (len = %d) done.\n", atoi(argv[2]));
+  //}
 
-  if (!strcmp(argv[1], "memfrob")) {
-    _memfrob(argc - 1, argv + 1);
-    printf("memfrob (len = %d) done.\n", atoi(argv[2]));
-  }
+  //if (!strcmp(argv[1], "memfrob")) {
+  //  _memfrob(argc - 1, argv + 1);
+  //  printf("memfrob (len = %d) done.\n", atoi(argv[2]));
+  //}
 
-  if (!strcmp(argv[1], "memmem")) {
-    _memmem(argc - 1, argv + 1);
-    printf("memmem (len = %d) done.\n", atoi(argv[2]));
-  }*/
+  //if (!strcmp(argv[1], "memmem")) {
+  //  _memmem(argc - 1, argv + 1);
+  //  printf("memmem (len = %d) done.\n", atoi(argv[2]));
+  //}
 
 
   if (   !strcmp(argv[1], "min")
@@ -1345,7 +1353,6 @@ main (int argc, char **argv)
     }
     return 0;
   }
-/*
   if (!strcmp (argv[1], "sum_linklist"))
   {
     ret = sum_linklist (argc - 1, ++argv);
@@ -1359,4 +1366,5 @@ main (int argc, char **argv)
     return 0;
   }
 */
+  return 1;
 }
