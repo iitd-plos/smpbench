@@ -9,7 +9,7 @@ declare i32 @printf(i8*, ...) #2
 ; @N = constant i32 10
 
 ; Definition of fibo10 function
-define i32 @fibo10(i32 %n) #0 {
+define void @fibo10(i32 %n) #0 {
   ; %n = load i32 *@N
   ; %n = add i32 0, 10
   br label %1
@@ -42,11 +42,12 @@ define i32 @fibo10(i32 %n) #0 {
 ; <label>:24
   %25 = getelementptr inbounds [15 x i8]* @.str2, i32 0, i32 0
   call i32 (i8*, ...)* @printf(i8 * %25, i32 %n, i32 %12)
-  ret i32 0
+  ret void
 }
 
 define i32 @main() #0 {
-  %n = add i32 0, 10
-  call i32 @fibo10(i32 %n)
+  ; %n = add i32 0, 10
+  ; call void @fibo10(i32 %n)
+  call void @fibo10(i32 10)
   ret i32 0
 }
