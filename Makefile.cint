@@ -203,10 +203,6 @@ cint/%.c.O0.bc: cint/%.c
 	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
 	opt-3.6 -mem2reg -o $@ $@.tmp
 
-cint/ctests_helper.c.O0.bc: cint/ctests_helper.c
-	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
-	opt-3.6 -mem2reg -o $@.tmp2 $@.tmp
-
 cint/%.bc.O0: cint/%.c.O0.bc cint/ctests_helper.c.O0.bc
 	llvm-link-3.6 $^ -o $@
 
