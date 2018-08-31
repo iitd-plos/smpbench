@@ -50,7 +50,9 @@ main(int argc, char **argv)
     for (i = 0; i < len; i++)
       printf ("a[%d] = %ld\n", i, a[i]);
   }
-  printf("max element = %ld\n", a[len - 1]);
+  printf("min element = %ld.\n", a[0]);
+  printf("median element = %ld.\n", a[len / 2]);
+  printf("max element = %ld.\n", a[len - 1]);
 
   return 0;
 }
