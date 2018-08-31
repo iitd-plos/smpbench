@@ -104,30 +104,30 @@ cint/count_ones32.bc.O0.s: cint/count_ones32.bc.O0
 
 cint/%.gcc48.O0.i386.o: cint/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/ctests_helper.gcc48.O0.i386.o: cint/ctests_helper.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
+#cint/ctests_helper.gcc48.O0.i386.o: cint/ctests_helper.c
+#	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/%.gcc48.O0.i386: cint/%.gcc48.O0.i386.o cint/ctests_helper.gcc48.O0.i386.o
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
 
 cint/%.gcc48.O2.i386.o: cint/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
-cint/ctests_helper.gcc48.O2.i386.o: cint/ctests_helper.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
+#cint/ctests_helper.gcc48.O2.i386.o: cint/ctests_helper.c
+#	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
 cint/%.gcc48.O2.i386: cint/%.gcc48.O2.i386.o cint/ctests_helper.gcc48.O2.i386.o
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
 
 cint/%.gcc48.O3.i386.o: cint/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/ctests_helper.gcc48.O3.i386.o: cint/ctests_helper.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
+#cint/ctests_helper.gcc48.O3.i386.o: cint/ctests_helper.c
+#	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
 cint/%.gcc48.O3.i386: cint/%.gcc48.O3.i386.o cint/ctests_helper.gcc48.O3.i386.o
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
 
 cint/%.gcc.O0.i386.o: cint/%.c
 	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/ctests_helper.gcc.O0.i386.o: cint/ctests_helper.c
-	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
+#cint/ctests_helper.gcc.O0.i386.o: cint/ctests_helper.c
+#	$(GCC_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/%.gcc.O0.i386: cint/%.gcc.O0.i386.o cint/ctests_helper.gcc.O0.i386.o
 	$(GCC_I386) $(CFLAGS) -g -O0 $^ -o $@
 

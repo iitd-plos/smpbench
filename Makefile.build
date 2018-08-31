@@ -124,13 +124,22 @@ RED=`tput bold; tput setaf 1`
 GREEN=`tput bold; tput setaf 2`
 RESET=`tput sgr0`
 
-.PHONY: superopt_test
-superopt_test: $(CINT_LLVM_PROGS)
-	for llvm_prog in $(CINT_LLVM_PROGS) ; do \
+.PHONY: superopt_test superopt_test_as
+superopt_test_as: $(CINT_LLVM_ASPROGS)
+	for llvm_prog in $(CINT_LLVM_ASPROGS) ; do \
 	  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog -o $$llvm_prog.etfg ; \
 	  $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.etfg -o $$llvm_prog.i386; \
 	  (perl $(SRCDIR)/misc/compare_commands.pl "$(LLI) $$llvm_prog" "$$llvm_prog.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
 	done
+
+superopt_test: $(CINT_BC_O0_PROGS) $(CINT_I386_PROGS)
+	for llvm_prog in $(CINT_PROGS) ; do \
+	  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog.bc.O0 -o $$llvm_prog.bc.O0.etfg ; \
+	  $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.bc.O0.etfg -o $$llvm_prog.bc.O0.i386; \
+	  (perl $(SRCDIR)/misc/compare_commands.pl "$(LLI) $$llvm_prog.bc.O0" "$$llvm_prog.gcc48.O3.i386" "$$llvm_prog.bc.O0.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
+	done
+
+
 
 cint-msp430: $(CINT_MSP430_PROGS)
 
