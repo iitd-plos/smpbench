@@ -27,7 +27,7 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 
 CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
-CINT_PROG_NAMES= emptyloop fibo_recursive fibo_recursive2 fibo_iter bubsort mergesort quicksort link_list_search aes #combox #smalltest ctests #count_ones32
+CINT_PROG_NAMES= emptyloop fibo_recursive fibo_recursive2 fibo_iter bubsort mergesort quicksort link_list_search aes almabench binarytrees bisect chomp fannkuch fft fftsp fftw fib integr knucleotide lists mandelbrot nbody nsievebits nsieve perlin qsort sha1 sha3 siphash24 spectral vmach #combox #smalltest ctests #count_ones32
 CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
 CINT_PROGS_GCC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_CLANG=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
