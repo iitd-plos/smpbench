@@ -118,11 +118,16 @@ CINT_MSP430_PROGS = \
   $(CINT_MSP430_GCC_O2_PROGS) \
   $(CINT_MSP430_GCC_O3_PROGS) \
 
-cint: $(CINT_I386_PROGS) $(CINT_LLVM_PROGS) # $(CINT_PPC_PROGS)
+CINT_LLVM_PROGS_ASM = $(addsuffix .s, $(CINT_LLVM_PROGS))
+
+cint: $(CINT_I386_PROGS) $(CINT_LLVM_PROGS) $(CINT_LLVM_PROGS_ASM) # $(CINT_PPC_PROGS)
 
 RED=`tput bold; tput setaf 1`
 GREEN=`tput bold; tput setaf 2`
 RESET=`tput sgr0`
+
+%.bc.O0.s: %.bc.O0
+	llvm-dis-3.6 < $< > $@
 
 .PHONY: superopt_test superopt_test_as
 superopt_test_as: $(CINT_LLVM_ASPROGS)
