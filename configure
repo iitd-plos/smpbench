@@ -54,6 +54,7 @@ rm -f $build_dir/Makefile
 config_mak="$build_dir/config.mak"
 config_h="$build_dir/config.h"
 config_pm="$build_dir/config.pm"
+config_py="$build_dir/config.py"
 
 echo "include $source_path/config-host.mak" > $config_mak
 echo "#include \"$source_path/config-host.h\"" > $config_h
@@ -68,3 +69,6 @@ fi
 echo "our \$srcdir = \"$source_path\";" >> $config_pm;
 echo "our \$build = \"$build_dir\";" >> $config_pm;
 echo "1;" >> $config_pm;
+
+echo "srcdir = \"$source_path\";" >> $config_py;
+echo "build = \"$build_dir\";" >> $config_py;

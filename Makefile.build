@@ -27,7 +27,9 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 
 CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
-CINT_PROG_NAMES= emptyloop fibo_recursive fibo_recursive2 fibo_iter bubsort mergesort quicksort link_list_search aes almabench binarytrees bisect chomp fannkuch fft fftsp fftw fib integr knucleotide lists mandelbrot nbody nsievebits nsieve perlin qsort sha1 sha3 siphash24 spectral vmach ctests #combox #smalltest #count_ones32
+CINT_PROG_NAMES= emptyloop fibo_recursive fibo_recursive2 fibo_iter bubsort mergesort quicksort link_list_search aes almabench binarytrees bisect #chomp fannkuch fft fftsp fftw fib integr knucleotide lists mandelbrot nbody nsievebits nsieve perlin qsort sha1 sha3 siphash24 spectral vmach ctests #emptyloop fibo_recursive fibo_recursive2 fibo_iter bubsort mergesort quicksort link_list_search aes almabench binarytrees bisect chomp fannkuch fft fftsp fftw fib integr knucleotide lists mandelbrot nbody nsievebits nsieve perlin qsort sha1 sha3 siphash24 spectral vmach ctests #combox #smalltest #count_ones32
+#FLOATING_POINT: almabench bisect
+#TAKES TOO LONG: aes
 CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
 CINT_PROGS_GCC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_CLANG=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
@@ -130,19 +132,21 @@ RESET=`tput sgr0`
 	llvm-dis-3.6 < $< > $@
 
 .PHONY: superopt_test superopt_test_as
-superopt_test_as: $(CINT_LLVM_ASPROGS)
-	for llvm_prog in $(CINT_LLVM_ASPROGS) ; do \
-	  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog -o $$llvm_prog.etfg ; \
-	  rm -f $$llvm_prog.i386 && $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.etfg -o $$llvm_prog.i386; \
-	  (perl $(SRCDIR)/misc/compare_commands.pl "$(LLI) $$llvm_prog" "$$llvm_prog.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
-	done
+#superopt_test_as: $(CINT_LLVM_ASPROGS)
+#	for llvm_prog in $(CINT_LLVM_ASPROGS) ; do \
+#	  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog -o $$llvm_prog.etfg ; \
+#	  rm -f $$llvm_prog.i386 && $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.etfg -o $$llvm_prog.i386; \
+#	  (perl $(SRCDIR)/misc/compare_commands.pl $$llvm_prog "$(LLI) $$llvm_prog" "$$llvm_prog.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
+#	done
 
 superopt_test: $(CINT_BC_O0_PROGS) $(CINT_I386_PROGS)
-	for llvm_prog in $(CINT_PROGS) ; do \
-	  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog.bc.O0 -o $$llvm_prog.bc.O0.etfg ; \
-	  rm -f $$llvm_prog.i386 && $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.bc.O0.etfg -o $$llvm_prog.bc.O0.i386; \
-	  (perl $(SRCDIR)/misc/compare_commands.pl "$(LLI) $$llvm_prog.bc.O0" "$$llvm_prog.gcc48.O3.i386" "$$llvm_prog.bc.O0.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
-	done
+	python $(SRCDIR)/misc/superopt_test.py $(CINT_PROGS) > superopt_test.cmds
+	parallel -j 4 :::: superopt_test.cmds
+	#for llvm_prog in $(CINT_PROGS) ; do \
+	#  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog.bc.O0 -o $$llvm_prog.bc.O0.etfg ; \
+	#  rm -f $$llvm_prog.i386 && $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.bc.O0.etfg -o $$llvm_prog.bc.O0.i386; \
+	#  (perl $(SRCDIR)/misc/compare_commands.pl "$(LLI) $$llvm_prog.bc.O0" "$$llvm_prog.gcc48.O3.i386" "$$llvm_prog.bc.O0.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
+	#done
 
 
 
