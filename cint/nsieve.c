@@ -7,13 +7,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define memset mymemset
+
 typedef unsigned char boolean;
 
 
 static void nsieve(int m) {
     unsigned int count = 0, i, j;
     boolean * flags = (boolean *) malloc(m * sizeof(boolean));
-    memset(flags, 1, m);
+    //memset(flags, 1, m);
+    for (i = 0; i < m; i++) {
+      flags[i] = 1;
+    }
 
     for (i = 2; i < m; ++i)
         if (flags[i]) {
