@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#define memcpy mymemcpy
 
 typedef unsigned long long uint64;
 typedef unsigned char uint8;

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#define memcpy mymemcpy
 
 typedef unsigned int u32;
 
