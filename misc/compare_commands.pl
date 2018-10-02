@@ -30,7 +30,7 @@ foreach my $command (@commands) {
   my $shcmd = "time $command $command_args > $outfile";
   print $shcmd."\n";
   system($shcmd);
-  system("cat $outfile");
+  system("echo \"Printing $outfile . . .\" && cat $outfile");
   $i++;
 }
 
