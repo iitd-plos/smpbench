@@ -51,7 +51,8 @@ main(int ac, char **av)
 		test(n - 1);
 	if (n >= 2)
 		test(n - 2);
-	exit(0);
+	//exit(0);
+        return 0;
 }
 /****
  build & benchmark results

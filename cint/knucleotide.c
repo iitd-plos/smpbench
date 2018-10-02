@@ -12,6 +12,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#define memcpy mymemcpy
 
 enum { ht_num_primes = 28 };
 
