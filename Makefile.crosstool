@@ -30,7 +30,7 @@ $(addprefix crosstool-, $(src_archs)): crosstool-common
 		&& rm -f a1; \
 	cd $(CROSSTOOL_DIR) && export AS=$(SRCDIR)/misc/as && export LD=$(SRCDIR)/misc/ld \
 		&& export CC=$(SRCDIR)/misc/gcc && export HOSTCC=$(SRCDIR)/misc/gcc \
-		&& export AR=ar && bash $(crosstool_file); \
+		&& export AR=ar && export MAKE=$(SRCDIR)/../tmp/make-3.82-install/bin/make && bash $(crosstool_file); \
 
 $(SRCDIR)/../tars/gcc-3.3.6.mod.%.tar.bz2::
 	mkdir -p $(build)/installs
@@ -44,6 +44,7 @@ $(SRCDIR)/../tars/glibc-2.3.6.mod.%.tar.bz2::
 	cd $(build)/installs && patch -p0 < $(SRCDIR)/misc/glibc-2.3.6.mod.patch && cd -
 	#Uncomment following for Ubuntu only
 	cd $(build)/installs && patch -p0 < $(SRCDIR)/misc/glibc-2.3.6.mod.ubuntu.patch && cd -
+	cd $(build)/installs && patch -p0 < $(SRCDIR)/misc/glibc-2.3.6.mod.ubuntu-16.04.patch && cd -
 	if [ $(src_arch) != "i386" ]; then \
 	  cd $(build)/installs && patch -p0 < $(SRCDIR)/misc/glibc-2.3.6.mod.nonx86.patch && cd -; \
 	fi

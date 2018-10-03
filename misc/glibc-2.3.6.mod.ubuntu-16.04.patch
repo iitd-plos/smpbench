@@ -1,0 +1,12 @@
+diff -Nur glibc-2.3.6/sysdeps/i386/Makefile glibc-2.3.6.mod/sysdeps/i386/Makefile
+--- glibc-2.3.6/sysdeps/i386/Makefile	2005-02-16 16:37:19.000000000 +0530
++++ glibc-2.3.6.mod/sysdeps/i386/Makefile	2018-05-13 10:06:19.910593151 +0530
+@@ -36,7 +36,7 @@
+ ifeq ($(subdir),csu)
+ sysdep-CFLAGS += -mpreferred-stack-boundary=4
+ else
+-sysdep-CFLAGS += -mpreferred-stack-boundary=2
++sysdep-CFLAGS += -mpreferred-stack-boundary=4
+ # Likewise, any function which calls user callbacks
+ uses-callbacks += -mpreferred-stack-boundary=4
+ # Likewise, any stack alignment tests

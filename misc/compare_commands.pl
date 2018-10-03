@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 use warnings;
+#use File::Sync qw(fsync sync);
 use File::Compare;
 
 my $num_args = $#ARGV + 1;
@@ -29,8 +30,9 @@ foreach my $command (@commands) {
   #my $shcmd = "time $command $command_args > $outfile 2>&1";
   my $shcmd = "time $command $command_args > $outfile";
   print $shcmd."\n";
-  system($shcmd);
-  system("echo \"Printing $outfile . . .\" && cat $outfile");
+  #system($shcmd);
+  #sync();
+  system("$shcmd && echo \"Printing $outfile . . .\" && cat $outfile");
   $i++;
 }
 
