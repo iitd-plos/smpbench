@@ -12,6 +12,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include "config-host.h"
 #define memcpy mymemcpy
 
 enum { ht_num_primes = 28 };
@@ -298,7 +299,7 @@ main ()
   seqlen = 0;
   nothree = 1;
 
-  f = fopen("Results/knucleotide-input.txt", "r");
+  f = fopen(SRC_DIR "/cint/data/knucleotide-input.txt", "r");
   if (f == NULL) return 2;
 
   while (nothree && fgets (line, 255, f))
