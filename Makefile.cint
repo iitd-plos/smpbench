@@ -93,13 +93,13 @@ cint/count_ones32.clang36.O3.i386.o: cint/count_ones32.c
 cint/count_ones32.clang36.O3.i386: cint/count_ones32.clang36.O3.i386.o
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
-cint/count_ones32.c.O0.bc: cint/count_ones32.c
-	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
-	opt-3.6 -mem2reg -o $@ $@.tmp
-cint/count_ones32.bc.O0: cint/count_ones32.c.O0.bc
-	llvm-link-3.6 $^ -o $@
-cint/count_ones32.bc.O0.s: cint/count_ones32.bc.O0
-	llvm-dis-3.6 < $< > $@
+#cint/count_ones32.c.O0.bc: cint/count_ones32.c
+#	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+#	opt-3.6 -mem2reg -o $@ $@.tmp
+#cint/count_ones32.bc.O0: cint/count_ones32.c.O0.bc
+#	llvm-link-3.6 $^ -o $@
+#cint/count_ones32.bc.O0.s: cint/count_ones32.bc.O0
+#	llvm-dis-3.6 < $< > $@
 
 
 cint/%.gcc48.O0.i386.o: cint/%.c
@@ -206,7 +206,13 @@ cint/%.c.O0.bc: cint/%.c
 cint/%.bc.O0: cint/%.c.O0.bc cint/ctests_helper.c.O0.bc
 	llvm-link-3.6 $^ -o $@
 
-cint/%.bc.O0.s: cint/%.bc.O0
+cint/%.bc.O2: cint/%.bc.O0
+	opt-3.6 -O2 -o $@ $<
+
+cint/%.bc.O3: cint/%.bc.O0
+	opt-3.6 -O3 -o $@ $<
+
+cint/%.s: cint/%
 	llvm-dis-3.6 < $< > $@
 
 %.gcc.O0.ppc: %.c

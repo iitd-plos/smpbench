@@ -29,9 +29,9 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 
 CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
-CINT_PROG_NAMES= emptyloop fibo_recursive fibo_recursive2 fibo_iter bubsort mergesort quicksort link_list_search binarytrees chomp fannkuch fib lists nsievebits knucleotide nsieve qsort sha1 vmach aes sha3 siphash24 #failures start at aes
+CINT_PROG_NAMES= emptyloop fibo_recursive fibo_recursive2 fibo_iter bubsort mergesort quicksort link_list_search binarytrees chomp fannkuch fib lists nsievebits knucleotide nsieve qsort sha1 vmach aes
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
-#TAKES TOO LONG: aes
+#USES UINT64: sha3 siphash24
 CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
 CINT_PROGS_GCC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_CLANG=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
@@ -60,6 +60,8 @@ CINT_CCOMP_O2_PROGS = $(addsuffix .ccomp.O2, $(CINT_PROGS_CCOMP))
 CINT_CCOMP_O0_PROGS = $(addsuffix .ccomp.O0, $(CINT_PROGS_CCOMP))
 #CINT_BC_O0_PROGS = $(addsuffix .bc.O0, $(CINT_PROGS))  $(addsuffix .bc.O0.s, $(CINT_PROGS_CCOMP))
 CINT_BC_O0_PROGS = $(addsuffix .bc.O0, $(CINT_PROGS))
+CINT_BC_O2_PROGS = $(addsuffix .bc.O2, $(CINT_PROGS))
+CINT_BC_O3_PROGS = $(addsuffix .bc.O3, $(CINT_PROGS))
 CINT_I386_HOSTGCC4_8_O0_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O0_PROGS))
 CINT_I386_HOSTGCC4_8_O2_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O2_PROGS))
 CINT_I386_HOSTGCC4_8_O3_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O3_PROGS))
@@ -106,6 +108,8 @@ CINT_I386_PROGS = \
   $(CINT_I386_CLANG3_6_O2_PROGS) \
   $(CINT_I386_CLANG3_6_O3_PROGS) \
   $(CINT_BC_O0_PROGS) \
+  $(CINT_BC_O2_PROGS) \
+  $(CINT_BC_O3_PROGS) \
   $(CINT_I386_ASPROGS) \
   #$(CINT_GCC_O0_PROGS) \
   #$(CINT_I386_ICC_O0_PROGS) \
@@ -114,7 +118,8 @@ CINT_I386_PROGS = \
   #$(CINT_I386_CCOMP_O0_PROGS) \
   #$(CINT_I386_CCOMP_O2_PROGS) \
 
-CINT_LLVM_PROGS = $(CINT_LLVM_ASPROGS) $(CINT_BC_O0_PROGS)
+CINT_BC_PROGS = $(CINT_BC_O0_PROGS) $(CINT_BC_O2_PROGS) $(CINT_BC_O3_PROGS)
+CINT_LLVM_PROGS = $(CINT_LLVM_ASPROGS) $(CINT_BC_PROGS)
 
 
 CINT_MSP430_PROGS = \
@@ -132,6 +137,10 @@ RESET=`tput sgr0`
 
 %.bc.O0.s: %.bc.O0
 	llvm-dis-3.6 < $< > $@
+%.bc.O2.s: %.bc.O2
+	llvm-dis-3.6 < $< > $@
+%.bc.O3.s: %.bc.O3
+	llvm-dis-3.6 < $< > $@
 
 .PHONY: superopt_test superopt_test_as
 #superopt_test_as: $(CINT_LLVM_ASPROGS)
@@ -141,7 +150,7 @@ RESET=`tput sgr0`
 #	  (perl $(SRCDIR)/misc/compare_commands.pl $$llvm_prog "$(LLI) $$llvm_prog" "$$llvm_prog.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
 #	done
 
-superopt_test: $(CINT_BC_O0_PROGS) $(CINT_I386_PROGS)
+superopt_test: $(CINT_BC_PROGS) $(CINT_I386_PROGS)
 	python $(SRCDIR)/misc/superopt_test.py $(CINT_PROGS) > superopt_test.cmds
 	parallel -j $(NPROCS) :::: superopt_test.cmds
 	#for llvm_prog in $(CINT_PROGS) ; do \
