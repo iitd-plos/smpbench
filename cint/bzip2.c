@@ -343,7 +343,7 @@ void spec_initbufs();
 void spec_compress(int in, int out, int level);
 void spec_uncompress(int in, int out, int level);
 int spec_init ();
-int spec_random_load (int fd);
+//int spec_random_load (int fd);
 int spec_load (int num, char *filename, int size);
 int spec_read (int fd, unsigned char *buf, int size);
 int spec_getc (int fd);
@@ -4270,7 +4270,7 @@ void spec_initbufs();
 void spec_compress(int in, int out, int level);
 void spec_uncompress(int in, int out, int level);
 int spec_init ();
-int spec_random_load (int fd);
+//int spec_random_load (int fd);
 int spec_load (int num, char *filename, int size);
 int spec_read (int fd, unsigned char *buf, int size);
 int spec_getc (int fd);
@@ -4357,6 +4357,7 @@ int spec_init () {
     return 0;
 }
 
+#if 0
 int spec_random_load (int fd) {
     /* Now fill up the first chunk with random data, if this data is truly
        random then we will not get much of a boost out of it */
@@ -4385,6 +4386,7 @@ int spec_random_load (int fd) {
     spec_fd[fd].len = 1024*1024;
     return 0;
 }
+#endif
 
 int spec_load (int num, char *filename, int size) {
 #define FILE_CHUNK (128*1024)
