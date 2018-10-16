@@ -1385,9 +1385,9 @@ void sendMTFValues ( void )
 
          if (verbosity >= 3)
             fprintf ( stderr, 
-                      "      initial group %d, [%d .. %d], has %d syms (%4.1f%%)\n",
-                              nPart, gs, ge, aFreq, 
-                              (100.0 * (float)aFreq) / (float)nMTF );
+                      "      initial group %d, [%d .. %d], has %d syms\n",
+                              nPart, gs, ge, aFreq/*, 
+                              (100.0 * (float)aFreq) / (float)nMTF */);
  
          for (v = 0; v < alphaSize; v++)
             if (v >= gs && v <= ge) 
@@ -2415,8 +2415,8 @@ void doReversibleTransformation ( void )
    sortIt ();
 
    if (verbosity >= 3)
-      fprintf ( stderr, "      %d work, %d block, ratio %5.2f\n",
-                        workDone, last, (float)workDone / (float)(last) );
+      fprintf ( stderr, "      %d work, %d block\n",
+                        workDone, last);
 
    if (workDone > workLimit && firstAttempt) {
       if (verbosity >= 2)
@@ -2427,8 +2427,8 @@ void doReversibleTransformation ( void )
       firstAttempt = False;
       sortIt();
       if (verbosity >= 3)
-         fprintf ( stderr, "      %d work, %d block, ratio %f\n",
-                           workDone, last, (float)workDone / (float)(last) );
+         fprintf ( stderr, "      %d work, %d block\n",
+                           workDone, last);
    }
 
    origPtr = -1;
@@ -2967,11 +2967,8 @@ void compressStream ( FILE *stream, FILE *zStream )
    if (bytesOut == 0) bytesOut = 1;
 
    if (verbosity >= 1)
-      fprintf ( stderr, "%6.3f:1, %6.3f bits/byte, "
-                        "%5.2f%% saved, %d in, %d out.\n",
-                (float)bytesIn / (float)bytesOut,
-                (8.0 * (float)bytesOut) / (float)bytesIn,
-                100.0 * (1.0 - (float)bytesOut / (float)bytesIn),
+      fprintf ( stderr,
+                        "%d in, %d out.\n",
                 bytesIn,
                 bytesOut
               );
@@ -4307,31 +4304,6 @@ struct spec_fd_t {
 } spec_fd[MAX_SPEC_FD];
 
 long int seedi;
-double ran()
-/* See "Random Number Generators: Good Ones Are Hard To Find", */
-/*     Park & Miller, CACM 31#10 October 1988 pages 1192-1201. */
-/***********************************************************/
-/* THIS IMPLEMENTATION REQUIRES AT LEAST 32 BIT INTEGERS ! */
-/***********************************************************/
-#define _A_MULTIPLIER  16807L
-#define _M_MODULUS     2147483647L /* (2**31)-1 */
-#define _Q_QUOTIENT    127773L     /* 2147483647 / 16807 */
-#define _R_REMAINDER   2836L       /* 2147483647 % 16807 */
-{
-	long lo;
-	long hi;
-	long test;
-
-	hi = seedi / _Q_QUOTIENT;
-	lo = seedi % _Q_QUOTIENT;
-	test = _A_MULTIPLIER * lo - _R_REMAINDER * hi;
-	if (test > 0) {
-		seedi = test;
-	} else {
-		seedi = test + _M_MODULUS;
-	}
-	return ( (float) seedi / _M_MODULUS);
-}
 
 
 int spec_init () {
