@@ -29,7 +29,7 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 
 CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
-CINT_PROG_NAMES= emptyloop fibo_iter bubsort mergesort quicksort link_list_search binarytrees chomp fannkuch fib lists nsievebits nsieve qsort vmach bzip2
+CINT_PROG_NAMES= emptyloop fibo_iter bubsort mergesort quicksort link_list_search binarytrees chomp fannkuch fib lists nsievebits nsieve qsort vmach #bzip2
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
 #USES UINT64: sha3 siphash24
 #aes2.O2: need to model llvm intrinsic function llvm.lifetime*
@@ -158,7 +158,7 @@ RESET=`tput sgr0`
 #	  (perl $(SRCDIR)/misc/compare_commands.pl $$llvm_prog "$(LLI) $$llvm_prog" "$$llvm_prog.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
 #	done
 
-superopt_test: $(CINT_BC_PROGS) $(CINT_I386_PROGS)
+superopt_test: $(CINT_BC_PROGS) $(CINT_ETFG_PROGS) $(CINT_I386_PROGS)
 	python $(SRCDIR)/misc/superopt_test.py $(CINT_PROGS) > superopt_test.cmds
 	parallel -j $(NPROCS) :::: superopt_test.cmds
 	#for llvm_prog in $(CINT_PROGS) ; do \
@@ -167,6 +167,9 @@ superopt_test: $(CINT_BC_PROGS) $(CINT_I386_PROGS)
 	#  (perl $(SRCDIR)/misc/compare_commands.pl "$(LLI) $$llvm_prog.bc.O0" "$$llvm_prog.gcc48.O3.i386" "$$llvm_prog.bc.O0.i386" "" && echo "$$llvm_prog $(GREEN)passed$(RESET)") || echo "$$llvm_prog $(RED)FAILED$(RESET)"; \
 	#done
 
+harvest_all: $(CINT_BC_PROGS) $(CINT_I386_PROGS)
+	python $(SRCDIR)/misc/harvest_all.py $(CINT_PROGS) > harvest_all.cmds
+	parallel -j $(NPROCS) :::: harvest_all.cmds
 
 
 cint-msp430: $(CINT_MSP430_PROGS)

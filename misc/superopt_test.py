@@ -11,6 +11,7 @@ color_red="`tput bold; tput setaf 1`"
 color_green="`tput bold; tput setaf 2`"
 color_reset="`tput sgr0`"
 opts = ["O0", "O2", "O3"]
+#opts = ["O0"]
 
 #num_cpus = multiprocessing.cpu_count()
 cint_progs = []
@@ -26,7 +27,7 @@ for cp in cint_progs:
   #print(cint_prog)
   cmd = "/bin/true && (/bin/true"
   for opt in opts:
-    cmd = cmd + " | ("
+    cmd = cmd + " && ("
     cmd = cmd + llvm2tfg_build_dir + "/bin/llvm2tfg " + cint_prog + ".bc." + opt + " -o " + cint_prog + ".bc." + opt + ".etfg";
     cmd = cmd + " && " + "rm -f " + cint_prog + ".bc." + opt + ".i386";
     cmd = cmd + " && " + superopt_dir + "/build/etfg_i386/codegen " + cint_prog + ".bc." + opt + ".etfg -o " + cint_prog + ".bc." + opt + ".i386";
