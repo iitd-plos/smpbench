@@ -23,6 +23,8 @@ cint_progs.pop(0)
 #print("num_cpus = ", num_cpus)
 for cp in cint_progs:
   name = os.path.basename(cp)
+  if name == "ctests":
+    continue
   cint_prog = os.path.abspath(build + "/" + cp)
   #print(cint_prog)
   cmd = "/bin/true && (/bin/true"
@@ -30,7 +32,7 @@ for cp in cint_progs:
     cmd = cmd + " && ("
     cmd = cmd + llvm2tfg_build_dir + "/bin/llvm2tfg " + cint_prog + ".bc." + opt + " -o " + cint_prog + ".bc." + opt + ".etfg";
     cmd = cmd + " && " + "rm -f " + cint_prog + ".bc." + opt + ".i386";
-    cmd = cmd + " && " + superopt_dir + "/build/etfg_i386/codegen " + cint_prog + ".bc." + opt + ".etfg -o " + cint_prog + ".bc." + opt + ".i386";
+    cmd = cmd + " && " + superopt_dir + "/build/etfg_i386/codegen " + cint_prog + ".bc." + opt + ".etfg -o " + cint_prog + ".bc." + opt + ".i386" + " -l " + cint_prog + ".bc." + opt + ".rewrite.log";
     cmd = cmd + ")"
   cmd = cmd + ")"
   #cmd = cmd + " && " + "(perl " + srcdir + "/misc/compare_commands.pl " + name + " \"" + lli + " " + cint_prog + ".bc.O0\" \"" + cint_prog + ".gcc48.O3.i386\" \"" + cint_prog + ".bc.O0.i386\" \"\" && echo \"" + cint_prog  + " " + color_green + "passed" + color_reset + "\") || echo \"" + cint_prog + " " + color_red + "FAILED" + color_reset + "\""
