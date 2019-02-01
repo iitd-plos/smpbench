@@ -435,6 +435,7 @@ __attribute__((noinline)) void init_perm1(Aint* perm1, int n)
   int i;
   for( i=0 ; i<n ; ++i ) perm1[i] = i;	/* initial (trivial) permu */
 }
+
 void print_perm(Aint* perm1, int n, int* didpr)
 {
     Int		i;
@@ -444,13 +445,14 @@ void print_perm(Aint* perm1, int n, int* didpr)
 	    ++*didpr;
 	}
 }
+
 void copy_perm(Aint* perm1, Aint* perm, int n)
 {
     int i;
 	    for( i=1 ; i<n ; ++i ) {	/* perm = perm1 */
 		perm[i] = perm1[i];
 	    }
-}    
+}
 
 void reverse_perm(Aint* perm1, Aint* perm, long *flips)
 {
@@ -470,7 +472,7 @@ void reverse_perm(Aint* perm1, Aint* perm, long *flips)
 		j=perm[k]; perm[k]=k ; k=j;
 	    }while( k );
 }
-  
+
 __attribute__((noinline)) int next_perm(int n, int* r, Aint* perm1, Aint* count)
 {
   Aint i, k;
@@ -627,7 +629,7 @@ static unsigned long ht_prime_list[ht_num_primes] = {
     1543ul,       3079ul,       6151ul,      12289ul,     24593ul,
     49157ul,      98317ul,      196613ul,    393241ul,    786433ul,
     1572869ul,    3145739ul,    6291469ul,   12582917ul,  25165843ul,
-    50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul, 
+    50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul,
     1610612741ul, 3221225473ul, 4294967291ul
 };
 
@@ -1197,10 +1199,10 @@ Primes up to  1280000    98610
 #include <string.h>
 
 void quicksort(int lo, int hi, int base[])
-{ 
+{
   int i,j;
   int pivot,temp;
-    
+
   if (lo<hi)
   {
     for (i=lo,j=hi,pivot=base[hi];i<j;)
@@ -1215,20 +1217,20 @@ void quicksort(int lo, int hi, int base[])
 }
 
 int quicksort_char(int lo, int hi, char base[])
-{ 
+{
   int i,j;
   char pivot,temp;
   //base = 0;
-    
+
   if (lo<hi)
   {
     for (i=lo,j=hi,pivot=base[hi];i<j;)
     {
       while (i<hi && base[i]<=pivot) i++;
       while (j>lo && base[j]>=pivot) j--;
-      if (i<j) 
-      { 
-        temp=base[i]; base[i]=base[j]; base[j]=temp; 
+      if (i<j)
+      {
+        temp=base[i]; base[i]=base[j]; base[j]=temp;
       }
     }
     temp=base[i]; base[i]=base[hi]; base[hi]=temp;
@@ -1457,7 +1459,7 @@ void do_test(unsigned char * txt, unsigned char * expected_output)
   SHA1_add_data(&ctx, txt, strlen((char *) txt));
   SHA1_finish(&ctx, output);
   ok = memcmp(output, expected_output, 20) == 0;
-  printf("Test `%s': %s\n", 
+  printf("Test `%s': %s\n",
          (char *) txt, (ok ? "passed" : "FAILED"));
 }
 
@@ -1476,7 +1478,7 @@ unsigned char test_output_1[20] =
 { 0xA9, 0x99, 0x3E, 0x36, 0x47, 0x06, 0x81, 0x6A, 0xBA, 0x3E ,
   0x25, 0x71, 0x78, 0x50, 0xC2, 0x6C, 0x9C, 0xD0, 0xD8, 0x9D };
 
-unsigned char test_input_2[] = 
+unsigned char test_input_2[] =
   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
 
 unsigned char test_output_2[20] =
@@ -1493,7 +1495,7 @@ void do_bench(int nblocks)
 
   for (i = 0; i < 64; i++) data[i] = i;
   SHA1_init(&ctx);
-  for (; nblocks > 0; nblocks--) 
+  for (; nblocks > 0; nblocks--)
     SHA1_add_data(&ctx, data, 64);
   SHA1_finish(&ctx, output);
 }
@@ -1785,6 +1787,15 @@ void sum_all_globals(int n) {
   }
 }
 
+void memcpy_2D(int row, int col, int*restrict src, int*restrict dst) {
+  int i, j;
+  for (i = 0; i < row; i++) {
+    for (j = 0; j < col; j++) {
+      dst[i*col+j] = src[i*col+j];
+    }
+  }
+}
+
 /*
 int int16_add(int a, int b, int c, int d, int e, int f, int g, int h,
     int i, int j, int k, int l, int m, int n, int o, int p)
@@ -2047,16 +2058,16 @@ __attribute__((noinline)) int init_new(int n)
 {
   int i;
   sum_new = 1;
-  for( i=0 ; i<10 ; i++ )  sum_new += sum_new;	
+  for( i=0 ; i<10 ; i++ )  sum_new += sum_new;
   return sum_new;
 }
 
-char array_2D[5][5] = {{1, 2, 3, 4, 5},
+int array_2D[5][5] = {{1, 2, 3, 4, 5},
                       {6, 7, 8, 9, 10},
                       {11, 12, 13, 14, 15},
                       {16, 17, 18, 19, 20},
                       {21, 22, 23, 24, 25}
-		     };  
+		     };
 
 __attribute__((noinline)) int add_2D_arr(int row, int col)
 {
@@ -2069,27 +2080,61 @@ __attribute__((noinline)) int add_2D_arr(int row, int col)
   return 1;
 }
 
+#define N 32
+#define M 32
 
-int g[144]; int avg=0; 
-__attribute__((noinline)) void array_average( ) 
+/* will fail with sketching because the guess `symbol + i*5` will have to be related to x86 reg (arity = 3) which is not possible with sketching */
+void init_array (int n, int m, int path[N][M])
+{
+  int i, j;
+
+  for (i = 0; i < n; i++)
+    for (j = 0; j < m; j++)
+      path[i][j] = ((i+1)*(j+1))/* / n*/;
+}
+
+void init_array_ptr (int n, int m, int** path)
+{
+  int i, j;
+
+  for (i = 0; i < n; i++)
+    for (j = 0; j < m; j++) {
+      path[i][j] = ((i+1)*(j+1))/* / n*/;
+    }
+}
+
+/* is failing with sketching because the guess `symbol + i*5` will have to be related to x86 reg (arity = 3) which is not possible with sketching */
+__attribute__((noinline)) int init_2D_arr(int row, int col)
+{
+  int i,j;
+  for(i=0; i< row; i++)
+  {
+    for(j=0; j< col; j++)
+      array_2D[i][j] = i+j;
+  }
+  return 1;
+}
+
+int g[144]; int avg=0;
+__attribute__((noinline)) void array_average( )
 {
 int *ptr = g; int sum =0;
 int i;
 for(i = 0; i < 144; i++,ptr++)
   sum = sum + *ptr;
 
-avg = sum/144; 
+avg = sum/144;
 }
 
 int x,y;
 __attribute__((noinline)) void ddai(int n)
 {
-x=0; y=0; 
-int i=0; 
+x=0; y=0;
+int i=0;
 while (i < n)
-{ 
-  y = y+1; 
-  x = x+y; 
+{
+  y = y+1;
+  x = x+y;
   i++;
 }
 }
@@ -2098,26 +2143,26 @@ int lerner1a(int x, int n)
 {
   int i, k = 0;
   for (i=0; i!=n; ++i)
-  { 
-    x += k*5; 
+  {
+    x += k*5;
     k += 1;
-    if (i >= 5) 
+    if (i >= 5)
       k += 3;
-  } 
-  return x; 
+  }
+  return x;
 }
 
 int lerner1b(int x, int n)
 {
   int i, k = 0;
   for (i=0; i!=n; ++i)
-  { 
-    x += k; 
+  {
+    x += k;
     k += 5;
-    if (i >= 5) 
+    if (i >= 5)
       k += 15;
-  } 
-  return x; 
+  }
+  return x;
 }
 
 int sum_ler_3b3c;
@@ -2125,7 +2170,7 @@ int lerner3b( )
 {
   int i,j;
   int sum =0;
-  for (i = 0; i < 10; i++) 
+  for (i = 0; i < 10; i++)
   {
     for (j = 0; j < 10; j++)
     {
@@ -2138,7 +2183,7 @@ int lerner3b( )
 int lerner3c( )
 {
   int i,j;
-  for (i = 0; i < 10; i++) 
+  for (i = 0; i < 10; i++)
   {
     for (j = 0; j < 10; j++)
     {
@@ -2160,17 +2205,17 @@ int main()
   sum_positive_globals(100);
   sum_positive_arg(sum_positive_g, 144);
   sum_all_globals(100);
-  int ret =  
+  int ret =
         main_ddec() +
-        main_chomp() + main_fannkuch(atoi("0"), (char **)atoi("0")) + 
-        main_knucleotide() + 
-        main_lists(atoi("0"), (char **)atoi("0")) + 
-        main_nsievebits(atoi("0"), (char **)atoi("0")) + 
-        main_nsieve(atoi("0"), (char **)atoi("0")) + 
-        main_qsort(atoi("0"), (char **)atoi("0")) + 
-        main_sha1(atoi("0"), (char **)atoi("0")) + 
-        nested_loops2_1(atoi("100"), atoi("100")) + nested_loops2(atoi("100")) + 
-        nested_loops3(atoi("100"), atoi("100"), a, b) + 
+        main_chomp() + main_fannkuch(atoi("0"), (char **)atoi("0")) +
+        main_knucleotide() +
+        main_lists(atoi("0"), (char **)atoi("0")) +
+        main_nsievebits(atoi("0"), (char **)atoi("0")) +
+        main_nsieve(atoi("0"), (char **)atoi("0")) +
+        main_qsort(atoi("0"), (char **)atoi("0")) +
+        main_sha1(atoi("0"), (char **)atoi("0")) +
+        nested_loops2_1(atoi("100"), atoi("100")) + nested_loops2(atoi("100")) +
+        nested_loops3(atoi("100"), atoi("100"), a, b) +
         quicksort_char(atoi("0"), atoi("100"), a) +
         peeling_src(atoi("1")) +
         peeling_dst(atoi("0")) +
@@ -2182,7 +2227,7 @@ int main()
         int5_add(3, 4, 5, 6, 7) + int6_add(3, 4, 5, 6, 7, 8) +
         int7_add(3, 4, 5, 6, 7, 8, 9) + int8_add(3, 4, 5, 6, 7, 8, 9, 10) +
         main_foo() +
-        sum_positive_sum + 
+        sum_positive_sum +
         add_2D_arr(5,5)
         //int16_add(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
         /*aliasing_example(100) +

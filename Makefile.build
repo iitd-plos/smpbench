@@ -6,7 +6,7 @@ NPROCS:=$(shell grep -c ^processor /proc/cpuinfo)
 
 
 TARS_DIR=$(SRCDIR)/../tars
-ITERS?=1 2 #3 4 5 6 7 8 
+ITERS?=1 2 #3 4 5 6 7 8
 
 LINUX=linux-2.6.36.4
 PFSCAN=pfscan-1.0
@@ -120,10 +120,10 @@ CINT_I386_PROGS = \
   $(CINT_BC_O2_PROGS) \
   $(CINT_BC_O3_PROGS) \
   $(CINT_I386_ASPROGS) \
+  $(CINT_I386_ICC_O0_PROGS) \
+  $(CINT_I386_ICC_O2_PROGS) \
+  $(CINT_I386_ICC_O3_PROGS) \
   #$(CINT_GCC_O0_PROGS) \
-  #$(CINT_I386_ICC_O0_PROGS) \
-  #$(CINT_I386_ICC_O2_PROGS) \
-  #$(CINT_I386_ICC_O3_PROGS) \
   #$(CINT_I386_CCOMP_O0_PROGS) \
   #$(CINT_I386_CCOMP_O2_PROGS) \
 
@@ -145,11 +145,11 @@ GREEN=`tput bold; tput setaf 2`
 RESET=`tput sgr0`
 
 %.bc.O0.s: %.bc.O0
-	llvm-dis-3.6 < $< > $@
+	$(LLVM_DIS) < $< > $@
 %.bc.O2.s: %.bc.O2
-	llvm-dis-3.6 < $< > $@
+	$(LLVM_DIS) < $< > $@
 %.bc.O3.s: %.bc.O3
-	llvm-dis-3.6 < $< > $@
+	$(LLVM_DIS) < $< > $@
 
 .PHONY: superopt_test superopt_test_as
 #superopt_test_as: $(CINT_LLVM_ASPROGS)
@@ -344,7 +344,7 @@ pbzip2_build: $(PBZIP2)/pbzip2
 $(PBZIP2)/pbzip2: $(TARS_DIR)/$(PBZIP2).tar.gz
 	tar xzf $(TARS_DIR)/$(PBZIP2).tar.gz && cd $(PBZIP2) && make && cd ..
 
-pfscan_run:: $(PFSCAN)/pfscan mytime $(RANDOM_FILES) 
+pfscan_run:: $(PFSCAN)/pfscan mytime $(RANDOM_FILES)
 	n=1 ; while [[ $$n -le $(NTHREADS) ]]; do \
 	  echo "nthreads=$$n" >> $(build)/profile.results; \
 	  for i in $(ITERS); do ./mytime pfscan.$$n $(PFSCAN)/pfscan -n $$n foobar $(RANDOM_FILES); done; \
