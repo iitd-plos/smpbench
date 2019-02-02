@@ -1796,6 +1796,41 @@ void memcpy_2D(int row, int col, int*restrict src, int*restrict dst) {
   }
 }
 
+void memcpy_v0(int size, int*restrict src, int*restrict dst)
+{
+  int i;
+  for (i = 0; i < size; i++) {
+    dst[i] = src[i];
+  }
+}
+
+#define N 32
+#define M 32
+
+int gsrc[N][M];
+void memset_v0(int row, int col, int c)
+{
+  int i, j;
+  for (i = 0; i < row; i++) {
+    for (j = 0; j < col; ++j) {
+      gsrc[i][j] = c;
+    }
+  }
+}
+
+
+int gdst[N][M];
+void memcpy_v1(int row, int col)
+{
+  int i, j;
+  for (i = 0; i < row; i++) {
+    for (j = 0; j < col; ++j) {
+      gdst[i][j] = gsrc[i][j];
+    }
+  }
+}
+
+
 /*
 int int16_add(int a, int b, int c, int d, int e, int f, int g, int h,
     int i, int j, int k, int l, int m, int n, int o, int p)
