@@ -1757,7 +1757,8 @@ int int8_add(int a, int b, int c, int d, int e, int f, int g, int h)
 
 int sum_positive_g[144];
 int sum_positive_sum = 0;
-int sum_positive_const = 123;
+int const sum_positive_const = 123;
+// without const eq just fails -- but last commit which removed it said llvm2tfg cannot handle `const`s.  What to do?
 
 void sum_positive_globals(int n) {
   int *ptr = sum_positive_g;
