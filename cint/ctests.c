@@ -669,11 +669,11 @@ struct ht_node *ht_node_create(char *key) {
     struct ht_node *node;
     if ((node = (struct ht_node *)mymalloc(sizeof(struct ht_node))) == 0) {
 	perror("malloc ht_node");
-	exit(1);
+	myexit(1);
     }
     if ((newkey = (char *)mystrdup(key)) == 0) {
 	perror("strdup newkey");
-	exit(1);
+	myexit(1);
     }
     node->key = newkey;
     node->val = 0;
@@ -1161,6 +1161,19 @@ unsigned int nsievebits(int m) {
     myfree(flags);
     return count;
 }
+
+/* #define NITER 2 */
+/* int main_nsieve(int argc, char * argv[]) { */
+/*   int m = argc < 2 ? 9 : atoi(argv[1]); */
+/*   int i, j; */
+/*   for (i = 0; i < 3; i++) { */
+/*     int n = 10000 << (m-i); */
+/*     unsigned count; */
+/*     for (j = 0; j < NITER; j++) { count = nsieve(n); } */
+/*     printf("Primes up to %8d %8u\n", n, count); */
+/*   } */
+/*   return 0; */
+/* } */
 
 int main_nsieve(int argc, char * argv[]) {
     int m = argc < 2 ? 9 : atoi(argv[1]);
@@ -1808,6 +1821,31 @@ void memcpy_v0(int size, int*restrict src, int*restrict dst)
 #define N 32
 #define M 32
 
+struct T {
+  char s[273];
+  int i;
+} S[N];
+void memset_v1(int row, int c)
+{
+  int i, j;
+  for (i = 0; i < row; i++) {
+    S[i].i = c;
+  }
+}
+struct T S2[N][M];
+void memset2D_v1(int row, int col, int c)
+{
+  int i, j;
+  for (i = 0; i < row; i++) {
+    for (j = 0; j < col; ++j) {
+      S2[i][j].i = c;
+    }
+  }
+}
+
+#define N 32
+#define M 32
+
 int gsrc[N][M];
 void memset_v0(int row, int col, int c)
 {
@@ -1819,6 +1857,18 @@ void memset_v0(int row, int col, int c)
   }
 }
 
+int g3[N][M][N];
+void memset3D_v0(int row, int col, int ind, int c)
+{
+  int i, j, k;
+  for (i = 0; i < row; i++) {
+    for (j = 0; j < col; ++j) {
+      for (k = 0; k < ind; ++k) {
+        g3[i][j][k] = c;
+      }
+    }
+  }
+}
 
 int gdst[N][M];
 void memcpy_v1(int row, int col)
