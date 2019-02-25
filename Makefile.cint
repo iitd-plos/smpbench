@@ -24,6 +24,7 @@ CLANG_I386_EQCHECKER_FLAGS= -m32 -g -std=c11 -fno-inline -fno-inline-functions -
 #GCC_PPC=$(CROSSTOOL_PPC_BIN)/powerpc-405-linux-gnu-gcc
 GCC_PPC=powerpc-linux-gnu-gcc
 GCC_X86=gcc
+GCC_I386=gcc -m32
 #GCC_I386=$(CROSSTOOL_I386_BIN)/i686-unknown-linux-gnu-gcc $(GCC_I386_FLAGS)
 HOSTGCC_I386=gcc $(GCC_I386_FLAGS)
 HOSTGCC4_4_I386=gcc-4.4 $(GCC_I386_FLAGS)
@@ -46,12 +47,12 @@ LD_I386_SYSTEM=/usr/bin/ld -melf_i386
 AS_PPC_SYSTEM=$(AS_PPC)
 LD_PPC_SYSTEM=$(LD_PPC)
 
-#CLANG_I386=$(SRCDIR)/misc/clang32 $(CLANG_I386_OPTS)
+#CLANG32_I386=$(SRCDIR)/misc/clang32 $(CLANG_I386_OPTS)
 #CLANG3_3_I386=$(SRCDIR)/misc/clang32 -v3.3 $(CLANG_I386_OPTS)
 #CLANG3_4_I386=$(SRCDIR)/misc/clang32 -v3.4 $(CLANG_I386_OPTS)
 #CLANG3_5_I386=$(SRCDIR)/misc/clang32 -v3.5 $(CLANG_I386_OPTS)
 #CLANG3_6_I386=$(SRCDIR)/misc/clang32 -v3.6 $(CLANG_I386_OPTS)
-CLANG3_6_I386=/usr/bin/clang-3.6 $(CLANG_I386_EQCHECKER_FLAGS)
+#CLANG_I386=/usr/bin/clang -m32
 
 ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c11 -ffreestanding -U__GNUC__
 
@@ -200,20 +201,20 @@ cint/%.ccomp.O2.i386: cint/%.ccomp.O2.i386.o cint/ctests_helper.ccomp.O2.i386.o
 
 
 cint/%.c.O0.bc: cint/%.c
-	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
-	opt-3.6 -mem2reg -o $@ $@.tmp
+	CLANG_REVERSE_ARGS=1 $(CLANG3_6_I386) $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	$(OPT3_6) -mem2reg -o $@ $@.tmp
 
 cint/%.bc.O0: cint/%.c.O0.bc cint/ctests_helper.c.O0.bc
-	llvm-link-3.6 $^ -o $@
+	$(LLVM_LINK3_6) $^ -o $@
 
 cint/%.bc.O2: cint/%.bc.O0
-	opt-3.6 -O2 -o $@ $<
+	$(OPT3_6) -O2 -o $@ $<
 
 cint/%.bc.O3: cint/%.bc.O0
-	opt-3.6 -O3 -o $@ $<
+	$(OPT3_6) -O3 -o $@ $<
 
 cint/%.s: cint/%
-	llvm-dis-3.6 < $< > $@
+	$(LLVM_DIS3_6) < $< > $@
 
 %.gcc.O0.ppc: %.c
 	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@
@@ -412,5 +413,5 @@ $(CINT_I386_ASPROGS): %.AS.i386: %.i386.s
 	$(LD_I386) -g $@.o -o $@
 
 $(CINT_LLVM_ASPROGS): %.AS.bc: %.ll
-	$(LLVM_AS) $< -o $@
-	$(LLVM_DIS) < $@ > $@.s
+	$(LLVM_AS3_6) $< -o $@
+	$(LLVM_DIS3_6) < $@ > $@.s
