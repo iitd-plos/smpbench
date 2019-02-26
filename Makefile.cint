@@ -52,7 +52,6 @@ LD_PPC_SYSTEM=$(LD_PPC)
 #CLANG3_4_I386=$(SRCDIR)/misc/clang32 -v3.4 $(CLANG_I386_OPTS)
 #CLANG3_5_I386=$(SRCDIR)/misc/clang32 -v3.5 $(CLANG_I386_OPTS)
 #CLANG3_6_I386=$(SRCDIR)/misc/clang32 -v3.6 $(CLANG_I386_OPTS)
-#CLANG_I386=/usr/bin/clang -m32
 
 ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c11 -ffreestanding -U__GNUC__
 
@@ -132,6 +131,28 @@ cint/%.gcc.O0.i386.o: cint/%.c
 cint/%.gcc.O0.i386: cint/%.gcc.O0.i386.o cint/ctests_helper.gcc.O0.i386.o
 	$(GCC_I386) $(CFLAGS) -g -O0 $^ -o $@ $(LIBS)
 
+cint/%.clang.O0.i386.o: cint/%.c
+	$(CLANG_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/ctests_helper.clang.O0.i386.o: cint/ctests_helper.c
+	$(CLANG_I386) -c $(CFLAGS) -g -O0 $< -o $@
+cint/%.clang.O0.i386: cint/%.clang.O0.i386.o cint/ctests_helper.clang.O0.i386.o
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+
+cint/%.clang.O2.i386.o: cint/%.c
+	$(CLANG_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/ctests_helper.clang.O2.i386.o: cint/ctests_helper.c
+	$(CLANG_I386) -c $(CFLAGS) -g -O2 $< -o $@
+cint/%.clang.O2.i386: cint/%.clang.O2.i386.o cint/ctests_helper.clang.O2.i386.o
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
+cint/%.clang.O3.i386.o: cint/%.c
+	$(CLANG_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/ctests_helper.clang.O3.i386.o: cint/ctests_helper.c
+	$(CLANG_I386) -c $(CFLAGS) -g -O3 $< -o $@
+cint/%.clang.O3.i386: cint/%.clang.O3.i386.o cint/ctests_helper.clang.O3.i386.o
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+
+
 cint/%.clang36.O0.i386.o: cint/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/ctests_helper.clang36.O0.i386.o: cint/ctests_helper.c
@@ -201,20 +222,20 @@ cint/%.ccomp.O2.i386: cint/%.ccomp.O2.i386.o cint/ctests_helper.ccomp.O2.i386.o
 
 
 cint/%.c.O0.bc: cint/%.c
-	CLANG_REVERSE_ARGS=1 $(CLANG3_6_I386) $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
-	$(OPT3_6) -mem2reg -o $@ $@.tmp
+	CLANG_REVERSE_ARGS=1 $(CLANG_I386) $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	$(OPT) -mem2reg -o $@ $@.tmp
 
 cint/%.bc.O0: cint/%.c.O0.bc cint/ctests_helper.c.O0.bc
-	$(LLVM_LINK3_6) $^ -o $@
+	$(LLVM_LINK) $^ -o $@
 
 cint/%.bc.O2: cint/%.bc.O0
-	$(OPT3_6) -O2 -o $@ $<
+	$(OPT) -O2 -o $@ $<
 
 cint/%.bc.O3: cint/%.bc.O0
-	$(OPT3_6) -O3 -o $@ $<
+	$(OPT) -O3 -o $@ $<
 
 cint/%.s: cint/%
-	$(LLVM_DIS3_6) < $< > $@
+	$(LLVM_DIS) < $< > $@
 
 %.gcc.O0.ppc: %.c
 	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@
@@ -309,13 +330,6 @@ cint/%.s: cint/%
 
 %.gcc.O3.i386: %.c
 	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
-
-%.clang.O0.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-%.clang.O2.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-%.clang.O3.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 -funroll-loops $< -o $@
 
 %.clang33.O0.i386: %.c
 	$(CLANG3_3_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@

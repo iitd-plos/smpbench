@@ -5,7 +5,7 @@ import os
 execfile("../smpbench-build/config.py")
 superopt_dir = os.path.abspath(srcdir + "/../superopt")
 lli = "lli-3.4"
-llvm2tfg_build_dir = os.path.abspath(srcdir + "/../llvm2tfg-build")
+llvm2tfg_build_dir = os.path.abspath(srcdir + "/../llvm-build")
 
 color_red="`tput bold; tput setaf 1`"
 color_green="`tput bold; tput setaf 2`"

@@ -58,6 +58,9 @@ CINT_GCC_O3_PROGS = $(addsuffix .gcc.O3.i386, $(CINT_PROGS_GCC))
 CINT_HOSTGCC4_8_O0_PROGS = $(addsuffix .gcc48.O0, $(CINT_PROGS_GCC))
 CINT_HOSTGCC4_8_O2_PROGS = $(addsuffix .gcc48.O2, $(CINT_PROGS_GCC))
 CINT_HOSTGCC4_8_O3_PROGS = $(addsuffix .gcc48.O3, $(CINT_PROGS_GCC))
+CINT_CLANG_O0_PROGS = $(addsuffix .clang.O0, $(CINT_PROGS_CLANG))
+CINT_CLANG_O2_PROGS = $(addsuffix .clang.O2, $(CINT_PROGS_CLANG))
+CINT_CLANG_O3_PROGS = $(addsuffix .clang.O3, $(CINT_PROGS_CLANG))
 CINT_CLANG3_6_O0_PROGS = $(addsuffix .clang36.O0, $(CINT_PROGS_CLANG))
 CINT_CLANG3_6_O2_PROGS = $(addsuffix .clang36.O2, $(CINT_PROGS_CLANG))
 CINT_CLANG3_6_O3_PROGS = $(addsuffix .clang36.O3, $(CINT_PROGS_CLANG))
@@ -74,6 +77,9 @@ CINT_BC_O3_PROGS = $(addsuffix .bc.O3, $(CINT_PROGS))
 CINT_I386_HOSTGCC4_8_O0_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O0_PROGS))
 CINT_I386_HOSTGCC4_8_O2_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O2_PROGS))
 CINT_I386_HOSTGCC4_8_O3_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O3_PROGS))
+CINT_I386_CLANG_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG_O0_PROGS))
+CINT_I386_CLANG_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG_O2_PROGS))
+CINT_I386_CLANG_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG_O3_PROGS))
 CINT_I386_CLANG3_6_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O0_PROGS))
 CINT_I386_CLANG3_6_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O2_PROGS))
 CINT_I386_CLANG3_6_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O3_PROGS))
@@ -114,8 +120,8 @@ CINT_I386_PROGS = \
   $(CINT_BC_O3_PROGS) \
   $(CINT_GCC_O0_PROGS) \
   $(CINT_GCC_O3_PROGS) \
-  $(CINT_CLANG_O0_PROGS) \
-  $(CINT_CLANG_O3_PROGS) \
+  $(CINT_I386_CLANG_O0_PROGS) \
+  $(CINT_I386_CLANG_O3_PROGS) \
   $(CINT_I386_ASPROGS) \
   #$(CINT_GCC_O0_PROGS) \
   #$(CINT_I386_ICC_O0_PROGS) \
@@ -150,11 +156,11 @@ GREEN=`tput bold; tput setaf 2`
 RESET=`tput sgr0`
 
 %.bc.O0.s: %.bc.O0
-	$(LLVM_DIS3_6) < $< > $@
+	$(LLVM_DIS) < $< > $@
 %.bc.O2.s: %.bc.O2
-	$(LLVM_DIS3_6) < $< > $@
+	$(LLVM_DIS) < $< > $@
 %.bc.O3.s: %.bc.O3
-	$(LLVM_DIS3_6) < $< > $@
+	$(LLVM_DIS) < $< > $@
 
 .PHONY: superopt_test superopt_test_as
 #superopt_test_as: $(CINT_LLVM_ASPROGS)
