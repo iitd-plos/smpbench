@@ -172,7 +172,7 @@ RESET=`tput sgr0`
 
 superopt_test: $(CINT_BC_PROGS) $(CINT_ETFG_PROGS) $(CINT_I386_PROGS)
 	python $(SRCDIR)/misc/superopt_test.py $(CINT_PROGS) > superopt_test.cmds
-	parallel -j $(NPROCS) :::: superopt_test.cmds
+	parallel --citation -j $(NPROCS) :::: superopt_test.cmds
 	#for llvm_prog in $(CINT_PROGS) ; do \
 	#  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog.bc.O0 -o $$llvm_prog.bc.O0.etfg ; \
 	#  rm -f $$llvm_prog.i386 && $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.bc.O0.etfg -o $$llvm_prog.bc.O0.i386; \
@@ -181,7 +181,7 @@ superopt_test: $(CINT_BC_PROGS) $(CINT_ETFG_PROGS) $(CINT_I386_PROGS)
 
 harvest_all: $(CINT_BC_PROGS) $(CINT_I386_PROGS)
 	python $(SRCDIR)/misc/harvest_all.py $(CINT_PROGS) > harvest_all.cmds
-	parallel -j $(NPROCS) :::: harvest_all.cmds
+	parallel --citation -j $(NPROCS) :::: harvest_all.cmds
 
 
 cint-msp430: $(CINT_MSP430_PROGS)
