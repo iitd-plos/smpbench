@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include <wchar.h>
-#include <stdlib.h>
+//#include <wchar.h>
+//#include <stdlib.h>
 
 //const char interp_section[] __attribute__((section(".interp"))) = "/path/to/dynamic/linker";
 

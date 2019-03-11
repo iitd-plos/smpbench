@@ -78,20 +78,20 @@ cint/count_ones32.gcc48.O3.i386.o: cint/count_ones32.c
 cint/count_ones32.gcc48.O3.i386: cint/count_ones32.gcc48.O3.i386.o
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
-cint/count_ones32.clang36.O0.i386.o: cint/count_ones32.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/count_ones32.clang36.O0.i386: cint/count_ones32.clang36.O0.i386.o
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
-
-cint/count_ones32.clang36.O2.i386.o: cint/count_ones32.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
-cint/count_ones32.clang36.O2.i386: cint/count_ones32.clang36.O2.i386.o
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
-
-cint/count_ones32.clang36.O3.i386.o: cint/count_ones32.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/count_ones32.clang36.O3.i386: cint/count_ones32.clang36.O3.i386.o
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
+#cint/count_ones32.clang36.O0.i386.o: cint/count_ones32.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+#cint/count_ones32.clang36.O0.i386: cint/count_ones32.clang36.O0.i386.o
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@
+#
+#cint/count_ones32.clang36.O2.i386.o: cint/count_ones32.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+#cint/count_ones32.clang36.O2.i386: cint/count_ones32.clang36.O2.i386.o
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@
+#
+#cint/count_ones32.clang36.O3.i386.o: cint/count_ones32.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+#cint/count_ones32.clang36.O3.i386: cint/count_ones32.clang36.O3.i386.o
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@
 
 #cint/count_ones32.c.O0.bc: cint/count_ones32.c
 #	CLANG_REVERSE_ARGS=1 clang-3.6 $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
@@ -153,34 +153,34 @@ cint/%.clang.O3.i386: cint/%.clang.O3.i386.o cint/ctests_helper.clang.O3.i386.o
 	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 
-cint/%.clang36.O0.i386.o: cint/%.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/ctests_helper.clang36.O0.i386.o: cint/ctests_helper.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
-cint/%.clang36.O0.i386: cint/%.clang36.O0.i386.o cint/ctests_helper.clang36.O0.i386.o
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+#cint/%.clang36.O0.i386.o: cint/%.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+#cint/ctests_helper.clang36.O0.i386.o: cint/ctests_helper.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+#cint/%.clang36.O0.i386: cint/%.clang36.O0.i386.o cint/ctests_helper.clang36.O0.i386.o
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
-cint/%.clang36.O2.i386.o: cint/%.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
-cint/ctests_helper.clang36.O2.i386.o: cint/ctests_helper.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
-cint/%.clang36.O2.i386: cint/%.clang36.O2.i386.o cint/ctests_helper.clang36.O2.i386.o
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
-
-cint/%.clang36.O3.i386.o: cint/%.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/ctests_helper.clang36.O3.i386.o: cint/ctests_helper.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
-cint/%.clang36.O3.i386: cint/%.clang36.O3.i386.o cint/ctests_helper.clang36.O3.i386.o
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+#cint/%.clang36.O2.i386.o: cint/%.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+#cint/ctests_helper.clang36.O2.i386.o: cint/ctests_helper.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+#cint/%.clang36.O2.i386: cint/%.clang36.O2.i386.o cint/ctests_helper.clang36.O2.i386.o
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+#
+#cint/%.clang36.O3.i386.o: cint/%.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+#cint/ctests_helper.clang36.O3.i386.o: cint/ctests_helper.c
+#	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+#cint/%.clang36.O3.i386: cint/%.clang36.O3.i386.o cint/ctests_helper.clang36.O3.i386.o
+#	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 
 cint/%.icc.O0.i386.o: cint/%.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+	$(ICC_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/ctests_helper.icc.O0.i386.o: cint/ctests_helper.c
-	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+	$(ICC_I386) -c $(CFLAGS) -g -O0 $< -o $@
 cint/%.icc.O0.i386: cint/%.icc.O0.i386.o cint/ctests_helper.icc.O0.i386.o
-	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
 cint/%.icc.O2.i386.o: cint/%.c
 	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@

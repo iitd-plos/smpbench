@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 
 struct list { int hd; struct list * tl; };
 

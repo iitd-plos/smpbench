@@ -30,9 +30,10 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
 CINT_PROG_NAMES=#ctests
-CINT_PROG_NAMES+= emptyloop fibo_iter bubsort mergesort quicksort link_list_search binarytrees chomp fannkuch fib lists nsievebits nsieve qsort vmach #bzip2
+CINT_PROG_NAMES+= emptyloop fibo_iter bubsort mergesort quicksort link_list_search binarytrees fib lists nsievebits nsieve qsort vmach #bzip2
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
 #USES UINT64: sha3 siphash24
+#USES VECTOR <4 x i32> in O3: fannkuch chomp
 #aes2.O2: need to model llvm intrinsic function llvm.lifetime*
 #sha1.O2: need to model/match instructions of the following type:
 #  %uadd = tail call { i32, i1 } @llvm.uadd.with.overflow.i32(i32 %3, i32 %4)
@@ -61,9 +62,9 @@ CINT_HOSTGCC4_8_O3_PROGS = $(addsuffix .gcc48.O3, $(CINT_PROGS_GCC))
 CINT_CLANG_O0_PROGS = $(addsuffix .clang.O0, $(CINT_PROGS_CLANG))
 CINT_CLANG_O2_PROGS = $(addsuffix .clang.O2, $(CINT_PROGS_CLANG))
 CINT_CLANG_O3_PROGS = $(addsuffix .clang.O3, $(CINT_PROGS_CLANG))
-CINT_CLANG3_6_O0_PROGS = $(addsuffix .clang36.O0, $(CINT_PROGS_CLANG))
-CINT_CLANG3_6_O2_PROGS = $(addsuffix .clang36.O2, $(CINT_PROGS_CLANG))
-CINT_CLANG3_6_O3_PROGS = $(addsuffix .clang36.O3, $(CINT_PROGS_CLANG))
+#CINT_CLANG3_6_O0_PROGS = $(addsuffix .clang36.O0, $(CINT_PROGS_CLANG))
+#CINT_CLANG3_6_O2_PROGS = $(addsuffix .clang36.O2, $(CINT_PROGS_CLANG))
+#CINT_CLANG3_6_O3_PROGS = $(addsuffix .clang36.O3, $(CINT_PROGS_CLANG))
 CINT_ICC_O0_PROGS = $(addsuffix .icc.O0, $(CINT_PROGS_ICC))
 CINT_ICC_O2_PROGS = $(addsuffix .icc.O2, $(CINT_PROGS_ICC))
 CINT_ICC_O3_PROGS = $(addsuffix .icc.O3, $(CINT_PROGS_ICC))
@@ -122,6 +123,8 @@ CINT_I386_PROGS = \
   $(CINT_GCC_O3_PROGS) \
   $(CINT_I386_CLANG_O0_PROGS) \
   $(CINT_I386_CLANG_O3_PROGS) \
+  $(CINT_I386_ICC_O0_PROGS) \
+  $(CINT_I386_ICC_O3_PROGS) \
   $(CINT_I386_ASPROGS) \
   #$(CINT_GCC_O0_PROGS) \
   #$(CINT_I386_ICC_O0_PROGS) \
@@ -172,7 +175,7 @@ RESET=`tput sgr0`
 
 superopt_test: $(CINT_BC_PROGS) $(CINT_ETFG_PROGS) $(CINT_I386_PROGS)
 	python $(SRCDIR)/misc/superopt_test.py $(CINT_PROGS) > superopt_test.cmds
-	parallel --citation -j $(NPROCS) :::: superopt_test.cmds
+	parallel -j $(NPROCS) :::: superopt_test.cmds
 	#for llvm_prog in $(CINT_PROGS) ; do \
 	#  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog.bc.O0 -o $$llvm_prog.bc.O0.etfg ; \
 	#  rm -f $$llvm_prog.i386 && $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.bc.O0.etfg -o $$llvm_prog.bc.O0.i386; \
@@ -181,7 +184,7 @@ superopt_test: $(CINT_BC_PROGS) $(CINT_ETFG_PROGS) $(CINT_I386_PROGS)
 
 harvest_all: $(CINT_BC_PROGS) $(CINT_I386_PROGS)
 	python $(SRCDIR)/misc/harvest_all.py $(CINT_PROGS) > harvest_all.cmds
-	parallel --citation -j $(NPROCS) :::: harvest_all.cmds
+	parallel -j $(NPROCS) :::: harvest_all.cmds
 
 
 cint-msp430: $(CINT_MSP430_PROGS)

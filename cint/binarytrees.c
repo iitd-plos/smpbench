@@ -7,9 +7,9 @@
        icc -O3 -ip -unroll -static binary-trees.c -lm
 */
 
-#include <math.h>
+//#include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 
 
 typedef struct tn {

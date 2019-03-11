@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
 
@@ -31,25 +31,25 @@ main(int argc, char **argv)
     len = atoi(argv[1]);
   }
 
-  long *a = (long *) malloc (len*sizeof(long));
-  long *b = (long *) malloc (len*sizeof(long));
+  unsigned long *a = (unsigned long *) malloc (len*sizeof(unsigned long));
+  unsigned long *b = (unsigned long *) malloc (len*sizeof(unsigned long));
   if (!a || !b) {
     printf("%s(): array allocation of size %d failed.\n", __func__, len);
     return 1;
   }
 
-  int i;
+  unsigned int i;
 
-  srand48 (0x12345678);
+  //srand48 (0x12345678);
 
   for (i = 0; i < len; i++) {
-    a[i] = lrand48();
+    a[i] = (unsigned long)(((unsigned long)i * 4093) % 4091);
   }
 
   if (len <= 10) {
     printf ("Printing Input array:\n");
     for (i = 0; i < len; i++)
-      printf ("a[%d] = %ld\n", i, a[i]);
+      printf ("a[%d] = %lu\n", i, a[i]);
   }
 
   int k,u;
@@ -69,12 +69,12 @@ main(int argc, char **argv)
   if (len <= 10) {
     printf ("Printing Sorted array:\n");
     for (i = 0; i < len; i++) {
-      printf("b[%d] = %ld\n", i, b[i]);
+      printf("b[%d] = %lu\n", i, b[i]);
     }
   }
-  printf("min element = %ld.\n", b[0]);
-  printf("median element = %ld.\n", b[len / 2]);
-  printf("max element = %ld.\n", b[len - 1]);
+  printf("min element = %lu.\n", b[0]);
+  printf("median element = %lu.\n", b[len / 2]);
+  printf("max element = %lu.\n", b[len - 1]);
 
   return 0;
 }
