@@ -25,7 +25,7 @@ define i32 @main() #0 {
   br i1 %7, label %1, label %8
   
 ; <label>:8
-  %9 = getelementptr inbounds [13 x i8]* @.str, i32 0, i32 0
-  call i32 (i8*, ...)* @printf(i8 * %9, i32 %n, i32 %3)
+  %9 = getelementptr inbounds [13 x i8], [13 x i8]* @.str, i32 0, i32 0
+  call i32 (i8*, ...) @printf(i8 *%9, i32 %n, i32 %3)
   ret i32 0
 }

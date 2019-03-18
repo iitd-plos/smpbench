@@ -19,7 +19,7 @@ _fibonacci:
   pushl %ebp
   movl %esp,%ebp
   pushl %esi
-  pushl %edx  /* <-- PUSH TO SAVE BEFORE CLOBBERING */
+  pushl %edi  /* <-- PUSH TO SAVE BEFORE CLOBBERING */
   movl 8(%ebp),%esi
 
   # 0th and 1st numbers are defined to be 1.
@@ -32,7 +32,7 @@ _fibonacci:
   call _fibonacci
 
   addl $4,%esp
-  movl %eax,%edx  # <-- %edx CLOBBERED!
+  movl %eax,%edi  # <-- %edi CLOBBERED!
 
   # find fib(n-2)
   subl $1,%esi
@@ -40,10 +40,10 @@ _fibonacci:
   call _fibonacci
 
   addl $4,%esp
-  addl %edx,%eax
+  addl %edi,%eax
 
 DONE:
-  popl %edx  # <-- POP TO RESTORE AFTER CLOBBERING
+  popl %edi  # <-- POP TO RESTORE AFTER CLOBBERING
   popl %esi
   popl %ebp
   ret

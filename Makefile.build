@@ -30,7 +30,7 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
 CINT_PROG_NAMES=#ctests
-CINT_PROG_NAMES+= emptyloop fibo_iter bubsort quicksort link_list_search binarytrees fib lists nsievebits nsieve qsort vmach #bzip2
+CINT_PROG_NAMES+= emptyloop fibo_iter bubsort quicksort link_list_search binarytrees fib lists nsievebits nsieve qsort vmach integr #bzip2
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
 #USES UINT64: sha3 siphash24
 #USES VECTOR <4 x i32> in O3: fannkuch chomp mergesort

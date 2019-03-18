@@ -35,7 +35,7 @@ define i32 @fibo_r(i32 %n) #0 {
 define i32 @main() #0 {
   %n = add i32 0, 10
   %1 = call i32 @fibo_r(i32 %n)
-  %2 = getelementptr inbounds [15 x i8]* @.str2, i32 0, i32 0
-  call i32 (i8*, ...)* @printf(i8 * %2, i32 %n, i32 %1)
+  %2 = getelementptr inbounds [15 x i8], [15 x i8]* @.str2, i32 0, i32 0
+  call i32 (i8*, ...) @printf(i8 * %2, i32 %n, i32 %1)
   ret i32 0
 }

@@ -427,5 +427,5 @@ $(CINT_I386_ASPROGS): %.AS.i386: %.i386.s
 	$(LD_I386) -g $@.o -o $@
 
 $(CINT_LLVM_ASPROGS): %.AS.bc: %.ll
-	$(LLVM_AS3_6) $< -o $@
-	$(LLVM_DIS3_6) < $@ > $@.s
+	$(LLVM_AS) $< -o $@
+	$(LLVM_DIS) < $@ > $@.s

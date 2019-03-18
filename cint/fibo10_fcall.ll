@@ -40,8 +40,8 @@ define void @fibo10(i32 %n) #0 {
   br i1 %23, label %1, label %24
   
 ; <label>:24
-  %25 = getelementptr inbounds [15 x i8]* @.str2, i32 0, i32 0
-  call i32 (i8*, ...)* @printf(i8 * %25, i32 %n, i32 %12)
+  %25 = getelementptr inbounds [15 x i8], [15 x i8]* @.str2, i32 0, i32 0
+  call i32 (i8*, ...) @printf(i8 * %25, i32 %n, i32 %12)
   ret void
 }
 
