@@ -11,6 +11,7 @@ color_red="`tput bold; tput setaf 1`"
 color_green="`tput bold; tput setaf 2`"
 color_reset="`tput sgr0`"
 opts = ["O0", "O3"]
+compilers = ["gcc", "clang", "icc"]
 #opts = ["O0", "O2", "O3"]
 #opts = ["O0"]
 
@@ -36,10 +37,10 @@ for cp in cint_progs:
     cmd = cmd + " && " + superopt_dir + "/build/etfg_i386/codegen " + cint_prog + ".bc." + opt + ".etfg -o " + cint_prog + ".bc." + opt + ".i386" + " -l " + cint_prog + ".bc." + opt + ".rewrite.log";
     cmd = cmd + ")"
   cmd = cmd + ")"
-  #cmd = cmd + " && " + "(perl " + srcdir + "/misc/compare_commands.pl " + name + " \"" + lli + " " + cint_prog + ".bc.O0\" \"" + cint_prog + ".gcc48.O3.i386\" \"" + cint_prog + ".bc.O0.i386\" \"\" && echo \"" + cint_prog  + " " + color_green + "passed" + color_reset + "\") || echo \"" + cint_prog + " " + color_red + "FAILED" + color_reset + "\""
   cmd = cmd + " && " + "(perl " + srcdir + "/misc/compare_commands.pl " + name
-  for opt in opts:
-    cmd = cmd + " \"" + cint_prog + ".gcc." + opt + ".i386\""
+  for c in compilers:
+    for opt in opts:
+      cmd = cmd + " \"" + cint_prog + "." + c + "." + opt + ".i386\""
   for opt in opts:
     cmd = cmd + " \"" + cint_prog + ".bc." + opt + ".i386\""
   cmd = cmd + " \"\" && echo \"" + cint_prog  + " " + color_green + "passed" + color_reset + "\") || echo \"" + cint_prog + " " + color_red + "FAILED" + color_reset + "\""
