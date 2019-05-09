@@ -14,7 +14,6 @@ ICC_I386_EQCHECKER_FLAGS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -f
 
 GCC_PPC=powerpc-linux-gnu-gcc
 GCC_X86=gcc
-GCC_I386=gcc -m32
 
 AS_PPC=powerpc-linux-gnu-as
 LD_PPC=powerpc-linux-gnu-ld
@@ -24,9 +23,6 @@ AS_I386_SYSTEM=/usr/bin/as --32
 LD_I386_SYSTEM=/usr/bin/ld -melf_i386
 AS_PPC_SYSTEM=$(AS_PPC)
 LD_PPC_SYSTEM=$(LD_PPC)
-
-ICC_I386=/opt/intel/bin/icc -m32 -mia32
-ICPC_I386=/opt/intel/bin/icpc  -m32 -mia32
 
 #ARM_PREFIX=/localhome/sbansal/gnuarm-4.0.2/bin
 #GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc

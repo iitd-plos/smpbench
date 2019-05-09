@@ -13,7 +13,7 @@
 typedef unsigned int bits;
 #define	NBITS	(8 * sizeof(bits))
 
-static unsigned int
+/*static */unsigned int
 nsieve(unsigned int m)
 {
 	unsigned int count, i, j;
@@ -30,7 +30,7 @@ nsieve(unsigned int m)
 	return (count);
 }
 
-static void
+/*static */void
 test(unsigned int n)
 {
 	unsigned int count, m;
