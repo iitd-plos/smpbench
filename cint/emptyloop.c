@@ -16,8 +16,11 @@ main(int argc, char **argv)
   if (argc >= 2) {
     numiter = atoi(argv[1]);
   }
+  int volatile v = 0;
  
-  for (i = 0; i < MAX(MAGIC_NUMBER,numiter); i++);
+  for (i = 0; i < MAX(MAGIC_NUMBER,numiter); i++) {
+	  v = i;
+  }
   printf("%lu\n", i);
   return 0;
 }
