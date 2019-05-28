@@ -5,11 +5,10 @@
 #include <stdbool.h>
 //#include <cs50.h>
 
-static char const *alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static int alphabet_len = 52;
-
 int main(int argc, char *argv[])
 {
+    char const *alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    int alphabet_len = 52;
     char const *hash;
     if(argc == 2) {
       hash = argv[1];
