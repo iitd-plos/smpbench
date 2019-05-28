@@ -19,7 +19,9 @@ int main(int argc, char *argv[])
 
     char password[6] = "\0\0\0\0\0\0";
     char salt[3];
-    memcpy(salt, hash, 2);
+    //memcpy(salt, hash, 2);
+    salt[0] = hash[0];
+    salt[1] = hash[1];
     salt[2] = '\0';
 
     bool flag = false;
