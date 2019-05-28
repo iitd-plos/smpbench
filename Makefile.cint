@@ -150,31 +150,31 @@ cint/%.s: cint/%
 	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 -funroll-loops $< -o $@
 
 %.gcc.O0.i386: %.c
-	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
 
 %.gcc.O2.i386: %.c
-	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< $(LIBS) -o $@
 
 %.gcc.O3.i386: %.c
-	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
 
 %.clang.O0.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
 
 %.clang.O2.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< $(LIBS) -o $@
 
 %.clang.O3.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
 
 %.icc.O0.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
 
 %.icc.O2.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< $(LIBS) -o $@
 
 %.icc.O3.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
 
 $(CINT_PPC_ASPROGS): %.AS.ppc: %.ppc.s
 	$(AS_PPC) $< -o $@.o

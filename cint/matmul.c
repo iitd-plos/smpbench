@@ -17,6 +17,13 @@ void matmul(long *c, long const *a, long const *b, long len)
   }
 }
 
+//int
+//my_lrand()
+//{
+//  static int seed = 0x234123;
+//  seed = (seed * 2311) % 1235;
+//  return seed;
+//}
 
 int
 main(int argc, char **argv)
@@ -55,7 +62,9 @@ main(int argc, char **argv)
   int j = lrand48() % len;
   printf("c[%d,%d] = %ld\n", i, j, c[i*len + j]);
 
-  for (int i = 0; i < 4; i++) matmul(c, c, a, len);
+  matmul(b, a, c, len);
+  matmul(a, b, c, len);
+  matmul(c, a, b, len);
   printf("c[%d,%d] = %ld\n", i, j, c[i*len + j]);
   return 0;
 }
