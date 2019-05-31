@@ -1,6 +1,8 @@
 import multiprocessing
 import sys
 import os
+import time
+from subprocess import check_call, STDOUT
 
 execfile("../smpbench-build/config.py")
 superopt_dir = os.path.abspath(srcdir + "/../superopt")
@@ -17,6 +19,7 @@ compilers = ["gcc", "clang", "icc"]
 
 #num_cpus = multiprocessing.cpu_count()
 cint_progs = []
+cint_profile_commands = {}
 
 for arg in sys.argv:
   cint_progs.append(arg)
@@ -38,10 +41,29 @@ for cp in cint_progs:
     cmd = cmd + ")"
   cmd = cmd + ")"
   cmd = cmd + " && " + "(perl " + srcdir + "/misc/compare_commands.pl " + name
+  ccmd = ""
+  cint_profile_commands[cp] = []
   for c in compilers:
     for opt in opts:
-      cmd = cmd + " \"" + cint_prog + "." + c + "." + opt + ".i386\""
+      ccmdo = "\"" + cint_prog + "." + c + "." + opt + ".i386\""
+      ccmd = ccmd + " " + ccmdo
+      cint_profile_commands[cp].append((c,opt,ccmdo))
   for opt in opts:
-    cmd = cmd + " \"" + cint_prog + ".bc." + opt + ".i386\""
-  cmd = cmd + " \"\" && echo \"" + cint_prog  + " " + color_green + "passed" + color_reset + "\") || echo \"" + cint_prog + " " + color_red + "FAILED" + color_reset + "\""
+    ccmdo = "\"" + cint_prog + ".bc." + opt + ".i386\""
+    ccmd = ccmd + ccmdo
+    cint_profile_commands[cp].append(("scg",opt,ccmdo))
+  ccmd = ccmd + " \"\""
+  cmd = cmd + ccmd + " && echo \"" + cint_prog  + " " + color_green + "passed" + color_reset + "\") || echo \"" + cint_prog + " " + color_red + "FAILED" + color_reset + "\""
   print cmd + "\n"
+
+#DEVNULL = open(os.devnull, 'wb', 0)
+profile_cmds = open("profile_cmds", 'w+')
+for cp,commands in cint_profile_commands.items():
+  profile_cmds.write(cp + "\n")
+  for c,opt,command in commands:
+    profile_cmds.write("  " + c + " : " + opt + " : " + command + "\n")
+  #start = time.time()
+  #check_call([command], stdout=DEVNULL, stderr=STDOUT)
+  #print(command + ": ")
+  #print("{:.3f} seconds".format(time.time() - start))
+profile_cmds.close()
