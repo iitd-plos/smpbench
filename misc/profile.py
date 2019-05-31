@@ -51,5 +51,6 @@ for cp,commands in cint_profile_commands.items():
     if len(c) == 3:
       c = c + "  "
     print(cp + " : " + c + " : " + opt + " : " + "{:.3f} avg {:.3f} max {:.3f} min".format(avg, maximum, minimum))
+    sys.stdout.flush()
 
 
