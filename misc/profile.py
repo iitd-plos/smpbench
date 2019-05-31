@@ -39,7 +39,10 @@ for cp,commands in cint_profile_commands.items():
     elapsed = []
     for i in range(NUM_ITER):
       start = time.time()
-      check_call([cmd], stdout=DEVNULL, stderr=STDOUT)
+      try:
+        check_call([cmd], stdout=DEVNULL, stderr=STDOUT)
+      except:
+        print "Call to " + cmd + " failed. ignoring"
       end = time.time()
       elapsed.append(end - start)
     avg = compute_avg(elapsed)
@@ -47,6 +50,6 @@ for cp,commands in cint_profile_commands.items():
     maximum = max(elapsed)
     if len(c) == 3:
       c = c + "  "
-    print(cp + " : " + c + " : " + opt + " : " + "{:.3f} avg {:.3f} max {:.3f} min".format(avg, minimum, maximum))
+    print(cp + " : " + c + " : " + opt + " : " + "{:.3f} avg {:.3f} max {:.3f} min".format(avg, maximum, minimum))
 
 
