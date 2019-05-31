@@ -50,7 +50,7 @@ for cp in cint_progs:
       cint_profile_commands[cp].append((c,opt,ccmdo))
   for opt in opts:
     ccmdo = "\"" + cint_prog + ".bc." + opt + ".i386\""
-    ccmd = ccmd + ccmdo
+    ccmd = ccmd + " " + ccmdo
     cint_profile_commands[cp].append(("scg",opt,ccmdo))
   ccmd = ccmd + " \"\""
   cmd = cmd + ccmd + " && echo \"" + cint_prog  + " " + color_green + "passed" + color_reset + "\") || echo \"" + cint_prog + " " + color_red + "FAILED" + color_reset + "\""
