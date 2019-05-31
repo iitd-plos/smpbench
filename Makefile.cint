@@ -126,7 +126,7 @@ cint/%.bc.O2: cint/%.bc.O0
 #see http://lists.llvm.org/pipermail/llvm-dev/2017-April/111989.html for the sequence of commands used to generate bc.O3 below
 cint/%.bc.O3: cint/%.c
 	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -m32 -O3 -emit-llvm $^ -c -o $@.tmp
-	$(OPT) -O3 -o $@ $@.tmp
+	$(OPT) -O3 -strip-debug -o $@ $@.tmp
 
 cint/%.s: cint/%
 	$(LLVM_DIS) < $< > $@
