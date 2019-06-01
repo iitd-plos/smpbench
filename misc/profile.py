@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import time
+import sys
 from subprocess import check_call, STDOUT
 
 def compute_avg(ls):
