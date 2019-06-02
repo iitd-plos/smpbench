@@ -176,6 +176,25 @@ cint/%.s: cint/%
 %.clang.O3.i386: %.c
 	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
 
+%.llc.O0.i386: %.c
+	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
+	$(OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(LLC) -O0 -filetype=obj $@.tmp -o $@.tmp.o
+	$(CLANG_I386) -O0 $@.tmp.o $(LIBS) -o $@
+
+%.llc.O2.i386: %.c
+	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
+	$(OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(LLC) -O2 -filetype=obj $@.tmp -o $@.tmp.o
+	$(CLANG_I386) -O2 $@.tmp.o $(LIBS) -o $@
+
+
+%.llc.O3.i386: %.c
+	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
+	$(OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(LLC) -O3 -filetype=obj $@.tmp -o $@.tmp.o
+	$(CLANG_I386) -O3 $@.tmp.o $(LIBS) -o $@
+
 %.icc.O0.i386: %.c
 	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
 

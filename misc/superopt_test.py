@@ -13,7 +13,7 @@ color_red="`tput bold; tput setaf 1`"
 color_green="`tput bold; tput setaf 2`"
 color_reset="`tput sgr0`"
 opts = ["O0", "O3"]
-compilers = ["gcc", "clang", "icc"]
+compilers = ["gcc", "clang", "llc", "icc"]
 #opts = ["O0", "O2", "O3"]
 #opts = ["O0"]
 
