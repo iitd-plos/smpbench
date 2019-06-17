@@ -8,9 +8,9 @@ EQCHECKER_NO_BUILTINS=-fno-builtin-printf -fno-builtin-malloc -fno-builtin-abort
 
 EQCHECKER_DEFINES= -Dalloca=myalloca -D_FORTIFY_SOURCE=0 -Dexit=myexit -Dabort=myabort -D__noreturn__=__no_reorder__
 
-GCC_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS) $(INCLUDES)
-CLANG_I386_EQCHECKER_FLAGS= -m32 -g -std=c11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  -DTIMING_OUTPUT -fno-reorder-blocks -fwrapv -fno-strict-overflow -fno-unroll-loops -std=c11 -ffreestanding -fno-unit-at-a-time --param scev-max-expr-size=0 -fno-zero-initialized-in-bss -fno-caller-saves -U__GNUC__ -D_FORTIFY_SOURCE=0 $(INCLUDES)
-ICC_I386_EQCHECKER_FLAGS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 $(EQCHECKER_DEFINES) -qno-opt-multi-version-aggressive -std=c11 -ffreestanding -U__GNUC__
+GCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS) ${INCLUDES}
+CLANG_I386_EQCHECKER_FLAGS= -m32 -g -std=c11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  -DTIMING_OUTPUT -fno-reorder-blocks -fwrapv -fno-strict-overflow -fno-unroll-loops -fno-vectorize -fno-slp-vectorize -mno-sse -std=c11 -ffreestanding -fno-unit-at-a-time --param scev-max-expr-size=0 -fno-zero-initialized-in-bss -fno-caller-saves -U__GNUC__ ${EQCHECKER_DEFINES} ${INCLUDES}
+ICC_I386_EQCHECKER_FLAGS= -m32 -mia32 -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 $(EQCHECKER_DEFINES) -qno-opt-multi-version-aggressive -std=c11 -ffreestanding ${INCLUDES} #-U__GNUC__
 
 GCC_PPC=powerpc-linux-gnu-gcc
 GCC_X86=gcc
@@ -24,73 +24,179 @@ LD_I386_SYSTEM=/usr/bin/ld -melf_i386
 AS_PPC_SYSTEM=$(AS_PPC)
 LD_PPC_SYSTEM=$(LD_PPC)
 
+GCC4_8_I386=gcc-4.8 ${GCC48_I386_EQCHECKER_FLAGS}
+
+CLANG3_6_I386=${CLANG3_6} $(CLANG_I386_EQCHECKER_FLAGS)
+CLANG6_0_I386=${CLANG6_0} $(CLANG_I386_EQCHECKER_FLAGS)
+
+ICC_I386=/home/rawcoder/intel/bin/icc $(ICC_I386_EQCHECKER_FLAGS)
+ICPC_I386=/home/rawcoder/intel/bin/icpc $(ICC_I386_EQCHECKER_FLAGS)
+
 #ARM_PREFIX=/localhome/sbansal/gnuarm-4.0.2/bin
 #GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc
 #AS_ARM=$(ARM_PREFIX)/arm-elf-as
 #LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 
-cint/%.gcc.eqchecker.O0.i386.o: cint/%.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
-cint/ctests_helper.gcc.eqchecker.O0.i386.o: cint/ctests_helper.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
-cint/%.gcc.eqchecker.O0.i386: cint/%.gcc.eqchecker.O0.i386.o cint/ctests_helper.gcc.eqchecker.O0.i386.o
-	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+cint/%.gcc48.O0.i386.o: cint/%.c
+	$(GCC4_8_I386) -c $(CFLAGS)  -O0 $< -o $@
+#cint/ctests_helper.gcc48.O0.i386.o: cint/ctests_helper.c
+#      $(GCC4_8_I386) -c $(CFLAGS)  -O0 $< -o $@
+cint/%.gcc48.O0.i386: cint/%.gcc48.O0.i386.o cint/ctests_helper.gcc48.O0.i386.o
+	$(GCC4_8_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
-cint/%.gcc.eqchecker.O2.i386.o: cint/%.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
-cint/ctests_helper.gcc.eqchecker.O2.i386.o: cint/ctests_helper.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
-cint/%.gcc.eqchecker.O2.i386: cint/%.gcc.eqchecker.O2.i386.o cint/ctests_helper.gcc.eqchecker.O2.i386.o
-	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+cint/%.gcc48.O2.i386.o: cint/%.c
+	$(GCC4_8_I386) -c $(CFLAGS)  -O2 $< -o $@
+#cint/ctests_helper.gcc48.O2.i386.o: cint/ctests_helper.c
+#      $(GCC4_8_I386) -c $(CFLAGS)  -O2 $< -o $@
+cint/%.gcc48.O2.i386: cint/%.gcc48.O2.i386.o cint/ctests_helper.gcc48.O2.i386.o
+	$(GCC4_8_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
-cint/%.gcc.eqchecker.O3.i386.o: cint/%.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
-cint/ctests_helper.gcc.eqchecker.O3.i386.o: cint/ctests_helper.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
-cint/%.gcc.eqchecker.O3.i386: cint/%.gcc.eqchecker.O3.i386.o cint/ctests_helper.gcc.eqchecker.O3.i386.o
-	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+cint/%.gcc48.O3.i386.o: cint/%.c
+	$(GCC4_8_I386) -c $(CFLAGS)  -O3 $< -o $@
+#cint/ctests_helper.gcc48.O3.i386.o: cint/ctests_helper.c
+#      $(GCC4_8_I386) -c $(CFLAGS)  -O3 $< -o $@
+cint/%.gcc48.O3.i386: cint/%.gcc48.O3.i386.o cint/ctests_helper.gcc48.O3.i386.o
+	$(GCC4_8_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
-cint/%.clang.eqchecker.O0.i386.o: cint/%.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
-cint/ctests_helper.clang.eqchecker.O0.i386.o: cint/ctests_helper.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
-cint/%.clang.eqchecker.O0.i386: cint/%.clang.eqchecker.O0.i386.o cint/ctests_helper.clang.eqchecker.O0.i386.o
-	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
-cint/%.clang.eqchecker.O2.i386.o: cint/%.c
-	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
-cint/ctests_helper.clang.eqchecker.O2.i386.o: cint/ctests_helper.c
-	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
-cint/%.clang.eqchecker.O2.i386: cint/%.clang.eqchecker.O2.i386.o cint/ctests_helper.clang.eqchecker.O2.i386.o
-	$(CLANG_I386) $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+cint/%.gcc.O0.i386.o: cint/%.c
+	$(GCC_I386) -c $(CFLAGS)  -O0 $< -o $@
+#cint/ctests_helper.gcc.O0.i386.o: cint/ctests_helper.c
+#      $(GCC_I386) -c $(CFLAGS)  -O0 $< -o $@
+cint/%.gcc.O0.i386: cint/%.gcc.O0.i386.o cint/ctests_helper.gcc.O0.i386.o
+	$(GCC_I386) $(CFLAGS)  -O0 $^ -o $@ $(LIBS)
 
-cint/%.clang.eqchecker.O3.i386.o: cint/%.c
-	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
-cint/ctests_helper.clang.eqchecker.O3.i386.o: cint/ctests_helper.c
-	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
-cint/%.clang.eqchecker.O3.i386: cint/%.clang.eqchecker.O3.i386.o cint/ctests_helper.clang.eqchecker.O3.i386.o
-	$(CLANG_I386) $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+# clang-3.6
 
-cint/%.icc.eqchecker.O0.i386.o: cint/%.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
-cint/ctests_helper.icc.eqchecker.O0.i386.o: cint/ctests_helper.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
-cint/%.icc.eqchecker.O0.i386: cint/%.icc.eqchecker.O0.i386.o cint/ctests_helper.icc.eqchecker.O0.i386.o
-	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+cint/%.clang36.O0.i386.o: cint/%.c
+	$(CLANG3_6_I386) -c $(CFLAGS)  -O0 $< -o $@
+cint/ctests_helper.clang36.O0.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS)  -O0 $< -o $@
+cint/%.clang36.O0.i386: cint/%.clang36.O0.i386.o cint/ctests_helper.clang36.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
-cint/%.icc.eqchecker.O2.i386.o: cint/%.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
-cint/ctests_helper.icc.eqchecker.O2.i386.o: cint/ctests_helper.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
-cint/%.icc.eqchecker.O2.i386: cint/%.icc.eqchecker.O2.i386.o cint/ctests_helper.icc.eqchecker.O2.i386.o
-	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+cint/%.clang36.O2.i386.o: cint/%.c
+	$(CLANG3_6_I386) -c $(CFLAGS)  -O2 $< -o $@
+cint/ctests_helper.clang36.O2.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS)  -O2 $< -o $@
+cint/%.clang36.O2.i386: cint/%.clang36.O2.i386.o cint/ctests_helper.clang36.O2.i386.o
+	$(CLANG3_6_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
-cint/%.icc.eqchecker.O3.i386.o: cint/%.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
-cint/ctests_helper.icc.eqchecker.O3.i386.o: cint/ctests_helper.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
-cint/%.icc.eqchecker.O3.i386: cint/%.icc.eqchecker.O3.i386.o cint/ctests_helper.icc.eqchecker.O3.i386.o
-	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+cint/%.clang36.O3.i386.o: cint/%.c
+	$(CLANG3_6_I386) -c $(CFLAGS)  -O3 $< -o $@
+cint/ctests_helper.clang36.O3.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS)  -O3 $< -o $@
+cint/%.clang36.O3.i386: cint/%.clang36.O3.i386.o cint/ctests_helper.clang36.O3.i386.o
+	$(CLANG3_6_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+
+# clang-6.0
+
+cint/%.clang60.O0.i386.o: cint/%.c
+	$(CLANG6_0_I386) -c $(CFLAGS)  -O0 $< -o $@
+cint/ctests_helper.clang60.O0.i386.o: cint/ctests_helper.c
+	$(CLANG6_0_I386) -c $(CFLAGS)  -O0 $< -o $@
+cint/%.clang60.O0.i386: cint/%.clang60.O0.i386.o cint/ctests_helper.clang60.O0.i386.o
+	$(CLANG6_0_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+
+cint/%.clang60.O2.i386.o: cint/%.c
+	$(CLANG6_0_I386) -c $(CFLAGS)  -O2 $< -o $@
+cint/ctests_helper.clang60.O2.i386.o: cint/ctests_helper.c
+	$(CLANG6_0_I386) -c $(CFLAGS)  -O2 $< -o $@
+cint/%.clang60.O2.i386: cint/%.clang60.O2.i386.o cint/ctests_helper.clang60.O2.i386.o
+	$(CLANG6_0_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
+cint/%.clang60.O3.i386.o: cint/%.c
+	$(CLANG6_0_I386) -c $(CFLAGS)  -O3 $< -o $@
+cint/ctests_helper.clang60.O3.i386.o: cint/ctests_helper.c
+	$(CLANG6_0_I386) -c $(CFLAGS)  -O3 $< -o $@
+cint/%.clang60.O3.i386: cint/%.clang60.O3.i386.o cint/ctests_helper.clang60.O3.i386.o
+	$(CLANG6_0_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+
+# icc
+
+cint/%.icc.O0.i386.o: cint/%.c
+	$(CLANG3_6_I386) -c $(CFLAGS)  -O0 $< -o $@
+cint/ctests_helper.icc.O0.i386.o: cint/ctests_helper.c
+	$(CLANG3_6_I386) -c $(CFLAGS)  -O0 $< -o $@
+cint/%.icc.O0.i386: cint/%.icc.O0.i386.o cint/ctests_helper.icc.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+
+cint/%.icc.O2.i386.o: cint/%.c
+	$(ICC_I386) -c $(CFLAGS)  -O2 $< -o $@
+cint/ctests_helper.icc.O2.i386.o: cint/ctests_helper.c
+	$(ICC_I386) -c $(CFLAGS)  -O2 $< -o $@
+cint/%.icc.O2.i386: cint/%.icc.O2.i386.o cint/ctests_helper.icc.O2.i386.o
+	$(ICC_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
+cint/%.icc.O3.i386.o: cint/%.c
+	$(ICC_I386) -c $(CFLAGS)  -O3 $< -o $@
+cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
+	$(ICC_I386) -c $(CFLAGS)  -O3 $< -o $@
+cint/%.icc.O3.i386: cint/%.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
+	$(ICC_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+
+#cint/%.gcc.eqchecker.O0.i386.o: cint/%.c
+#	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O0 $< -o $@
+#cint/ctests_helper.gcc.eqchecker.O0.i386.o: cint/ctests_helper.c
+#	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O0 $< -o $@
+#cint/%.gcc.eqchecker.O0.i386: cint/%.gcc.eqchecker.O0.i386.o cint/ctests_helper.gcc.eqchecker.O0.i386.o
+#	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+#
+#cint/%.gcc.eqchecker.O2.i386.o: cint/%.c
+#	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O2 $< -o $@
+#cint/ctests_helper.gcc.eqchecker.O2.i386.o: cint/ctests_helper.c
+#	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O2 $< -o $@
+#cint/%.gcc.eqchecker.O2.i386: cint/%.gcc.eqchecker.O2.i386.o cint/ctests_helper.gcc.eqchecker.O2.i386.o
+#	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+#
+#cint/%.gcc.eqchecker.O3.i386.o: cint/%.c
+#	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O3 $< -o $@
+#cint/ctests_helper.gcc.eqchecker.O3.i386.o: cint/ctests_helper.c
+#	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O3 $< -o $@
+#cint/%.gcc.eqchecker.O3.i386: cint/%.gcc.eqchecker.O3.i386.o cint/ctests_helper.gcc.eqchecker.O3.i386.o
+#	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+#
+#cint/%.clang.eqchecker.O0.i386.o: cint/%.c
+#	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O0 $< -o $@
+#cint/ctests_helper.clang.eqchecker.O0.i386.o: cint/ctests_helper.c
+#	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O0 $< -o $@
+#cint/%.clang.eqchecker.O0.i386: cint/%.clang.eqchecker.O0.i386.o cint/ctests_helper.clang.eqchecker.O0.i386.o
+#	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+#
+#cint/%.clang.eqchecker.O2.i386.o: cint/%.c
+#	$(CLANG3_6) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS)  -O2 $< -o $@
+#cint/ctests_helper.clang.eqchecker.O2.i386.o: cint/ctests_helper.c
+#	$(CLANG3_6) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS)  -O2 $< -o $@
+#cint/%.clang.eqchecker.O2.i386: cint/%.clang.eqchecker.O2.i386.o cint/ctests_helper.clang.eqchecker.O2.i386.o
+#	$(CLANG3_6) $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+#
+#cint/%.clang.eqchecker.O3.i386.o: cint/%.c
+#	$(CLANG3_6) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS)  -O3 $< -o $@
+#cint/ctests_helper.clang.eqchecker.O3.i386.o: cint/ctests_helper.c
+#	$(CLANG3_6) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS)  -O3 $< -o $@
+#cint/%.clang.eqchecker.O3.i386: cint/%.clang.eqchecker.O3.i386.o cint/ctests_helper.clang.eqchecker.O3.i386.o
+#	$(CLANG3_6) $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+#
+#cint/%.icc.eqchecker.O0.i386.o: cint/%.c
+#	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  -O0 $< -o $@
+#cint/ctests_helper.icc.eqchecker.O0.i386.o: cint/ctests_helper.c
+#	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  -O0 $< -o $@
+#cint/%.icc.eqchecker.O0.i386: cint/%.icc.eqchecker.O0.i386.o cint/ctests_helper.icc.eqchecker.O0.i386.o
+#	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+#
+#cint/%.icc.eqchecker.O2.i386.o: cint/%.c
+#	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  -O2 $< -o $@
+#cint/ctests_helper.icc.eqchecker.O2.i386.o: cint/ctests_helper.c
+#	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  -O2 $< -o $@
+#cint/%.icc.eqchecker.O2.i386: cint/%.icc.eqchecker.O2.i386.o cint/ctests_helper.icc.eqchecker.O2.i386.o
+#	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+#
+#cint/%.icc.eqchecker.O3.i386.o: cint/%.c
+#	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  -O3 $< -o $@
+#cint/ctests_helper.icc.eqchecker.O3.i386.o: cint/ctests_helper.c
+#	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  -O3 $< -o $@
+#cint/%.icc.eqchecker.O3.i386: cint/%.icc.eqchecker.O3.i386.o cint/ctests_helper.icc.eqchecker.O3.i386.o
+#	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 cint/%.ccomp.O0.i386.o: cint/%.c
 	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O0 $< -o $@
@@ -107,28 +213,37 @@ cint/%.ccomp.O2.i386: cint/%.ccomp.O2.i386.o cint/ctests_helper.ccomp.O2.i386.o
 	$(CCOMP_I386) $(CCOMP_CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
 cint/%.c.O0.eqchecker.bc: cint/%.c
-	CLANG_REVERSE_ARGS=1 $(CLANG_I386) $(EQCHECKER_DEFINES) -Xclang -disable-O0-optnone $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
-	$(OPT) -mem2reg -strip-debug -o $@ $@.tmp
+	CLANG_REVERSE_ARGS=1 $(CLANG3_6) $(EQCHECKER_DEFINES) -Xclang $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	#CLANG_REVERSE_ARGS=1 $(CLANG3_6) $(EQCHECKER_DEFINES) -Xclang -disable-O0-optnone $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	$(LLVM_OPT) -mem2reg -strip-debug -o $@ $@.tmp
 
 cint/%.c.O0.bc: cint/%.c
-	$(CLANG_I386) $(CFLAGS) -Xclang -disable-O0-optnone $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
-	$(OPT) -mem2reg -strip-debug -o $@ $@.tmp
+	$(CLANG3_6) $(CFLAGS) -Xclang $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	#$(CLANG3_6) $(CFLAGS) -Xclang -disable-O0-optnone $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	$(LLVM_OPT) -mem2reg -strip-debug -o $@ $@.tmp
 
 cint/%.bc.O0: cint/%.c.O0.bc cint/ctests_helper.c.O0.bc
 	$(LLVM_LINK) $^ -o $@
 
 cint/%.bc.O2: cint/%.bc.O0
-	$(OPT) -O2 -o $@ $<
+	$(LLVM_OPT) -O2 -o $@ $<
 
 #cint/%.bc.O3: cint/%.bc.O0
-#	$(OPT) -O3 -o $@ $<
+#	$(LLVM_OPT) -O3 -o $@ $<
 
 #see http://lists.llvm.org/pipermail/llvm-dev/2017-April/111989.html for the sequence of commands used to generate bc.O3 below
 cint/%.bc.O3: cint/%.c
-	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -m32 -O3 -emit-llvm $^ -c -o $@.tmp
-	$(OPT) -O3 -strip-debug -o $@ $@.tmp
+	$(CLANG3_6) $(CFLAGS) -Xclang $(INCLUDES) -m32 -O3 -emit-llvm $^ -c -o $@.tmp
+	#$(CLANG3_6) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -m32 -O3 -emit-llvm $^ -c -o $@.tmp
+	$(LLVM_OPT) -O3 -strip-debug -o $@ $@.tmp
 
-cint/%.s: cint/%
+cint/%.bc.O0.s: cint/%.bc.O0
+	$(LLVM_DIS) < $< > $@
+
+cint/%.bc.O2.s: cint/%.bc.O0
+	$(LLVM_DIS) < $< > $@
+
+cint/%.bc.O3.s: cint/%.bc.O0
 	$(LLVM_DIS) < $< > $@
 
 %.gcc.O0.ppc: %.c
@@ -168,32 +283,32 @@ cint/%.s: cint/%
 	$(GCC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
 
 %.clang.O0.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
+	$(CLANG3_6) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
 
 %.clang.O2.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< $(LIBS) -o $@
+	$(CLANG3_6) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< $(LIBS) -o $@
 
 %.clang.O3.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
+	$(CLANG3_6) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
 
 %.llc.O0.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
-	$(OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(CLANG3_6) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
+	$(LLVM_OPT) -O3 -strip-debug -o $@.tmp $@.tmp
 	$(LLC) -O0 -filetype=obj $@.tmp -o $@.tmp.o
-	$(CLANG_I386) -O0 $@.tmp.o $(LIBS) -o $@
+	$(CLANG3_6) -O0 $@.tmp.o $(LIBS) -o $@
 
 %.llc.O2.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
-	$(OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(CLANG3_6) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
+	$(LLVM_OPT) -O3 -strip-debug -o $@.tmp $@.tmp
 	$(LLC) -O2 -filetype=obj $@.tmp -o $@.tmp.o
-	$(CLANG_I386) -O2 $@.tmp.o $(LIBS) -o $@
+	$(CLANG3_6) -O2 $@.tmp.o $(LIBS) -o $@
 
 
 %.llc.O3.i386: %.c
-	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
-	$(OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(CLANG3_6) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
+	$(LLVM_OPT) -O3 -strip-debug -o $@.tmp $@.tmp
 	$(LLC) -O3 -filetype=obj $@.tmp -o $@.tmp.o
-	$(CLANG_I386) -O3 $@.tmp.o $(LIBS) -o $@
+	$(CLANG3_6) -O3 $@.tmp.o $(LIBS) -o $@
 
 %.icc.O0.i386: %.c
 	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
