@@ -431,32 +431,43 @@ int main_chomp(void)
 #define Int	int
 #define Aint	int
 
+__attribute__((noinline))void reverse_perm_old(Aint* perm1, Aint* perm, long *flips)
+{
+  int i;
+#define XCH(x,y)  { Aint t_mp; t_mp=(x); (x)=(y); (y)=t_mp; }
+   int k = perm1[0];    /* cache perm[0] in k */
+   do {     /* k!=0 ==> k>0 */
+    Int j;
+    for( i=1, j=k-1 ; i<j ; ++i, --j ) {
+        XCH(perm[i], perm[j])
+    }
+    *flips = *flips + 1;
+    /*
+     * Now exchange k (caching perm[0]) and perm[k]... with care!
+     * XCH(k, perm[k]) does NOT work!
+     */
+    j=perm[k]; perm[k]=k ; k=j;
+      }while( k );
+}
+
+
 __attribute__((noinline)) void init_perm1(Aint* perm1, int n)
 {
   int i;
   for( i=0 ; i<n ; ++i ) perm1[i] = i;	/* initial (trivial) permu */
 }
 
-void print_perm(Aint* perm1, int n, int* didpr)
-{
-    Int		i;
-	if( *didpr < 30 ) {
-	    for( i=0 ; i<n ; ++i ) printf("%d", (int)(1+perm1[i]));
-	    printf("\n");
-	    ++*didpr;
-	}
-}
-
-void copy_perm(Aint* perm1, Aint* perm, int n)
+__attribute__((noinline))void copy_perm(Aint* perm1, Aint* perm, int n)
 {
     int i;
 	    for( i=1 ; i<n ; ++i ) {	/* perm = perm1 */
 		perm[i] = perm1[i];
 	    }
-}
+}    
 
-void reverse_perm(Aint* perm1, Aint* perm, long *flips)
+__attribute__((noinline))long reverse_perm(Aint* perm1, Aint* perm, long flipsmax)
 {
+  long flips = 0;
   int i;
 #define XCH(x,y)	{ Aint t_mp; t_mp=(x); (x)=(y); (y)=t_mp; }
    int k = perm1[0];		/* cache perm[0] in k */
@@ -465,91 +476,88 @@ void reverse_perm(Aint* perm1, Aint* perm, long *flips)
 		for( i=1, j=k-1 ; i<j ; ++i, --j ) {
 		    XCH(perm[i], perm[j])
 		}
-		*flips = *flips + 1;
+		flips = flips + 1;
 		/*
 		 * Now exchange k (caching perm[0]) and perm[k]... with care!
 		 * XCH(k, perm[k]) does NOT work!
 		 */
 		j=perm[k]; perm[k]=k ; k=j;
 	    }while( k );
+      if( flipsmax < flips ) {
+        flipsmax = flips;
+      }
+  return flipsmax;
 }
 
-__attribute__((noinline)) int next_perm(int n, int* r, Aint* perm1, Aint* count)
+__attribute__((noinline))long copy_and_reverse_perm(Aint* perm1, Aint* perm, long flipsmax, int n)
 {
-  Aint i, k;
-	for(;;) {
-	    if( *r == n ) {
-		return 1;
-	    }
-	    /* rotate down perm[0..r] by one */
-	    {
-		Int	perm0 = perm1[0];
-		i = 0;
-		while( i < *r ) {
-		    k = i+1;
-		    perm1[i] = perm1[k];
-		    i = k;
-		}
-		perm1[*r] = perm0;
-	    }
-	    if( (count[*r] -= 1) > 0 ) {
-		break;
-	    }
-	    ++*r;
-	}
-  return 0;
+  const int n1  = n - 1;
+  if( ! (perm1[0]==0 || perm1[n1]==n1) ) {
+    copy_perm(perm1, perm, n);
+    flipsmax = reverse_perm(perm1, perm, flipsmax);
+  }
+  return flipsmax;
+}
+__attribute__((noinline))void print_perm(Aint* perm1, int n)
+{
+    int		i;
+	  for( i=0 ; i<n ; ++i ) printf("%d", (int)(1+perm1[i]));
+	  printf("\n");
 }
 
-void set_count(Aint* count, Int* r)
+long
+fannkuch( int n )
 {
-	for( ; *r!=1 ; --*r ) {
-	    count[*r-1] = *r;
-	}
-}
+  Aint* perm;
+  Aint* perm1;
+  Aint* count;
+  long  flips;
+  long  flipsmax;
+  int   r;
+  int   i;
+  int   k;
+  int   didpr;
 
-__attribute__((noinline)) void fannkuch_flips(int* perm1, int* perm, Aint* count, int n, int *didpr, int *r, long* flips, long* flipsMax)
-{
-    const Int	n1	= n - 1;
-  print_perm(perm1, n, didpr);
-  set_count(count, r);
+  if( n < 1 ) return 0;
+  r = n; didpr = 0; flipsmax = 0;
 
-	if( ! (perm1[0]==0 || perm1[n1]==n1) ) {
-	    *flips = 0;
-      copy_perm(perm1, perm, n);
-      reverse_perm(perm1, perm, flips);
-	    if( *flipsMax < *flips ) {
-        *flipsMax = *flips;
-	    }
-	}
-}
+  perm1 = mycalloc(n, sizeof(*perm1));
+  init_perm1(perm1, n);
+  perm  = mycalloc(n, sizeof(*perm ));
+  count = mycalloc(n, sizeof(*count));
 
-long fannkuch( int n )
-{
-    Aint*	perm;
-    Aint*	perm1;
-    Aint*	count;
-    long	flips;
-    long	flipsMax;
-    Int		r;
-    Int		i;
-    Int		k;
-    Int didpr = 0;
-
-    if( n < 1 ) return 0;
-
-    perm  = mycalloc(n, sizeof(*perm ));
-    perm1 = mycalloc(n, sizeof(*perm1));
-    count = mycalloc(n, sizeof(*count));
-
-    init_perm1(perm1, n);
-
-    r = n; flipsMax = 0;
-    for(;;) {
-      fannkuch_flips(perm1, perm, count, n, &didpr, &r, &flips, &flipsMax);
-      if(next_perm(n, &r, perm1, count))
-        return flipsMax;
+  for(;;) {
+    if( didpr < 30 ) {
+        print_perm(perm1, n);
+        ++didpr;
     }
+    flipsmax = copy_and_reverse_perm(perm1, perm, flipsmax, n);
+	  for( ; r!=1 ; --r ) {
+	      count[r-1] = r;
+	  }
+    for(;;) {
+      if( r == n ) {
+        return flipsmax;
+      }
+      /* rotate down perm[0..r] by one */
+      {
+        Aint perm0 = perm1[0];
+        i = 0;
+        while( i < r ) {
+          k = i+1;
+          perm1[i] = perm1[k];
+          i = k;
+        }
+        perm1[r] = perm0;
+      }
+      if( (count[r] -= 1) > 0 ) {
+        break;
+      }
+      ++r;
+    }
+  }
 }
+
 
     int
 main_fannkuch( int argc, char* argv[] )
@@ -630,7 +638,7 @@ static unsigned long ht_prime_list[ht_num_primes] = {
     1543ul,       3079ul,       6151ul,      12289ul,     24593ul,
     49157ul,      98317ul,      196613ul,    393241ul,    786433ul,
     1572869ul,    3145739ul,    6291469ul,   12582917ul,  25165843ul,
-    50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul,
+    50331653ul,   100663319ul,  201326611ul, 402653189ul, 805306457ul, 
     1610612741ul, 3221225473ul, 4294967291ul
 };
 
@@ -670,11 +678,11 @@ struct ht_node *ht_node_create(char *key) {
     struct ht_node *node;
     if ((node = (struct ht_node *)mymalloc(sizeof(struct ht_node))) == 0) {
 	perror("malloc ht_node");
-	myexit(1);
+	exit(1);
     }
-    if ((newkey = (char *)mystrdup(key)) == 0) {
+    if ((newkey = (char *)strdup(key)) == 0) {
 	perror("strdup newkey");
-	myexit(1);
+	exit(1);
     }
     node->key = newkey;
     node->val = 0;
@@ -697,60 +705,20 @@ __attribute__((noinline)) struct ht_ht *ht_create(int size) {
     return(ht);
 }
 
-//void ht_destroy(struct ht_ht *ht) {
-//    struct ht_node *cur, *next;
-//    int i;
-//#ifdef HT_DEBUG
-//    int chain_len;
-//    int max_chain_len = 0;
-//    int density = 0;
-//    fprintf(stderr, " HT: size            %d\n", ht->size);
-//    fprintf(stderr, " HT: items           %d\n", ht->items);
-//    fprintf(stderr, " HT: collisions      %d\n", ht->collisions);
-//#endif /* HT_DEBUG */
-//    for (i=0; i<ht->size; i++) {
-//	next = ht->tbl[i];
-//#ifdef HT_DEBUG
-//	if (next) {
-//	    density++;
-//	}
-//	chain_len = 0;
-//#endif /* HT_DEBUG */
-//	while (next) {
-//	    cur = next;
-//	    next = next->next;
-//	    myfree(cur->key);
-//	    myfree(cur);
-//#ifdef HT_DEBUG
-//	    chain_len++;
-//#endif /* HT_DEBUG */
-//	}
-//#ifdef HT_DEBUG
-//	if (chain_len > max_chain_len)
-//	    max_chain_len = chain_len;
-//#endif /* HT_DEBUG */
-//    }
-//    myfree(ht->tbl);
-//    myfree(ht);
-//#ifdef HT_DEBUG
-//    fprintf(stderr, " HT: density         %d\n", density);
-//    fprintf(stderr, " HT: max chain len   %d\n", max_chain_len);
-//#endif /* HT_DEBUG */
-//}
 void ht_destroy(struct ht_ht *ht) {
-  struct ht_node *cur, *next;
-  int i;
-  for (i=0; i < ht->size; i++) {
-	  next = ht->tbl[i];
-	  while (next) {
+    struct ht_node *cur, *next;
+    int i;
+    for (i=0; i<ht->size; i++) {
+	next = ht->tbl[i];
+	while (next) {
 	    cur = next;
 	    next = next->next;
 	    myfree(cur->key);
 	    myfree(cur);
-	  }
-  }
-  myfree(ht->tbl);
-  myfree(ht);
+	}
+    }
+    myfree(ht->tbl);
+    myfree(ht);
 }
 
 /*inline*/ struct ht_node *ht_find(struct ht_ht *ht, char *key) {
@@ -1058,20 +1026,22 @@ int main_lists(int argc, char ** argv)
   if (checklist(n, reverselist(l))) {
     printf("OK\n");
   } else {
-    goto bug;
+    goto BUG;
   }
+
   for (i = 0; i < 2*niter + 1; i++) {
     l = reverse_inplace(l);
   }
   if (checklist(n, l)) {
     printf("OK\n");
   } else {
-    goto bug;
+    goto BUG;
   }
+  
   return 0;
-bug:
-  printf("Bug!\n");
-  return 2;
+  BUG:
+    printf("Bug!\n");
+    return 2;
 }
 
 /*
@@ -1179,19 +1149,6 @@ unsigned int nsieve_static(int m) {
     return count;
 }
 
-/* #define NITER 2 */
-/* int main_nsieve(int argc, char * argv[]) { */
-/*   int m = argc < 2 ? 9 : atoi(argv[1]); */
-/*   int i, j; */
-/*   for (i = 0; i < 3; i++) { */
-/*     int n = 10000 << (m-i); */
-/*     unsigned count; */
-/*     for (j = 0; j < NITER; j++) { count = nsieve(n); } */
-/*     printf("Primes up to %8d %8u\n", n, count); */
-/*   } */
-/*   return 0; */
-/* } */
-
 int main_nsieve(int argc, char * argv[]) {
     int m = argc < 2 ? 9 : atoi(argv[1]);
     int i;
@@ -1228,20 +1185,20 @@ Primes up to  1280000    98610
 #include <stdio.h>
 #include <string.h>
 
-void quicksort_orig(int lo, int hi, int* base)
-{
+void quicksort_orig(int lo, int hi, int * base)
+{ 
   int i,j;
-  int pivot, temp;
-
+  int pivot,temp;
+    
   if (lo<hi)
   {
     for (i=lo,j=hi,pivot=base[hi];i<j;)
     {
       while (i<hi && base[i]<=pivot) i++;
       while (j>lo && base[j]>=pivot) j--;
-      if (i<j) { temp=base[i]; base[i]=base[j];base[j]=temp; }
+      if (i<j) { temp=base[i]; base[i]=base[j]; base[j]=temp; }
     }
-    temp=base[i]; base[i]=base[hi];base[hi]=temp; 
+    temp=base[i]; base[i]=base[hi]; base[hi]=temp;
     quicksort_orig(lo,i-1,base);  quicksort_orig(i+1,hi,base);
   }
 }
@@ -1303,12 +1260,12 @@ int main_qsort(int argc, char ** argv)
   if (argc >= 3) bench = 1;
   a = mymalloc(n * sizeof(int));
   b = mymalloc(n * sizeof(int));
-  rand_init(a, b, n);
+  for (i = 0; i < n; i++) b[i] = a[i] = rand() & 0xFFFF;
   quicksort(0, n - 1, a);
   if (!bench) {
     qsort(b, n, sizeof(int), cmpint);
-    if (equal_array(a, b, n)) {
-      printf("Bug!\n"); return 2;
+    for (i = 0; i < n; i++) {
+      if (a[i] != b[i]) { printf("Bug!\n"); return 2; }
     }
     printf("OK\n");
   }
@@ -1386,15 +1343,11 @@ void SHA1_copy_and_swap(void * src, void * dst, int numwords)
 #define Y3 0x8F1BBCDCU
 #define Y4 0xCA62C1D6U
 
-void SHA1_transform(struct SHA1Context * ctx)
+
+void SHA1_rounds(struct SHA1Context * ctx , u32 *data)
 {
   int i;
-  register u32 a, b, c, d, e, t;
-  u32 data[80];
-
-  /* Convert buffer data to 16 big-endian integers */
-  SHA1_copy_and_swap(ctx->buffer, data, 16);
-
+  u32 a, b, c, d, e, t;
   /* Expand into 80 integers */
   for (i = 16; i < 80; i++) {
     t = data[i-3] ^ data[i-8] ^ data[i-14] ^ data[i-16];
@@ -1432,6 +1385,14 @@ void SHA1_transform(struct SHA1Context * ctx)
   ctx->state[2] += c;
   ctx->state[3] += d;
   ctx->state[4] += e;
+}
+
+void SHA1_transform(struct SHA1Context * ctx)
+{
+  u32 *data = mymalloc(sizeof(u32) * 80);
+  int numwords = 16;
+  SHA1_copy_and_swap(ctx->buffer, data, numwords);
+  SHA1_rounds(ctx, data);
 }
 
 void SHA1_init(struct SHA1Context * ctx)
@@ -1526,7 +1487,7 @@ void do_test(unsigned char * txt, unsigned char * expected_output)
   SHA1_add_data(&ctx, txt, strlen((char *) txt));
   SHA1_finish(&ctx, output);
   ok = memcmp(output, expected_output, 20) == 0;
-  printf("Test `%s': %s\n",
+  printf("Test `%s': %s\n", 
          (char *) txt, (ok ? "passed" : "FAILED"));
 }
 
@@ -1545,7 +1506,7 @@ unsigned char test_output_1[20] =
 { 0xA9, 0x99, 0x3E, 0x36, 0x47, 0x06, 0x81, 0x6A, 0xBA, 0x3E ,
   0x25, 0x71, 0x78, 0x50, 0xC2, 0x6C, 0x9C, 0xD0, 0xD8, 0x9D };
 
-unsigned char test_input_2[] =
+unsigned char test_input_2[] = 
   "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
 
 unsigned char test_output_2[20] =
@@ -1562,7 +1523,7 @@ void do_bench(int nblocks)
 
   for (i = 0; i < 64; i++) data[i] = i;
   SHA1_init(&ctx);
-  for (; nblocks > 0; nblocks--)
+  for (; nblocks > 0; nblocks--) 
     SHA1_add_data(&ctx, data, 64);
   SHA1_finish(&ctx, output);
 }
@@ -1825,7 +1786,6 @@ int int8_add(int a, int b, int c, int d, int e, int f, int g, int h)
 int sum_positive_g[144];
 int sum_positive_sum = 0;
 int const sum_positive_const = 123;
-// without const eq just fails -- but last commit which removed it said llvm2tfg cannot handle `const`s.  What to do?
 
 void sum_positive_globals(int n) {
   int *ptr = sum_positive_g;
@@ -1941,8 +1901,6 @@ void memcpy_v1(int row, int col)
     }
   }
 }
-
-
 /*
 int int16_add(int a, int b, int c, int d, int e, int f, int g, int h,
     int i, int j, int k, int l, int m, int n, int o, int p)
@@ -2008,8 +1966,7 @@ big_struct_return_function(int n)
 int main_ddec()
 {
   int ret = 0;
-  int i;
-  for(i = 0; i < LOOP_N; ++i)
+  for(int i = 0; i < LOOP_N; ++i)
     ret += ddec(i, i);
   return ret;
 }
@@ -2205,33 +2162,16 @@ __attribute__((noinline)) int init_new(int n)
 {
   int i;
   sum_new = 1;
-  for( i=0 ; i<10 ; i++ )  sum_new += sum_new;
+  for( i=0 ; i<10 ; i++ )  sum_new += sum_new;	
   return sum_new;
 }
 
-__attribute__((noinline)) int sum_1(int n) 
-{
-  int ret = 0;
-  for (int i = 0; i < n+1; ++i)
-    ret += i;
-  return ret;
-}
-
-__attribute__((noinline)) int sum_2(int n) 
-{
-  int ret = 0;
-  for (int i = 0; i <= n; ++i)
-    ret += i;
-  return ret;
-}
-
-
-int array_2D[5][5] = {{1, 2, 3, 4, 5},
+char array_2D[5][5] = {{1, 2, 3, 4, 5},
                       {6, 7, 8, 9, 10},
                       {11, 12, 13, 14, 15},
                       {16, 17, 18, 19, 20},
                       {21, 22, 23, 24, 25}
-		     };
+		     };  
 
 __attribute__((noinline)) int add_2D_arr(int row, int col)
 {
@@ -2279,26 +2219,25 @@ __attribute__((noinline)) int init_2D_arr(int row, int col)
   return 1;
 }
 
-int g[144]; int avg=0;
-__attribute__((noinline)) void array_average( )
+int g[144]; int avg=0; 
+__attribute__((noinline)) void array_average( ) 
 {
 int *ptr = g; int sum =0;
-int i;
-for(i = 0; i < 144; i++,ptr++)
+for(int i = 0; i < 144; i++,ptr++)
   sum = sum + *ptr;
 
-avg = sum/144;
+avg = sum/144; 
 }
 
 int x,y;
 __attribute__((noinline)) void ddai(int n)
 {
-x=0; y=0;
-int i=0;
+x=0; y=0; 
+int i=0; 
 while (i < n)
-{
-  y = y+1;
-  x = x+y;
+{ 
+  y = y+1; 
+  x = x+y; 
   i++;
 }
 }
@@ -2307,26 +2246,26 @@ int lerner1a(int x, int n)
 {
   int i, k = 0;
   for (i=0; i!=n; ++i)
-  {
-    x += k*5;
+  { 
+    x += k*5; 
     k += 1;
-    if (i >= 5)
+    if (i >= 5) 
       k += 3;
-  }
-  return x;
+  } 
+  return x; 
 }
 
 int lerner1b(int x, int n)
 {
   int i, k = 0;
   for (i=0; i!=n; ++i)
-  {
-    x += k;
+  { 
+    x += k; 
     k += 5;
-    if (i >= 5)
+    if (i >= 5) 
       k += 15;
-  }
-  return x;
+  } 
+  return x; 
 }
 
 int sum_ler_3b3c;
@@ -2334,7 +2273,7 @@ int lerner3b( )
 {
   int i,j;
   int sum =0;
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < 10; i++) 
   {
     for (j = 0; j < 10; j++)
     {
@@ -2347,7 +2286,7 @@ int lerner3b( )
 int lerner3c( )
 {
   int i,j;
-  for (i = 0; i < 10; i++)
+  for (i = 0; i < 10; i++) 
   {
     for (j = 0; j < 10; j++)
     {
@@ -2369,17 +2308,17 @@ int main()
   sum_positive_globals(100);
   sum_positive_arg(sum_positive_g, 144);
   sum_all_globals(100);
-  int ret =
+  int ret =  
         main_ddec() +
-        main_chomp() + main_fannkuch(atoi("0"), (char **)atoi("0")) +
-        main_knucleotide() +
-        main_lists(atoi("0"), (char **)atoi("0")) +
-        main_nsievebits(atoi("0"), (char **)atoi("0")) +
-        main_nsieve(atoi("0"), (char **)atoi("0")) +
-        main_qsort(atoi("0"), (char **)atoi("0")) +
-        main_sha1(atoi("0"), (char **)atoi("0")) +
-        nested_loops2_1(atoi("100"), atoi("100")) + nested_loops2(atoi("100")) +
-        nested_loops3(atoi("100"), atoi("100"), a, b) +
+        main_chomp() + main_fannkuch(atoi("0"), (char **)atoi("0")) + 
+        main_knucleotide() + 
+        main_lists(atoi("0"), (char **)atoi("0")) + 
+        main_nsievebits(atoi("0"), (char **)atoi("0")) + 
+        main_nsieve(atoi("0"), (char **)atoi("0")) + 
+        main_qsort(atoi("0"), (char **)atoi("0")) + 
+        main_sha1(atoi("0"), (char **)atoi("0")) + 
+        nested_loops2_1(atoi("100"), atoi("100")) + nested_loops2(atoi("100")) + 
+        nested_loops3(atoi("100"), atoi("100"), a, b) + 
         quicksort_char(atoi("0"), atoi("100"), a) +
         peeling_src(atoi("1")) +
         peeling_dst(atoi("0")) +
@@ -2391,7 +2330,7 @@ int main()
         int5_add(3, 4, 5, 6, 7) + int6_add(3, 4, 5, 6, 7, 8) +
         int7_add(3, 4, 5, 6, 7, 8, 9) + int8_add(3, 4, 5, 6, 7, 8, 9, 10) +
         main_foo() +
-        sum_positive_sum +
+        sum_positive_sum + 
         add_2D_arr(5,5)
         //int16_add(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
         /*aliasing_example(100) +
@@ -2399,7 +2338,6 @@ int main()
   printf("finished\n");
   return ret;
 }
-
 __attribute__((noinline)) int sum_n(int n)
 {
   int i;
