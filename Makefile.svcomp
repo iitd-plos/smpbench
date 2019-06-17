@@ -1,0 +1,422 @@
+#########
+# SVCOMP 
+#########
+
+# Add programs here
+									# kundu \
+									# kundu2 \
+								  # minepump_spec1_product35 \
+									# minepump_spec1_product36 \
+									# minepump_spec1_product40 \
+									# minepump_spec1_product44 \
+									# minepump_spec1_product47 \
+									# minepump_spec1_product51 \
+									# minepump_spec1_product59 \
+									# minepump_spec3_product58 \
+									# minepump_spec3_product62 \
+									# minepump_spec3_product63 \
+									# minepump_spec3_product64 \
+									# minepump_spec4_product39 \
+									# minepump_spec4_product44 \
+									# minepump_spec4_product60 \
+									# minepump_spec4_product64 \
+									# minepump_spec5_product39 \
+									# minepump_spec5_product43 \
+									# minepump_spec5_product44 \
+									# minepump_spec5_product47 \
+									# minepump_spec5_product59 \
+
+SVCOMP_PROG_NAMES=bist_cell \
+									diskperf.i-1 \
+									diskperf.i-2 \
+									diskperf_simpl1 \
+									floppy.i-1 \
+									floppy.i-2 \
+									floppy.i-3 \
+									floppy2.i \
+									kbfiltr.i-1 \
+									kbfiltr.i-2 \
+									kbfiltr_simpl1 \
+									kbfiltr_simpl2-1 \
+									kbfiltr_simpl2-2 \
+									kundu \
+									kundu1 \
+									kundu2 \
+									minepump_spec1_product35 \
+									minepump_spec1_product36 \
+									minepump_spec1_product37 \
+									minepump_spec1_product38 \
+									minepump_spec1_product40 \
+									minepump_spec1_product41 \
+									minepump_spec1_product42 \
+									minepump_spec1_product44 \
+									minepump_spec1_product45 \
+									minepump_spec1_product46 \
+									minepump_spec1_product47 \
+									minepump_spec1_product49 \
+									minepump_spec1_product50 \
+									minepump_spec1_product51 \
+									minepump_spec1_product53 \
+									minepump_spec1_product54 \
+									minepump_spec1_product57 \
+									minepump_spec1_product58 \
+									minepump_spec1_product59 \
+									minepump_spec1_product61 \
+									minepump_spec2_product33 \
+									minepump_spec2_product37 \
+									minepump_spec2_product38 \
+									minepump_spec2_product41 \
+									minepump_spec2_product42 \
+									minepump_spec2_product45 \
+									minepump_spec2_product46 \
+									minepump_spec2_product49 \
+									minepump_spec2_product57 \
+									minepump_spec2_product58 \
+									minepump_spec3_product01 \
+									minepump_spec3_product02 \
+									minepump_spec3_product03 \
+									minepump_spec3_product04 \
+									minepump_spec3_product05 \
+									minepump_spec3_product07 \
+									minepump_spec3_product08 \
+									minepump_spec3_product10 \
+									minepump_spec3_product11 \
+									minepump_spec3_product12 \
+									minepump_spec3_product14 \
+									minepump_spec3_product15 \
+									minepump_spec3_product16 \
+									minepump_spec3_product17 \
+									minepump_spec3_product18 \
+									minepump_spec3_product19 \
+									minepump_spec3_product21 \
+									minepump_spec3_product22 \
+									minepump_spec3_product23 \
+									minepump_spec3_product24 \
+									minepump_spec3_product26 \
+									minepump_spec3_product27 \
+									minepump_spec3_product28 \
+									minepump_spec3_product29 \
+									minepump_spec3_product30 \
+									minepump_spec3_product31 \
+									minepump_spec3_product33 \
+									minepump_spec3_product34 \
+									minepump_spec3_product37 \
+									minepump_spec3_product38 \
+									minepump_spec3_product41 \
+									minepump_spec3_product42 \
+									minepump_spec3_product45 \
+									minepump_spec3_product46 \
+									minepump_spec3_product49 \
+									minepump_spec3_product50 \
+									minepump_spec3_product54 \
+									minepump_spec3_product58 \
+									minepump_spec3_product62 \
+									minepump_spec3_product63 \
+									minepump_spec3_product64 \
+									minepump_spec4_product34 \
+									minepump_spec4_product35 \
+									minepump_spec4_product36 \
+									minepump_spec4_product37 \
+									minepump_spec4_product38 \
+									minepump_spec4_product39 \
+									minepump_spec4_product42 \
+									minepump_spec4_product44 \
+									minepump_spec4_product46 \
+									minepump_spec4_product47 \
+									minepump_spec4_product49 \
+									minepump_spec4_product50 \
+									minepump_spec4_product51 \
+									minepump_spec4_product52 \
+									minepump_spec4_product57 \
+									minepump_spec4_product60 \
+									minepump_spec4_product61 \
+									minepump_spec4_product64 \
+									minepump_spec5_product34 \
+									minepump_spec5_product35 \
+									minepump_spec5_product36 \
+									minepump_spec5_product37 \
+									minepump_spec5_product39 \
+									minepump_spec5_product41 \
+									minepump_spec5_product43 \
+									minepump_spec5_product44 \
+									minepump_spec5_product45 \
+									minepump_spec5_product46 \
+									minepump_spec5_product47 \
+									minepump_spec5_product49 \
+									minepump_spec5_product50 \
+									minepump_spec5_product51 \
+									minepump_spec5_product52 \
+									minepump_spec5_product53 \
+									minepump_spec5_product57 \
+									minepump_spec5_product59 \
+									minepump_spec5_product61 \
+									minepump_spec5_product62 \
+									parport.i-1 \
+									parport.i-2 \
+									pc_sfifo_1-1 \
+									pc_sfifo_1-2 \
+									pc_sfifo_2-1 \
+									pc_sfifo_2-2 \
+									token_ring.01-1 \
+									token_ring.01-2 \
+									token_ring.02-1 \
+									token_ring.02-2 \
+									token_ring.03-1 \
+									token_ring.03-2 \
+									transmitter.01 \
+									transmitter.02 \
+									transmitter.03
+ 
+SVCOMP_PROGS=$(addprefix svcomp/, $(SVCOMP_PROG_NAMES))
+
+SVCOMP_PROGS_GCC=$(SVCOMP_PROGS)
+SVCOMP_PROGS_CLANG=$(SVCOMP_PROGS)
+SVCOMP_PROGS_ICC=$(SVCOMP_PROGS)
+
+SVCOMP_HOSTGCC4_8_O0_PROGS = $(addsuffix .gcc48.O0, $(SVCOMP_PROGS_GCC))
+SVCOMP_HOSTGCC4_8_O2_PROGS = $(addsuffix .gcc48.O2, $(SVCOMP_PROGS_GCC))
+SVCOMP_HOSTGCC4_8_O3_PROGS = $(addsuffix .gcc48.O3, $(SVCOMP_PROGS_GCC))
+SVCOMP_CLANG3_6_O0_PROGS = $(addsuffix .clang36.O0, $(SVCOMP_PROGS_CLANG))
+SVCOMP_CLANG3_6_O2_PROGS = $(addsuffix .clang36.O2, $(SVCOMP_PROGS_CLANG))
+SVCOMP_CLANG3_6_O3_PROGS = $(addsuffix .clang36.O3, $(SVCOMP_PROGS_CLANG))
+SVCOMP_ICC_O0_PROGS = $(addsuffix .icc.O0, $(SVCOMP_PROGS_ICC))
+SVCOMP_ICC_O2_PROGS = $(addsuffix .icc.O2, $(SVCOMP_PROGS_ICC))
+SVCOMP_ICC_O3_PROGS = $(addsuffix .icc.O3, $(SVCOMP_PROGS_ICC))
+SVCOMP_BC_O0_PROGS = $(addsuffix .bc.O0, $(SVCOMP_PROGS))
+SVCOMP_BC_O2_PROGS = $(addsuffix .bc.O2, $(SVCOMP_PROGS))
+SVCOMP_BC_O3_PROGS = $(addsuffix .bc.O3, $(SVCOMP_PROGS))
+SVCOMP_I386_HOSTGCC4_8_O0_PROGS = $(addsuffix .i386, $(SVCOMP_HOSTGCC4_8_O0_PROGS))
+SVCOMP_I386_HOSTGCC4_8_O2_PROGS = $(addsuffix .i386, $(SVCOMP_HOSTGCC4_8_O2_PROGS))
+SVCOMP_I386_HOSTGCC4_8_O3_PROGS = $(addsuffix .i386, $(SVCOMP_HOSTGCC4_8_O3_PROGS))
+SVCOMP_I386_CLANG3_6_O0_PROGS = $(addsuffix .i386, $(SVCOMP_CLANG3_6_O0_PROGS))
+SVCOMP_I386_CLANG3_6_O2_PROGS = $(addsuffix .i386, $(SVCOMP_CLANG3_6_O2_PROGS))
+SVCOMP_I386_CLANG3_6_O3_PROGS = $(addsuffix .i386, $(SVCOMP_CLANG3_6_O3_PROGS))
+SVCOMP_I386_CLANG6_0_O0_PROGS = $(addsuffix .i386, $(SVCOMP_CLANG6_0_O0_PROGS))
+SVCOMP_I386_CLANG6_0_O2_PROGS = $(addsuffix .i386, $(SVCOMP_CLANG6_0_O2_PROGS))
+SVCOMP_I386_CLANG6_0_O3_PROGS = $(addsuffix .i386, $(SVCOMP_CLANG6_0_O3_PROGS))
+SVCOMP_I386_ICC_O0_PROGS = $(addsuffix .i386, $(SVCOMP_ICC_O0_PROGS))
+SVCOMP_I386_ICC_O2_PROGS = $(addsuffix .i386, $(SVCOMP_ICC_O2_PROGS))
+SVCOMP_I386_ICC_O3_PROGS = $(addsuffix .i386, $(SVCOMP_ICC_O3_PROGS))
+
+SVCOMP_I386_PROGS = \
+  $(SVCOMP_I386_HOSTGCC4_8_O0_PROGS) \
+  $(SVCOMP_I386_HOSTGCC4_8_O2_PROGS) \
+  $(SVCOMP_I386_HOSTGCC4_8_O3_PROGS) \
+  $(SVCOMP_I386_CLANG3_6_O0_PROGS) \
+  $(SVCOMP_I386_CLANG3_6_O2_PROGS) \
+  $(SVCOMP_I386_CLANG3_6_O3_PROGS) \
+  $(SVCOMP_I386_ICC_O0_PROGS) \
+  $(SVCOMP_I386_ICC_O2_PROGS) \
+  $(SVCOMP_I386_ICC_O3_PROGS) \
+  $(SVCOMP_BC_O0_PROGS) \
+  $(SVCOMP_BC_O2_PROGS) \
+  $(SVCOMP_BC_O3_PROGS)
+
+SVCOMP_BC_PROGS = $(SVCOMP_BC_O0_PROGS) $(SVCOMP_BC_O2_PROGS) $(SVCOMP_BC_O3_PROGS)
+SVCOMP_LLVM_PROGS = $(SVCOMP_LLVM_ASPROGS) $(SVCOMP_BC_PROGS)
+SVCOMP_LLVM_PROGS_ASM = $(addsuffix .s, $(SVCOMP_LLVM_PROGS))
+
+svcomp: $(SVCOMP_I386_PROGS) $(SVCOMP_LLVM_PROGS) $(SVCOMP_LLVM_PROGS_ASM)
+
+# Flags and per file rules
+
+EQCHECKER_NO_BUILTINS=-fno-builtin-printf -fno-builtin-malloc -fno-builtin-abort -fno-builtin-exit -fno-builtin-fscanf -fno-builtin-abs -fno-builtin-acos -fno-builtin-asin -fno-builtin-atan2 -fno-builtin-atan -fno-builtin-calloc -fno-builtin-ceil -fno-builtin-cosh -fno-builtin-cos -fno-builtin-exit -fno-builtin-exp -fno-builtin-fabs -fno-builtin-floor -fno-builtin-fmod -fno-builtin-fprintf -fno-builtin-fputs -fno-builtin-frexp -fno-builtin-fscanf -fno-builtin-isalnum -fno-builtin-isalpha -fno-builtin-iscntrl -fno-builtin-isdigit -fno-builtin-isgraph -fno-builtin-islower -fno-builtin-isprint -fno-builtin-ispunct -fno-builtin-isspace -fno-builtin-isupper -fno-builtin-isxdigit -fno-builtin-tolower -fno-builtin-toupper -fno-builtin-labs -fno-builtin-ldexp -fno-builtin-log10 -fno-builtin-log -fno-builtin-malloc -fno-builtin-memchr -fno-builtin-memcmp -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-modf -fno-builtin-pow -fno-builtin-printf -fno-builtin-putchar -fno-builtin-puts -fno-builtin-scanf -fno-builtin-sinh -fno-builtin-sin -fno-builtin-snprintf -fno-builtin-sprintf -fno-builtin-sqrt -fno-builtin-sscanf -fno-builtin-strcat -fno-builtin-strchr -fno-builtin-strcmp -fno-builtin-strcpy -fno-builtin-strcspn -fno-builtin-strlen -fno-builtin-strncat -fno-builtin-strncmp -fno-builtin-strncpy -fno-builtin-strpbrk -fno-builtin-strrchr -fno-builtin-strspn -fno-builtin-strstr -fno-builtin-tanh -fno-builtin-tan -fno-builtin-vfprintf -fno-builtin-vsprintf -fno-builtin
+
+EQCHECKER_DEFINES= -Dalloca=myalloca -D_FORTIFY_SOURCE=0 -Dexit=myexit -Dabort=myabort -D__noreturn__=__no_reorder__
+
+HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS)
+CLANG_I386_EQCHECKER_FLAGS= -m32 -std=c11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -fwrapv -fno-strict-overflow -fno-unroll-loops -fno-vectorize -fno-slp-vectorize -mno-sse -std=c11 -ffreestanding -fno-unit-at-a-time --param scev-max-expr-size=0 -fno-zero-initialized-in-bss -fno-caller-saves -U__GNUC__ -D_FORTIFY_SOURCE=0
+
+GCC_PPC=powerpc-linux-gnu-gcc
+GCC_X86=gcc
+HOSTGCC4_8_I386=gcc-4.8 $(HOSTGCC48_I386_EQCHECKER_FLAGS)
+
+AS_PPC=powerpc-linux-gnu-as
+LD_PPC=powerpc-linux-gnu-ld
+AS_I386=as --32
+LD_I386=ld -melf_i386
+AS_I386_SYSTEM=/usr/bin/as --32
+LD_I386_SYSTEM=/usr/bin/ld -melf_i386
+AS_PPC_SYSTEM=$(AS_PPC)
+LD_PPC_SYSTEM=$(LD_PPC)
+
+CLANG3_6_I386=${CLANG3_6} $(CLANG_I386_EQCHECKER_FLAGS)
+CLANG6_0_I386=${CLANG6_0} $(CLANG_I386_EQCHECKER_FLAGS)
+
+ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c11 -ffreestanding
+
+ICC_I386=/home/rawcoder/intel/bin/icc -m32 -mia32 $(ICC_I386_OPTS)
+ICPC_I386=/home/rawcoder/intel/bin/icpc  -m32 -mia32 $(ICC_I386_OPTS)
+
+ARM_PREFIX=/localhome/sbansal/gnuarm-4.0.2/bin
+GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc
+AS_ARM=$(ARM_PREFIX)/arm-elf-as
+LD_ARM=$(ARM_PREFIX)/arm-elf-ld
+
+svcomp/%.gcc48.O0.i386.o: svcomp/%.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
+svcomp/%.gcc48.O0.i386: svcomp/%.gcc48.O0.i386.o svcomp/svcomp_helper.gcc48.O0.i386.o
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+
+svcomp/%.gcc48.O2.i386.o: svcomp/%.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
+svcomp/%.gcc48.O2.i386: svcomp/%.gcc48.O2.i386.o svcomp/svcomp_helper.gcc48.O2.i386.o 
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
+svcomp/%.gcc48.O3.i386.o: svcomp/%.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
+svcomp/%.gcc48.O3.i386: svcomp/%.gcc48.O3.i386.o svcomp/svcomp_helper.gcc48.O3.i386.o 
+	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+
+# clang36
+
+svcomp/%.clang36.O0.i386.o: svcomp/%.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+svcomp/%.clang36.O0.i386: svcomp/%.clang36.O0.i386.o svcomp/svcomp_helper.clang36.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+
+svcomp/%.clang36.O2.i386.o: svcomp/%.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
+svcomp/%.clang36.O2.i386: svcomp/%.clang36.O2.i386.o svcomp/svcomp_helper.clang36.O2.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
+svcomp/%.clang36.O3.i386.o: svcomp/%.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
+svcomp/%.clang36.O3.i386: svcomp/%.clang36.O3.i386.o svcomp/svcomp_helper.clang36.O3.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+
+# clang-6.0
+
+# svcomp/%.clang60.O0.i386.o: svcomp/%.c
+# 	$(CLANG6_0_I386) -c $(CFLAGS) -g -O0 $< -o $@
+# svcomp/%.clang60.O0.i386: svcomp/%.clang60.O0.i386.o
+# 	$(CLANG6_0_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+
+# svcomp/%.clang60.O2.i386.o: svcomp/%.c
+# 	$(CLANG6_0_I386) -c $(CFLAGS) -g -O2 $< -o $@
+# svcomp/%.clang60.O2.i386: svcomp/%.clang60.O2.i386.o
+# 	$(CLANG6_0_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
+# svcomp/%.clang60.O3.i386.o: svcomp/%.c
+# 	$(CLANG6_0_I386) -c $(CFLAGS) -g -O3 $< -o $@
+# svcomp/%.clang60.O3.i386: svcomp/%.clang60.O3.i386.o
+# 	$(CLANG6_0_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+
+# icc 
+
+svcomp/%.icc.O0.i386.o: svcomp/%.c
+	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
+svcomp/%.icc.O0.i386: svcomp/%.icc.O0.i386.o svcomp/svcomp_helper.icc.O0.i386.o
+	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+
+svcomp/%.icc.O2.i386.o: svcomp/%.c
+	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@
+svcomp/%.icc.O2.i386: svcomp/%.icc.O2.i386.o svcomp/svcomp_helper.icc.O2.i386.o
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
+svcomp/%.icc.O3.i386.o: svcomp/%.c
+	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
+svcomp/%.icc.O3.i386: svcomp/%.icc.O3.i386.o svcomp/svcomp_helper.icc.O3.i386.o
+	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+
+# ccomp
+
+# svcomp/%.ccomp.O0.i386.o: svcomp/%.c
+# 	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O0 $< -o $@
+# svcomp/%.ccomp.O0.i386: svcomp/%.ccomp.O0.i386.o
+# 	$(CCOMP_I386) $(CCOMP_CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+
+# svcomp/%.ccomp.O2.i386.o: svcomp/%.c
+# 	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 $< -o $@
+# svcomp/%.ccomp.O2.i386: svcomp/%.ccomp.O2.i386.o
+# 	$(CCOMP_I386) $(CCOMP_CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
+
+# LLVM bitcode
+
+svcomp/%.c.O0.bc: svcomp/%.c
+	CLANG_REVERSE_ARGS=1 ${CLANG3_6} $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
+	${LLVM_OPT} -mem2reg -o $@ $@.tmp
+
+svcomp/%.bc.O0: svcomp/%.c.O0.bc svcomp/svcomp_helper.c.O0.bc
+	${LLVM_LINK} $^ -o $@
+
+svcomp/%.bc.O2: svcomp/%.bc.O0
+	${LLVM_OPT} -O2 -o $@ $<
+
+svcomp/%.bc.O3: svcomp/%.bc.O0
+	${LLVM_OPT} -O3 -o $@ $<
+
+svcomp/%.s: svcomp/%
+	${LLVM_DIS} < $< > $@
+
+# Other archs
+
+%.gcc.O0.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@
+
+%.gcc.O2.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 $< -o $@
+
+%.gcc.O2U.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -funroll-loops $< -o $@
+
+%.gcc.O0.le.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 -mlittle $< -o $@
+
+%.gcc.O2.le.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g  $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -mlittle $< -o $@
+
+%.gcc.O2U.le.ppc: %.c
+	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -funroll-loops -mlittle $< -o $@
+
+%.gcc.O0.arm: %.c
+	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O0 $< -o $@
+
+%.gcc.O2.arm: %.c
+	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 $< -o $@
+
+%.gcc.O2U.arm: %.c
+	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 -funroll-loops $< -o $@
+
+%.ccomp.O2.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
+	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+
+%.ccomp.O0.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
+	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+
+%.gcc.O0.i386.o: %.c
+	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+
+%.gcc.O2.i386.o: %.c
+	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+
+%.gcc.O3.i386.o: %.c
+	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+
+%.gcc48.O0.i386.o: %.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+
+%.gcc48.O2.i386.o: %.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+
+%.gcc48.O3.i386.o: %.c
+	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+
+%.gcc.O0.i386.o: %.c
+	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+
+%.gcc.O2.i386.o: %.c
+	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+
+%.gcc.O3.i386.o: %.c
+	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+
+%.msp430-gcc.O0: %.c
+	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O0 $< -o $@
+
+%.msp430-gcc.O2: %.c
+	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O2 $< -o $@
+
+%.msp430-gcc.O3: %.c
+	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O3 $< -o $@

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 //const char interp_section[] __attribute__((section(".interp"))) = "/path/to/dynamic/linker";
 
@@ -123,4 +124,9 @@ char *
 mystrdup(char const *s)
 {
   return strdup(s);
+}
+
+int mytoupper(int c)
+{
+  return toupper(c);
 }

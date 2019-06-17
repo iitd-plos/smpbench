@@ -31,6 +31,7 @@ CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_c
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
 CINT_PROG_NAMES=ctests
 CINT_PROG_NAMES+= emptyloop fibo_iter bubsort mergesort quicksort link_list_search binarytrees chomp fannkuch fib lists nsievebits nsieve qsort vmach #bzip2
+CINT_PROG_NAMES+= glibcqsort
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
 #USES UINT64: sha3 siphash24
 #aes2.O2: need to model llvm intrinsic function llvm.lifetime*
@@ -148,6 +149,7 @@ CINT_MSP430_PROGS = \
 CINT_LLVM_PROGS_ASM = $(addsuffix .s, $(CINT_LLVM_PROGS))
 
 cint: $(CINT_I386_PROGS) $(CINT_LLVM_PROGS) $(CINT_LLVM_PROGS_ASM) # $(CINT_PPC_PROGS)
+
 
 RED=`tput bold; tput setaf 1`
 GREEN=`tput bold; tput setaf 2`
@@ -458,7 +460,7 @@ $(RANDOM_FILES): %: gen_randfile.pl
 	perl -I$(SRCDIR) -I$(DATA_RANDOM)/lib $(SRCDIR)/gen_randfile.pl $@
 
 clean::
-	rm -rf *.o utils/*.o mytime $(SYSBENCH) $(PFSCAN) $(PBZIP2) $(SPLASH) $(HPCC) $(GRAPH500) $(PARSEC) $(MEMCACHED) $(LINUX) cint/*
+	rm -rf *.o utils/*.o mytime $(SYSBENCH) $(PFSCAN) $(PBZIP2) $(SPLASH) $(HPCC) $(GRAPH500) $(PARSEC) $(MEMCACHED) $(LINUX) cint/* svcomp/*
 
 distclean:: clean
 	rm -f $(RANDOM_FILES)
@@ -466,5 +468,6 @@ distclean:: clean
 include $(SRCDIR)/Makefile.crosstool
 include $(SRCDIR)/Makefile.compcert
 include $(SRCDIR)/Makefile.cint
+include $(SRCDIR)/Makefile.svcomp
 
 -include $(OBJS:.o=.d)

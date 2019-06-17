@@ -50,6 +50,7 @@ fi
 
 mkdir -p $build_dir/utils
 mkdir -p $build_dir/cint
+mkdir -p $build_dir/svcomp
 rm -f $build_dir/Makefile
 
 config_mak="$build_dir/config.mak"

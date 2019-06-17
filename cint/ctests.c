@@ -27,6 +27,7 @@ void *mycalloc(size_t nmemb, size_t size);
 char *mystrdup(char const *);
 FILE *myfopen(char const *path, char const *mode);
 void *myrealloc(void *ptr, size_t size);
+int mytoupper(int c);
 
 //#define mymalloc abcmall
 #define atoi my_atoi
@@ -54,7 +55,7 @@ struct _play
 
 int nrow = 3,ncol = 5;      /* global so as to avoid passing them all over the place */
 
-int *mymalloc(size_t size);
+void *mymalloc(size_t size);
 
 
 
@@ -696,45 +697,60 @@ __attribute__((noinline)) struct ht_ht *ht_create(int size) {
     return(ht);
 }
 
+//void ht_destroy(struct ht_ht *ht) {
+//    struct ht_node *cur, *next;
+//    int i;
+//#ifdef HT_DEBUG
+//    int chain_len;
+//    int max_chain_len = 0;
+//    int density = 0;
+//    fprintf(stderr, " HT: size            %d\n", ht->size);
+//    fprintf(stderr, " HT: items           %d\n", ht->items);
+//    fprintf(stderr, " HT: collisions      %d\n", ht->collisions);
+//#endif /* HT_DEBUG */
+//    for (i=0; i<ht->size; i++) {
+//	next = ht->tbl[i];
+//#ifdef HT_DEBUG
+//	if (next) {
+//	    density++;
+//	}
+//	chain_len = 0;
+//#endif /* HT_DEBUG */
+//	while (next) {
+//	    cur = next;
+//	    next = next->next;
+//	    myfree(cur->key);
+//	    myfree(cur);
+//#ifdef HT_DEBUG
+//	    chain_len++;
+//#endif /* HT_DEBUG */
+//	}
+//#ifdef HT_DEBUG
+//	if (chain_len > max_chain_len)
+//	    max_chain_len = chain_len;
+//#endif /* HT_DEBUG */
+//    }
+//    myfree(ht->tbl);
+//    myfree(ht);
+//#ifdef HT_DEBUG
+//    fprintf(stderr, " HT: density         %d\n", density);
+//    fprintf(stderr, " HT: max chain len   %d\n", max_chain_len);
+//#endif /* HT_DEBUG */
+//}
 void ht_destroy(struct ht_ht *ht) {
-    struct ht_node *cur, *next;
-    int i;
-#ifdef HT_DEBUG
-    int chain_len;
-    int max_chain_len = 0;
-    int density = 0;
-    fprintf(stderr, " HT: size            %d\n", ht->size);
-    fprintf(stderr, " HT: items           %d\n", ht->items);
-    fprintf(stderr, " HT: collisions      %d\n", ht->collisions);
-#endif /* HT_DEBUG */
-    for (i=0; i<ht->size; i++) {
-	next = ht->tbl[i];
-#ifdef HT_DEBUG
-	if (next) {
-	    density++;
-	}
-	chain_len = 0;
-#endif /* HT_DEBUG */
-	while (next) {
+  struct ht_node *cur, *next;
+  int i;
+  for (i=0; i < ht->size; i++) {
+	  next = ht->tbl[i];
+	  while (next) {
 	    cur = next;
 	    next = next->next;
 	    myfree(cur->key);
 	    myfree(cur);
-#ifdef HT_DEBUG
-	    chain_len++;
-#endif /* HT_DEBUG */
-	}
-#ifdef HT_DEBUG
-	if (chain_len > max_chain_len)
-	    max_chain_len = chain_len;
-#endif /* HT_DEBUG */
-    }
-    myfree(ht->tbl);
-    myfree(ht);
-#ifdef HT_DEBUG
-    fprintf(stderr, " HT: density         %d\n", density);
-    fprintf(stderr, " HT: max chain len   %d\n", max_chain_len);
-#endif /* HT_DEBUG */
+	  }
+  }
+  myfree(ht->tbl);
+  myfree(ht);
 }
 
 /*inline*/ struct ht_node *ht_find(struct ht_ht *ht, char *key) {
@@ -947,7 +963,7 @@ main_knucleotide ()
 	}
     }
   for (i = 0; i < seqlen; i++)
-    buffer[i] = toupper (buffer[i]);
+    buffer[i] = mytoupper (buffer[i]);
   write_frequencies (1, buffer, seqlen);
   write_frequencies (2, buffer, seqlen);
   write_count ("GGT", buffer, seqlen);
@@ -1042,8 +1058,7 @@ int main_lists(int argc, char ** argv)
   if (checklist(n, reverselist(l))) {
     printf("OK\n");
   } else {
-    printf("Bug!\n");
-    return 2;
+    goto bug;
   }
   for (i = 0; i < 2*niter + 1; i++) {
     l = reverse_inplace(l);
@@ -1051,10 +1066,12 @@ int main_lists(int argc, char ** argv)
   if (checklist(n, l)) {
     printf("OK\n");
   } else {
-    printf("Bug!\n");
-    return 2;
+    goto bug;
   }
   return 0;
+bug:
+  printf("Bug!\n");
+  return 2;
 }
 
 /*
@@ -1146,7 +1163,7 @@ Primes up to  1280000    98610
 typedef unsigned char boolean;
 
 
-unsigned int nsievebits(int m) {
+unsigned int nsieve_static(int m) {
     unsigned int count = 0, i, j;
     boolean * flags = (boolean *) mymalloc(m * sizeof(boolean));
     memset(flags, 1, m);
@@ -1180,7 +1197,7 @@ int main_nsieve(int argc, char * argv[]) {
     int i;
     for (i = 0; i < 3; i++)
     {
-        unsigned int count = nsievebits(10000 << (m-i));
+        unsigned int count = nsieve_static(10000 << (m-i));
         printf("Primes up to %8u %8u\n", 10000 << (m-i), count);
     }
     return 0;
@@ -1211,10 +1228,10 @@ Primes up to  1280000    98610
 #include <stdio.h>
 #include <string.h>
 
-void quicksort(int lo, int hi, int base[])
+void quicksort_orig(int lo, int hi, int* base)
 {
   int i,j;
-  int pivot,temp;
+  int pivot, temp;
 
   if (lo<hi)
   {
@@ -1222,11 +1239,80 @@ void quicksort(int lo, int hi, int base[])
     {
       while (i<hi && base[i]<=pivot) i++;
       while (j>lo && base[j]>=pivot) j--;
-      if (i<j) { temp=base[i]; base[i]=base[j]; base[j]=temp; }
+      if (i<j) { temp=base[i]; base[i]=base[j];base[j]=temp; }
     }
-    temp=base[i]; base[i]=base[hi]; base[hi]=temp;
+    temp=base[i]; base[i]=base[hi];base[hi]=temp; 
+    quicksort_orig(lo,i-1,base);  quicksort_orig(i+1,hi,base);
+  }
+}
+
+void swap(int* base, int i, int j)
+{
+  int temp = base[i];
+  base[i] = base[j];
+  base[j] = temp;
+}
+
+void quicksort(int lo, int hi, int* base)
+{
+  int i,j;
+  int pivot;
+
+  if (lo<hi)
+  {
+    for (i=lo,j=hi,pivot=base[hi];i<j;)
+    {
+      while (i<hi && base[i]<=pivot) i++;
+      while (j>lo && base[j]>=pivot) j--;
+      if (i<j) { swap(base, i, j); }
+    }
+    swap(base, i, hi);
     quicksort(lo,i-1,base);  quicksort(i+1,hi,base);
   }
+}
+
+int cmpint(const void * i, const void * j)
+{
+  int vi = *((int *) i);
+  int vj = *((int *) j);
+  if (vi == vj) return 0;
+  if (vi < vj) return -1;
+  return 1;
+}
+
+void rand_init(int* a, int* b, int n)
+{
+  for (int i = 0; i < n; i++) b[i] = a[i] = rand() & 0xFFFF;
+}
+
+int equal_array(int* a, int* b, int n)
+{
+    while (n-- > 0) {
+      if (*a++ != *b++) return 1;
+    }
+    return 0;
+}
+
+int main_qsort(int argc, char ** argv)
+{
+  int n, i;
+  int * a, * b;
+  int bench = 0;
+
+  if (argc >= 2) n = atoi(argv[1]); else n = 1000000;
+  if (argc >= 3) bench = 1;
+  a = mymalloc(n * sizeof(int));
+  b = mymalloc(n * sizeof(int));
+  rand_init(a, b, n);
+  quicksort(0, n - 1, a);
+  if (!bench) {
+    qsort(b, n, sizeof(int), cmpint);
+    if (equal_array(a, b, n)) {
+      printf("Bug!\n"); return 2;
+    }
+    printf("OK\n");
+  }
+  return 0;
 }
 
 int quicksort_char(int lo, int hi, char base[])
@@ -1247,42 +1333,10 @@ int quicksort_char(int lo, int hi, char base[])
       }
     }
     temp=base[i]; base[i]=base[hi]; base[hi]=temp;
-    //printf("hello %c", temp);
-    //quicksort_char(lo,i-1,base);  quicksort_char(i+1,hi,base);
   }
   return 0;
 }
 
-int cmpint(const void * i, const void * j)
-{
-  int vi = *((int *) i);
-  int vj = *((int *) j);
-  if (vi == vj) return 0;
-  if (vi < vj) return -1;
-  return 1;
-}
-
-int main_qsort(int argc, char ** argv)
-{
-  int n, i;
-  int * a, * b;
-  int bench = 0;
-
-  if (argc >= 2) n = atoi(argv[1]); else n = 1000000;
-  if (argc >= 3) bench = 1;
-  a = mymalloc(n * sizeof(int));
-  b = mymalloc(n * sizeof(int));
-  for (i = 0; i < n; i++) b[i] = a[i] = rand() & 0xFFFF;
-  quicksort(0, n - 1, a);
-  if (!bench) {
-    qsort(b, n, sizeof(int), cmpint);
-    for (i = 0; i < n; i++) {
-      if (a[i] != b[i]) { printf("Bug!\n"); return 2; }
-    }
-    printf("OK\n");
-  }
-  return 0;
-}
 /* SHA-1 cryptographic hash function */
 /* Ref: Handbook of Applied Cryptography, section 9.4.2, algorithm 9.53 */
 
@@ -1818,6 +1872,13 @@ void memcpy_v0(int size, int*restrict src, int*restrict dst)
   }
 }
 
+void memcpy_v0_neo(int i, int size, int*restrict src, int*restrict dst)
+{
+  for (; i < size; i++) {
+    dst[i] = src[i];
+  }
+}
+
 #define N 32
 #define M 32
 
@@ -2148,6 +2209,23 @@ __attribute__((noinline)) int init_new(int n)
   return sum_new;
 }
 
+__attribute__((noinline)) int sum_1(int n) 
+{
+  int ret = 0;
+  for (int i = 0; i < n+1; ++i)
+    ret += i;
+  return ret;
+}
+
+__attribute__((noinline)) int sum_2(int n) 
+{
+  int ret = 0;
+  for (int i = 0; i <= n; ++i)
+    ret += i;
+  return ret;
+}
+
+
 int array_2D[5][5] = {{1, 2, 3, 4, 5},
                       {6, 7, 8, 9, 10},
                       {11, 12, 13, 14, 15},
@@ -2320,4 +2398,11 @@ int main()
         big_struct_return_function(100).a*/;
   printf("finished\n");
   return ret;
+}
+
+__attribute__((noinline)) int sum_n(int n)
+{
+  int i;
+  for (i = 0; i < n; ++i);
+  return i;
 }
