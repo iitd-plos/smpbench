@@ -1,7 +1,7 @@
 /* A bytecode interpreter for a simple virtual machine */
 
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 
 #define STACKSIZE 256
 

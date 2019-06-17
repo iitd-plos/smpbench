@@ -4,7 +4,7 @@
 // Compile with:  -O3 -s -std=c99 -fomit-frame-pointer
 
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <string.h>
 
 #define memset mymemset
@@ -12,7 +12,7 @@
 typedef unsigned char boolean;
 
 
-static void nsieve(int m) {
+/*static */void nsieve(int m) {
     unsigned int count = 0, i, j;
     boolean * flags = (boolean *) malloc(m * sizeof(boolean));
     //memset(flags, 1, m);

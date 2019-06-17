@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
 
@@ -83,7 +83,39 @@
   } \
 } while (0)
 
+unsigned short lcong_state[7];
 
+static void
+my_lcong48(unsigned short lcong_params[7])
+{
+  for (size_t i = 0; i < 7; i++) {
+    lcong_state[i] = lcong_params[i];
+  }
+}
+
+static uint64_t
+read48(unsigned short const *arr)
+{
+  uint64_t ret = arr[2];
+  ret = (ret << 8);
+  ret |= arr[1];
+  ret = (ret << 8);
+  ret |= arr[0];
+  return ret;
+}
+
+static long int
+my_lrand48(void)
+{
+  uint64_t Xi = read48(&lcong_state[0]);
+  uint64_t a = read48(&lcong_state[3]);
+  uint64_t c = lcong_state[6];
+  Xi = (a*Xi + c) % (1ULL << 48);
+  lcong_state[0] = Xi & 0xff;
+  lcong_state[1] = (Xi >> 8) & 0xff;
+  lcong_state[2] = (Xi >> 16) & 0xff;
+  return (long int)Xi;
+}
 
 
 int
@@ -109,10 +141,25 @@ main(int argc, char ** argv)
 
   int i;
 
-  srand48 (0x12345678);
+  //srand48 (0x12345678);
+  unsigned short lcong_param[7];
+
+  //lcong_params 0..2 specify Xi
+  lcong_param[0] = 0x330E; //taken from man page of lrand48
+  lcong_param[1] = 0x5678; //arbitrary
+  lcong_param[2] = 0x1234;
+
+  //lcong_params 3..5 specify a
+  lcong_param[3] = 0xE66D; //default value (taken from man page of lrand48)
+  lcong_param[4] = 0xDEEC; //default value (taken from man page of lrand48)
+  lcong_param[5] = 0x5; //default value (taken from man page of lrand48)
+
+  //lcong_param 6 specifies c
+  lcong_param[6] = 0xB; //default value (taken from man page of lrand48)
+  my_lcong48(lcong_param);
 
   for (i = 0; i < len; i++) {
-    list[i] = lrand48();
+    list[i] = my_lrand48();
   }
 
   if (len <= 10) {

@@ -9,7 +9,7 @@ declare i32 @puts(i8* nocapture) nounwind
 ; Definition of main function
 define i32 @main() {   ; i32()*
   ; Convert [13 x i8]* to i8  *...
-  %cast210 = getelementptr [13 x i8]* @.str
+  %cast210 = getelementptr [13 x i8], [13 x i8]* @.str
   ; Call puts function to write out the string to stdout.
   %c2 = bitcast [13 x i8]* %cast210 to i8*
   call i32 @puts(i8 *%c2)

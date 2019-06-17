@@ -27,13 +27,15 @@ SNTHREADS?=$(shell cat /proc/cpuinfo | grep processor | wc -l)
 SPLASH_PROGS=radix water-spatial water-nsquared volrend raytrace fmm ocean barnes lu-ncont lu-cont fft radiosity cholesky hpcc
 RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2 randfile.10.3 randfile.10.4 randfile.10.5 randfile.10.6 randfile.40.1 randfile.100.2 randfile.200.1 randfile 200.1 randfile.400.1
 
-CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
+#CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
 CINT_PROG_NAMES=ctests
-CINT_PROG_NAMES+= emptyloop fibo_iter bubsort mergesort quicksort link_list_search binarytrees chomp fannkuch fib lists nsievebits nsieve qsort vmach #bzip2
+CINT_PROG_NAMES+= pcrack bubsort emptyloop fibo_iter hsearch binarytrees fib lists nsievebits nsieve qsort vmach #bzip2
+#NEEDS ENHANCED TRANSMAPS AND LIVENESS ANALYSIS FOR BEST PERFORMANCE: matmul matmul_noalias
 CINT_PROG_NAMES+= glibcqsort
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
-#USES UINT64: sha3 siphash24
+#USES UINT64: sha3 siphash24 quicksort
+#USES VECTOR <4 x i32> in O3: fannkuch chomp mergesort relu
 #aes2.O2: need to model llvm intrinsic function llvm.lifetime*
 #sha1.O2: need to model/match instructions of the following type:
 #  %uadd = tail call { i32, i1 } @llvm.uadd.with.overflow.i32(i32 %3, i32 %4)
@@ -53,18 +55,12 @@ COMPCERT_DIR=$(build)/installs/$(COMPCERT)
 COMPCERT_INSTALL=$(COMPCERT_DIR)-install
 CCOMP_I386=$(COMPCERT_INSTALL)/bin/ccomp -fvararg-calls -fno-fpu -funprototyped -fstruct-return -fno-tailcalls -L$(COMPCERT_INSTALL)/lib/compcert $(EMIT_RELOCS_FLAG)
 
-CINT_GCC_O0_PROGS = $(addsuffix .gcc.O0.i386, $(CINT_PROGS_GCC))
-CINT_GCC_O2_PROGS = $(addsuffix .gcc.O2.i386, $(CINT_PROGS_GCC))
-CINT_GCC_O3_PROGS = $(addsuffix .gcc.O3.i386, $(CINT_PROGS_GCC))
-CINT_HOSTGCC4_8_O0_PROGS = $(addsuffix .gcc48.O0, $(CINT_PROGS_GCC))
-CINT_HOSTGCC4_8_O2_PROGS = $(addsuffix .gcc48.O2, $(CINT_PROGS_GCC))
-CINT_HOSTGCC4_8_O3_PROGS = $(addsuffix .gcc48.O3, $(CINT_PROGS_GCC))
-CINT_CLANG3_6_O0_PROGS = $(addsuffix .clang36.O0, $(CINT_PROGS_CLANG))
-CINT_CLANG3_6_O2_PROGS = $(addsuffix .clang36.O2, $(CINT_PROGS_CLANG))
-CINT_CLANG3_6_O3_PROGS = $(addsuffix .clang36.O3, $(CINT_PROGS_CLANG))
-CINT_CLANG6_0_O0_PROGS = $(addsuffix .clang60.O0, $(CINT_PROGS_CLANG))
-CINT_CLANG6_0_O2_PROGS = $(addsuffix .clang60.O2, $(CINT_PROGS_CLANG))
-CINT_CLANG6_0_O3_PROGS = $(addsuffix .clang60.O3, $(CINT_PROGS_CLANG))
+CINT_CLANG_O0_PROGS = $(addsuffix .clang.O0, $(CINT_PROGS_CLANG))
+CINT_CLANG_O2_PROGS = $(addsuffix .clang.O2, $(CINT_PROGS_CLANG))
+CINT_CLANG_O3_PROGS = $(addsuffix .clang.O3, $(CINT_PROGS_CLANG))
+CINT_LLC_O0_PROGS = $(addsuffix .llc.O0, $(CINT_PROGS_CLANG))
+CINT_LLC_O2_PROGS = $(addsuffix .llc.O2, $(CINT_PROGS_CLANG))
+CINT_LLC_O3_PROGS = $(addsuffix .llc.O3, $(CINT_PROGS_CLANG))
 CINT_ICC_O0_PROGS = $(addsuffix .icc.O0, $(CINT_PROGS_ICC))
 CINT_ICC_O2_PROGS = $(addsuffix .icc.O2, $(CINT_PROGS_ICC))
 CINT_ICC_O3_PROGS = $(addsuffix .icc.O3, $(CINT_PROGS_ICC))
@@ -75,21 +71,33 @@ CINT_CCOMP_O0_PROGS = $(addsuffix .ccomp.O0, $(CINT_PROGS_CCOMP))
 CINT_BC_O0_PROGS = $(addsuffix .bc.O0, $(CINT_PROGS))
 CINT_BC_O2_PROGS = $(addsuffix .bc.O2, $(CINT_PROGS))
 CINT_BC_O3_PROGS = $(addsuffix .bc.O3, $(CINT_PROGS))
-CINT_I386_HOSTGCC4_8_O0_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O0_PROGS))
-CINT_I386_HOSTGCC4_8_O2_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O2_PROGS))
-CINT_I386_HOSTGCC4_8_O3_PROGS = $(addsuffix .i386, $(CINT_HOSTGCC4_8_O3_PROGS))
-CINT_I386_CLANG3_6_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O0_PROGS))
-CINT_I386_CLANG3_6_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O2_PROGS))
-CINT_I386_CLANG3_6_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O3_PROGS))
-CINT_I386_CLANG6_0_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O0_PROGS))
-CINT_I386_CLANG6_0_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O2_PROGS))
-CINT_I386_CLANG6_0_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O3_PROGS))
+CINT_I386_GCC_O0_PROGS = $(addsuffix .gcc.O0.i386, $(CINT_PROGS_GCC))
+CINT_I386_GCC_O2_PROGS = $(addsuffix .gcc.O2.i386, $(CINT_PROGS_GCC))
+CINT_I386_GCC_O3_PROGS = $(addsuffix .gcc.O3.i386, $(CINT_PROGS_GCC))
+CINT_I386_CLANG_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG_O0_PROGS))
+CINT_I386_CLANG_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG_O2_PROGS))
+CINT_I386_CLANG_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG_O3_PROGS))
+CINT_I386_LLC_O0_PROGS = $(addsuffix .i386, $(CINT_LLC_O0_PROGS))
+CINT_I386_LLC_O2_PROGS = $(addsuffix .i386, $(CINT_LLC_O2_PROGS))
+CINT_I386_LLC_O3_PROGS = $(addsuffix .i386, $(CINT_LLC_O3_PROGS))
 CINT_I386_ICC_O0_PROGS = $(addsuffix .i386, $(CINT_ICC_O0_PROGS))
 CINT_I386_ICC_O2_PROGS = $(addsuffix .i386, $(CINT_ICC_O2_PROGS))
 CINT_I386_ICC_O3_PROGS = $(addsuffix .i386, $(CINT_ICC_O3_PROGS))
 CINT_I386_ICC_O2U_PROGS = $(addsuffix .i386, $(CINT_ICC_O2U_PROGS))
 CINT_I386_CCOMP_O0_PROGS = $(addsuffix .i386, $(CINT_CCOMP_O0_PROGS))
 CINT_I386_CCOMP_O2_PROGS = $(addsuffix .i386, $(CINT_CCOMP_O2_PROGS))
+
+CINT_EQCHECKER_I386_GCC_O0_PROGS =   $(addsuffix .gcc.eqchecker.O0.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_GCC_O2_PROGS =   $(addsuffix .gcc.eqchecker.O2.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_GCC_O3_PROGS =   $(addsuffix .gcc.eqchecker.O3.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_CLANG_O0_PROGS = $(addsuffix .clang.eqchecker.O0.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_CLANG_O2_PROGS = $(addsuffix .clang.eqchecker.O2.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_CLANG_O3_PROGS = $(addsuffix .clang.eqchecker.O3.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_ICC_O0_PROGS =   $(addsuffix .icc.eqchecker.O0.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_ICC_O2_PROGS =   $(addsuffix .icc.eqchecker.O2.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_ICC_O3_PROGS =   $(addsuffix .icc.eqchecker.O3.i386, $(CINT_PROGS))
+
+
 CINT_I386_ASPROGS_NAMES = hello_world.AS.i386 fibo.AS.i386 one_bbl.AS.i386 irreducible_cfg.AS.i386 sum8.AS.i386 \
                image_diff.AS.i386 fibo_rec.AS.i386 one_bbl_unroll_loops.AS.i386\
                one_bbl_stack_analysis.AS.i386 link_list_double.AS.i386
@@ -116,28 +124,42 @@ CINT_MSP430_GCC_O3_PROGS = $(addsuffix .msp430-gcc.O3, $(CINT_PROGS_GCC))
 CINT_PPC_PROGS = $(CINT_PPC_ASPROGS) \
             #$(CINT_PPC_O0_PROGS) $(CINT_PPC_O2_PROGS) $(CINT_PPC_O2U_PROGS) $(PPC_LITTLE_O0_PROGS) $(PPC_LITTLE_O2_PROGS) $(PPC_LITTLE_O2U_PROGS)
 #X86_PROGS = $(X86_O0_PROGS) $(X86_O2_PROGS) $(X86_O2U_PROGS)
+
+CINT_EQCHECKER_I386_PROGS = \
+  $(CINT_EQCHECKER_I386_GCC_O0_PROGS) \
+  $(CINT_EQCHECKER_I386_GCC_O3_PROGS) \
+  $(CINT_EQCHECKER_I386_CLANG_O0_PROGS) \
+  $(CINT_EQCHECKER_I386_CLANG_O3_PROGS) \
+  $(CINT_EQCHECKER_I386_ICC_O0_PROGS) \
+  $(CINT_EQCHECKER_I386_ICC_O3_PROGS) \
+
 CINT_I386_PROGS = \
-  $(CINT_I386_HOSTGCC4_8_O0_PROGS) \
-  $(CINT_I386_HOSTGCC4_8_O2_PROGS) \
-  $(CINT_I386_HOSTGCC4_8_O3_PROGS) \
-  $(CINT_I386_CLANG3_6_O0_PROGS) \
-  $(CINT_I386_CLANG3_6_O2_PROGS) \
-  $(CINT_I386_CLANG3_6_O3_PROGS) \
   $(CINT_BC_O0_PROGS) \
-  $(CINT_BC_O2_PROGS) \
   $(CINT_BC_O3_PROGS) \
-  #$(CINT_I386_ASPROGS) \
+  $(CINT_I386_GCC_O0_PROGS) \
+  $(CINT_I386_GCC_O3_PROGS) \
+  $(CINT_I386_CLANG_O0_PROGS) \
+  $(CINT_I386_CLANG_O3_PROGS) \
+  $(CINT_I386_LLC_O0_PROGS) \
+  $(CINT_I386_LLC_O3_PROGS) \
+  $(CINT_I386_ICC_O0_PROGS) \
+  $(CINT_I386_ICC_O3_PROGS) \
+  $(CINT_I386_ASPROGS) \
+  #$(CINT_GCC_O0_PROGS) \
   #$(CINT_I386_ICC_O0_PROGS) \
   #$(CINT_I386_ICC_O2_PROGS) \
   #$(CINT_I386_ICC_O3_PROGS) \
-  #$(CINT_I386_CLANG6_0_O0_PROGS) \
-  #$(CINT_I386_CLANG6_0_O2_PROGS) \
-  #$(CINT_I386_CLANG6_0_O3_PROGS) \
-  #$(CINT_GCC_O0_PROGS) \
   #$(CINT_I386_CCOMP_O0_PROGS) \
   #$(CINT_I386_CCOMP_O2_PROGS) \
+  #$(CINT_I386_HOSTGCC4_8_O0_PROGS) \
+  #$(CINT_I386_HOSTGCC4_8_O2_PROGS) \
+  #$(CINT_I386_HOSTGCC4_8_O3_PROGS) \
+  #$(CINT_I386_CLANG3_6_O0_PROGS) \
+  #$(CINT_I386_CLANG3_6_O2_PROGS) \
+  #$(CINT_I386_CLANG3_6_O3_PROGS) \
 
-CINT_BC_PROGS = $(CINT_BC_O0_PROGS) $(CINT_BC_O2_PROGS) $(CINT_BC_O3_PROGS)
+#CINT_BC_PROGS = $(CINT_BC_O0_PROGS) $(CINT_BC_O2_PROGS) $(CINT_BC_O3_PROGS)
+CINT_BC_PROGS = $(CINT_BC_O0_PROGS) $(CINT_BC_O3_PROGS)
 CINT_LLVM_PROGS = $(CINT_LLVM_ASPROGS) $(CINT_BC_PROGS)
 
 
@@ -148,7 +170,7 @@ CINT_MSP430_PROGS = \
 
 CINT_LLVM_PROGS_ASM = $(addsuffix .s, $(CINT_LLVM_PROGS))
 
-cint: $(CINT_I386_PROGS) $(CINT_LLVM_PROGS) $(CINT_LLVM_PROGS_ASM) # $(CINT_PPC_PROGS)
+cint: $(CINT_I386_PROGS) $(CINT_EQCHECKER_I386_PROGS) $(CINT_LLVM_PROGS) $(CINT_LLVM_PROGS_ASM) # $(CINT_PPC_PROGS)
 
 
 RED=`tput bold; tput setaf 1`
@@ -173,6 +195,7 @@ RESET=`tput sgr0`
 superopt_test: $(CINT_BC_PROGS) $(CINT_ETFG_PROGS) $(CINT_I386_PROGS)
 	python $(SRCDIR)/misc/superopt_test.py $(CINT_PROGS) > superopt_test.cmds
 	parallel -j $(NPROCS) :::: superopt_test.cmds
+	python $(SRCDIR)/misc/profile.py
 	#for llvm_prog in $(CINT_PROGS) ; do \
 	#  $(LLVM2TFG_BUILD_DIR)/bin/llvm2tfg $$llvm_prog.bc.O0 -o $$llvm_prog.bc.O0.etfg ; \
 	#  rm -f $$llvm_prog.i386 && $(SUPEROPT_DIR)/build/etfg_i386/codegen $$llvm_prog.bc.O0.etfg -o $$llvm_prog.bc.O0.i386; \
