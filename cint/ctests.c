@@ -1250,22 +1250,19 @@ int equal_array(int* a, int* b, int n)
     return 0;
 }
 
-int main_qsort(int argc, char ** argv)
+int main_qsort(int n, int bench)
 {
-  int n, i;
+  int i;
   int * a, * b;
-  int bench = 0;
 
-  if (argc >= 2) n = atoi(argv[1]); else n = 1000000;
-  if (argc >= 3) bench = 1;
   a = mymalloc(n * sizeof(int));
   b = mymalloc(n * sizeof(int));
-  for (i = 0; i < n; i++) b[i] = a[i] = rand() & 0xFFFF;
+  rand_init(a, b, n);
   quicksort(0, n - 1, a);
   if (!bench) {
     qsort(b, n, sizeof(int), cmpint);
-    for (i = 0; i < n; i++) {
-      if (a[i] != b[i]) { printf("Bug!\n"); return 2; }
+    if (equal_array(a, b, n)) {
+      printf("Bug!\n"); return 2;
     }
     printf("OK\n");
   }
@@ -1479,13 +1476,15 @@ void SHA1_finish(struct SHA1Context * ctx, unsigned char output[20])
 
 void do_test(unsigned char * txt, unsigned char * expected_output)
 {
-  struct SHA1Context ctx;
-  unsigned char output[20];
+  struct SHA1Context* ctx;
+  unsigned char* output;
   int ok;
 
-  SHA1_init(&ctx);
-  SHA1_add_data(&ctx, txt, strlen((char *) txt));
-  SHA1_finish(&ctx, output);
+  ctx = mymalloc(sizeof(struct SHA1Context));
+  output = mymalloc(sizeof(unsigned char)*20);
+  SHA1_init(ctx);
+  SHA1_add_data(ctx, txt, strlen((char *) txt));
+  SHA1_finish(ctx, output);
   ok = memcmp(output, expected_output, 20) == 0;
   printf("Test `%s': %s\n", 
          (char *) txt, (ok ? "passed" : "FAILED"));
@@ -1540,7 +1539,7 @@ int main_sha1(int argc, char ** argv)
   }
   do_test(test_input_1, test_output_1);
   do_test(test_input_2, test_output_2);
-  do_bench(1000000);
+  //do_bench(1000000);
   return 0;
 }
 
@@ -2315,7 +2314,8 @@ int main()
         main_lists(atoi("0"), (char **)atoi("0")) + 
         main_nsievebits(atoi("0"), (char **)atoi("0")) + 
         main_nsieve(atoi("0"), (char **)atoi("0")) + 
-        main_qsort(atoi("0"), (char **)atoi("0")) + 
+        //main_qsort(atoi("0"), (char **)atoi("0")) + 
+        main_qsort(10000, 0) + 
         main_sha1(atoi("0"), (char **)atoi("0")) + 
         nested_loops2_1(atoi("100"), atoi("100")) + nested_loops2(atoi("100")) + 
         nested_loops3(atoi("100"), atoi("100"), a, b) + 
