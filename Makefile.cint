@@ -10,7 +10,7 @@ EQCHECKER_DEFINES= -Dalloca=myalloca -D_FORTIFY_SOURCE=0 -Dexit=myexit -Dabort=m
 
 GCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS) ${INCLUDES}
 CLANG_I386_EQCHECKER_FLAGS= -m32 -g -std=c11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  -DTIMING_OUTPUT -fno-reorder-blocks -fwrapv -fno-strict-overflow -fno-unroll-loops -fno-vectorize -fno-slp-vectorize -mno-sse -std=c11 -ffreestanding -fno-unit-at-a-time --param scev-max-expr-size=0 -fno-zero-initialized-in-bss -fno-caller-saves -U__GNUC__ ${EQCHECKER_DEFINES} ${INCLUDES}
-ICC_I386_EQCHECKER_FLAGS= -m32 -mia32 -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 $(EQCHECKER_DEFINES) -qno-opt-multi-version-aggressive -std=c11 -ffreestanding ${INCLUDES} #-U__GNUC__
+ICC_I386_EQCHECKER_FLAGS= -m32 -mia32 -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc $(EQCHECKER_DEFINES) -qno-opt-multi-version-aggressive -std=c11 -ffreestanding ${INCLUDES} #-U__GNUC__
 
 GCC_PPC=powerpc-linux-gnu-gcc
 GCC_X86=gcc
@@ -310,14 +310,14 @@ cint/%.bc.O3.s: cint/%.bc.O0
 	$(LLC) -O3 -filetype=obj $@.tmp -o $@.tmp.o
 	$(CLANG3_6) -O3 $@.tmp.o $(LIBS) -o $@
 
-%.icc.O0.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
-
-%.icc.O2.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< $(LIBS) -o $@
-
-%.icc.O3.i386: %.c
-	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
+#%.icc.O0.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $< $(LIBS) -o $@
+#
+#%.icc.O2.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $< $(LIBS) -o $@
+#
+#%.icc.O3.i386: %.c
+#	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $< $(LIBS) -o $@
 
 $(CINT_PPC_ASPROGS): %.AS.ppc: %.ppc.s
 	$(AS_PPC) $< -o $@.o
