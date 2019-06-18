@@ -558,6 +558,62 @@ fannkuch( int n )
   }
 }
 
+long
+fannkuch_clang( int n )
+{
+  Aint* perm;
+  Aint* perm1;
+  Aint* count;
+  long  flips;
+  long  flipsmax;
+  int   r;
+  int   i;
+  int   k;
+  int   didpr;
+
+  if( n < 1 ) return 0;
+  r = n; didpr = 0; flipsmax = 0;
+
+  perm1 = mycalloc(n, sizeof(*perm1));
+  init_perm1(perm1, n);
+  perm  = mycalloc(n, sizeof(*perm ));
+  count = mycalloc(n, sizeof(*count));
+
+  if (n == 1) {
+        print_perm(perm1, n);
+        return copy_and_reverse_perm(perm1, perm, flipsmax, n);
+  }
+  for(;;) {
+    if( didpr < 30 ) {
+        print_perm(perm1, n);
+        ++didpr;
+    }
+    flipsmax = copy_and_reverse_perm(perm1, perm, flipsmax, n);
+	  for( ; r!=1 ; --r ) {
+	      count[r-1] = r;
+	  }
+    for(;;) {
+      if( r == n ) {
+        return flipsmax;
+      }
+      /* rotate down perm[0..r] by one */
+      {
+        Aint perm0 = perm1[0];
+        i = 0;
+        while( i < r ) {
+          k = i+1;
+          perm1[i] = perm1[k];
+          i = k;
+        }
+        perm1[r] = perm0;
+      }
+      if( (count[r] -= 1) > 0 ) {
+        break;
+      }
+      ++r;
+    }
+  }
+}
 
     int
 main_fannkuch( int argc, char* argv[] )
@@ -1064,8 +1120,8 @@ nsieve(unsigned int m)
 {
 	unsigned int count, i, j;
 	bits * a;
-        a = mymalloc((m / NBITS) * sizeof(bits));
-	memset(a, (1 << 8) - 1, (m / NBITS) * sizeof(bits));
+	a = mymalloc((m / NBITS) * sizeof(bits));
+	mymemset(a, (1 << 8) - 1, (m / NBITS) * sizeof(bits));
 	count = 0;
 	for (i = 2; i < m; ++i)
 		if (a[i / NBITS] & (1 << i % NBITS)) {
@@ -1149,8 +1205,7 @@ unsigned int nsieve_static(int m) {
     return count;
 }
 
-int main_nsieve(int argc, char * argv[]) {
-    int m = argc < 2 ? 9 : atoi(argv[1]);
+int main_nsieve(int m) {
     int i;
     for (i = 0; i < 3; i++)
     {
@@ -2313,7 +2368,7 @@ int main()
         main_knucleotide() + 
         main_lists(atoi("0"), (char **)atoi("0")) + 
         main_nsievebits(atoi("0"), (char **)atoi("0")) + 
-        main_nsieve(atoi("0"), (char **)atoi("0")) + 
+        main_nsieve(10000) + 
         //main_qsort(atoi("0"), (char **)atoi("0")) + 
         main_qsort(10000, 0) + 
         main_sha1(atoi("0"), (char **)atoi("0")) + 
