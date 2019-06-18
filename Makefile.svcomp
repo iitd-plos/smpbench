@@ -245,8 +245,8 @@ CLANG6_0_I386=${CLANG6_0} $(CLANG_I386_EQCHECKER_FLAGS)
 
 ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c11 -ffreestanding
 
-ICC_I386=/home/rawcoder/intel/bin/icc -m32 -mia32 $(ICC_I386_OPTS)
-ICPC_I386=/home/rawcoder/intel/bin/icpc  -m32 -mia32 $(ICC_I386_OPTS)
+#ICC_I386=/home/rawcoder/intel/bin/icc -m32 -mia32 $(ICC_I386_OPTS)
+#ICPC_I386=/home/rawcoder/intel/bin/icpc  -m32 -mia32 $(ICC_I386_OPTS)
 
 ARM_PREFIX=/localhome/sbansal/gnuarm-4.0.2/bin
 GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc

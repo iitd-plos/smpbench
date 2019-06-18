@@ -29,7 +29,6 @@ FILE *myfopen(char const *path, char const *mode);
 void *myrealloc(void *ptr, size_t size);
 int mytoupper(int c);
 
-//#define mymalloc abcmall
 #define atoi my_atoi
 #define memset mymemset
 #define memcpy mymemcpy
