@@ -579,6 +579,7 @@ fannkuch_clang( int n )
   perm  = mycalloc(n, sizeof(*perm ));
   count = mycalloc(n, sizeof(*count));
 
+  // specialize for n == 1
   if (n == 1) {
         print_perm(perm1, n);
         return copy_and_reverse_perm(perm1, perm, flipsmax, n);

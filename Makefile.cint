@@ -135,6 +135,24 @@ cint/ctests_helper.icc.O3.i386.o: cint/ctests_helper.c
 cint/%.icc.O3.i386: cint/%.icc.O3.i386.o cint/ctests_helper.icc.O3.i386.o
 	$(ICC_I386) $(CFLAGS)  $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
+cint/%.gcc48.O0.i386.s: cint/%.gcc48.O0.i386
+	objdump -d -Mintel $< > $@
+
+cint/%.gcc48.O3.i386.s: cint/%.gcc48.O3.i386
+	objdump -d -Mintel $< > $@
+
+cint/%.clang36.O0.i386.s: cint/%.clang36.O0.i386
+	objdump -d -Mintel $< > $@
+
+cint/%.clang36.O3.i386.s: cint/%.clang36.O3.i386
+	objdump -d -Mintel $< > $@
+
+cint/%.icc.O0.i386.s: cint/%.icc.O0.i386
+	objdump -d -Mintel $< > $@
+
+cint/%.icc.O3.i386.s: cint/%.icc.O3.i386
+	objdump -d -Mintel $< > $@
+
 #cint/%.gcc.eqchecker.O0.i386.o: cint/%.c
 #	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS)  -O0 $< -o $@
 #cint/ctests_helper.gcc.eqchecker.O0.i386.o: cint/ctests_helper.c
