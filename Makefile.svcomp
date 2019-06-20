@@ -1,3 +1,5 @@
+include $(SRCDIR)/eqchecker.defs
+
 #########
 # SVCOMP 
 #########
@@ -218,41 +220,6 @@ SVCOMP_LLVM_PROGS_ASM = $(addsuffix .s, $(SVCOMP_LLVM_PROGS))
 
 svcomp: $(SVCOMP_I386_PROGS) $(SVCOMP_LLVM_PROGS) $(SVCOMP_LLVM_PROGS_ASM)
 
-# Flags and per file rules
-
-EQCHECKER_NO_BUILTINS=-fno-builtin-printf -fno-builtin-malloc -fno-builtin-abort -fno-builtin-exit -fno-builtin-fscanf -fno-builtin-abs -fno-builtin-acos -fno-builtin-asin -fno-builtin-atan2 -fno-builtin-atan -fno-builtin-calloc -fno-builtin-ceil -fno-builtin-cosh -fno-builtin-cos -fno-builtin-exit -fno-builtin-exp -fno-builtin-fabs -fno-builtin-floor -fno-builtin-fmod -fno-builtin-fprintf -fno-builtin-fputs -fno-builtin-frexp -fno-builtin-fscanf -fno-builtin-isalnum -fno-builtin-isalpha -fno-builtin-iscntrl -fno-builtin-isdigit -fno-builtin-isgraph -fno-builtin-islower -fno-builtin-isprint -fno-builtin-ispunct -fno-builtin-isspace -fno-builtin-isupper -fno-builtin-isxdigit -fno-builtin-tolower -fno-builtin-toupper -fno-builtin-labs -fno-builtin-ldexp -fno-builtin-log10 -fno-builtin-log -fno-builtin-malloc -fno-builtin-memchr -fno-builtin-memcmp -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-modf -fno-builtin-pow -fno-builtin-printf -fno-builtin-putchar -fno-builtin-puts -fno-builtin-scanf -fno-builtin-sinh -fno-builtin-sin -fno-builtin-snprintf -fno-builtin-sprintf -fno-builtin-sqrt -fno-builtin-sscanf -fno-builtin-strcat -fno-builtin-strchr -fno-builtin-strcmp -fno-builtin-strcpy -fno-builtin-strcspn -fno-builtin-strlen -fno-builtin-strncat -fno-builtin-strncmp -fno-builtin-strncpy -fno-builtin-strpbrk -fno-builtin-strrchr -fno-builtin-strspn -fno-builtin-strstr -fno-builtin-tanh -fno-builtin-tan -fno-builtin-vfprintf -fno-builtin-vsprintf -fno-builtin
-
-EQCHECKER_DEFINES= -Dalloca=myalloca -D_FORTIFY_SOURCE=0 -Dexit=myexit -Dabort=myabort -D__noreturn__=__no_reorder__
-
-HOSTGCC48_I386_EQCHECKER_FLAGS= -m32 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS)
-CLANG_I386_EQCHECKER_FLAGS= -m32 -std=c11 -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-builtin -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  -DTIMING_OUTPUT -Dexit=myexit -fno-reorder-blocks -fwrapv -fno-strict-overflow -fno-unroll-loops -fno-vectorize -fno-slp-vectorize -mno-sse -std=c11 -ffreestanding -fno-unit-at-a-time --param scev-max-expr-size=0 -fno-zero-initialized-in-bss -fno-caller-saves -U__GNUC__ -D_FORTIFY_SOURCE=0
-
-GCC_PPC=powerpc-linux-gnu-gcc
-GCC_X86=gcc
-HOSTGCC4_8_I386=gcc-4.8 $(HOSTGCC48_I386_EQCHECKER_FLAGS)
-
-AS_PPC=powerpc-linux-gnu-as
-LD_PPC=powerpc-linux-gnu-ld
-AS_I386=as --32
-LD_I386=ld -melf_i386
-AS_I386_SYSTEM=/usr/bin/as --32
-LD_I386_SYSTEM=/usr/bin/ld -melf_i386
-AS_PPC_SYSTEM=$(AS_PPC)
-LD_PPC_SYSTEM=$(LD_PPC)
-
-CLANG3_6_I386=${CLANG3_6} $(CLANG_I386_EQCHECKER_FLAGS)
-CLANG6_0_I386=${CLANG6_0} $(CLANG_I386_EQCHECKER_FLAGS)
-
-ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -unroll0 -no-ansi-alias -falias -no-vec -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c11 -ffreestanding
-
-ICC_I386=/home/rawcoder/intel/bin/icc -m32 -mia32 $(ICC_I386_OPTS)
-ICPC_I386=/home/rawcoder/intel/bin/icpc  -m32 -mia32 $(ICC_I386_OPTS)
-
-ARM_PREFIX=/localhome/sbansal/gnuarm-4.0.2/bin
-GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc
-AS_ARM=$(ARM_PREFIX)/arm-elf-as
-LD_ARM=$(ARM_PREFIX)/arm-elf-ld
-
 svcomp/%.gcc48.O0.i386.o: svcomp/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
 svcomp/%.gcc48.O0.i386: svcomp/%.gcc48.O0.i386.o svcomp/svcomp_helper.gcc48.O0.i386.o
@@ -349,74 +316,3 @@ svcomp/%.bc.O3: svcomp/%.bc.O0
 
 svcomp/%.s: svcomp/%
 	${LLVM_DIS} < $< > $@
-
-# Other archs
-
-%.gcc.O0.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@
-
-%.gcc.O2.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 $< -o $@
-
-%.gcc.O2U.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -funroll-loops $< -o $@
-
-%.gcc.O0.le.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 -mlittle $< -o $@
-
-%.gcc.O2.le.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g  $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -mlittle $< -o $@
-
-%.gcc.O2U.le.ppc: %.c
-	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -funroll-loops -mlittle $< -o $@
-
-%.gcc.O0.arm: %.c
-	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O0 $< -o $@
-
-%.gcc.O2.arm: %.c
-	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 $< -o $@
-
-%.gcc.O2U.arm: %.c
-	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 -funroll-loops $< -o $@
-
-%.ccomp.O2.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
-	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-
-%.ccomp.O0.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
-	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-
-%.gcc.O0.i386.o: %.c
-	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-
-%.gcc.O2.i386.o: %.c
-	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-
-%.gcc.O3.i386.o: %.c
-	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
-
-%.gcc48.O0.i386.o: %.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-
-%.gcc48.O2.i386.o: %.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-
-%.gcc48.O3.i386.o: %.c
-	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
-
-%.gcc.O0.i386.o: %.c
-	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
-
-%.gcc.O2.i386.o: %.c
-	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
-
-%.gcc.O3.i386.o: %.c
-	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
-
-%.msp430-gcc.O0: %.c
-	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O0 $< -o $@
-
-%.msp430-gcc.O2: %.c
-	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O2 $< -o $@
-
-%.msp430-gcc.O3: %.c
-	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O3 $< -o $@
