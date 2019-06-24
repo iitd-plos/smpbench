@@ -26,6 +26,7 @@ void myfree(void *ptr);
 void *mycalloc(size_t nmemb, size_t size);
 char *mystrdup(char const *);
 FILE *myfopen(char const *path, char const *mode);
+int myfclose(FILE *fp);
 void *myrealloc(void *ptr, size_t size);
 int mytoupper(int c);
 
@@ -505,70 +506,26 @@ __attribute__((noinline))void print_perm(Aint* perm1, int n)
 	  printf("\n");
 }
 
+__attribute__((noinline)) void rotate_left_by_one(Aint* perm1, int r)
+{
+  Aint perm0 = perm1[0];
+  int i = 0;
+  while( i < r ) {
+    int k = i+1;
+    perm1[i] = perm1[k];
+    i = k;
+  }
+  perm1[r] = perm0;
+}
+
 long
 fannkuch( int n )
 {
   Aint* perm;
   Aint* perm1;
   Aint* count;
-  long  flips;
   long  flipsmax;
   int   r;
-  int   i;
-  int   k;
-  int   didpr;
-
-  if( n < 1 ) return 0;
-  r = n; didpr = 0; flipsmax = 0;
-
-  perm1 = mycalloc(n, sizeof(*perm1));
-  init_perm1(perm1, n);
-  perm  = mycalloc(n, sizeof(*perm ));
-  count = mycalloc(n, sizeof(*count));
-
-  for(;;) {
-    if( didpr < 30 ) {
-        print_perm(perm1, n);
-        ++didpr;
-    }
-    flipsmax = copy_and_reverse_perm(perm1, perm, flipsmax, n);
-	  for( ; r!=1 ; --r ) {
-	      count[r-1] = r;
-	  }
-    for(;;) {
-      if( r == n ) {
-        return flipsmax;
-      }
-      /* rotate down perm[0..r] by one */
-      {
-        Aint perm0 = perm1[0];
-        i = 0;
-        while( i < r ) {
-          k = i+1;
-          perm1[i] = perm1[k];
-          i = k;
-        }
-        perm1[r] = perm0;
-      }
-      if( (count[r] -= 1) > 0 ) {
-        break;
-      }
-      ++r;
-    }
-  }
-}
-
-long
-fannkuch_clang( int n )
-{
-  Aint* perm;
-  Aint* perm1;
-  Aint* count;
-  long  flips;
-  long  flipsmax;
-  int   r;
-  int   i;
-  int   k;
   int   didpr;
 
   if( n < 1 ) return 0;
@@ -598,16 +555,7 @@ fannkuch_clang( int n )
         return flipsmax;
       }
       /* rotate down perm[0..r] by one */
-      {
-        Aint perm0 = perm1[0];
-        i = 0;
-        while( i < r ) {
-          k = i+1;
-          perm1[i] = perm1[k];
-          i = k;
-        }
-        perm1[r] = perm0;
-      }
+      rotate_left_by_one(perm1, r);
       if( (count[r] -= 1) > 0 ) {
         break;
       }
@@ -616,7 +564,7 @@ fannkuch_clang( int n )
   }
 }
 
-    int
+int
 main_fannkuch( int argc, char* argv[] )
 {
     int		n = (argc>1) ? atoi(argv[1]) : 10;
@@ -737,7 +685,7 @@ struct ht_node *ht_node_create(char *key) {
 	perror("malloc ht_node");
 	exit(1);
     }
-    if ((newkey = (char *)strdup(key)) == 0) {
+    if ((newkey = (char *)mystrdup(key)) == 0) {
 	perror("strdup newkey");
 	exit(1);
     }
