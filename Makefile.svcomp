@@ -316,3 +316,74 @@ svcomp/%.bc.O3: svcomp/%.bc.O0
 
 svcomp/%.s: svcomp/%
 	${LLVM_DIS} < $< > $@
+
+## Other archs
+#
+#%.gcc.O0.ppc: %.c
+#	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 $< -o $@
+#
+#%.gcc.O2.ppc: %.c
+#	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 $< -o $@
+#
+#%.gcc.O2U.ppc: %.c
+#	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -funroll-loops $< -o $@
+#
+#%.gcc.O0.le.ppc: %.c
+#	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O0 -mlittle $< -o $@
+#
+#%.gcc.O2.le.ppc: %.c
+#	$(GCC_PPC) $(CFLAGS) -g  $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -mlittle $< -o $@
+#
+#%.gcc.O2U.le.ppc: %.c
+#	$(GCC_PPC) $(CFLAGS) -g $(LINKER_SCRIPT_PPCLE_FLAG) -O2 -funroll-loops -mlittle $< -o $@
+#
+#%.gcc.O0.arm: %.c
+#	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O0 $< -o $@
+#
+#%.gcc.O2.arm: %.c
+#	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 $< -o $@
+#
+#%.gcc.O2U.arm: %.c
+#	$(GCC_ARM) $(CFLAGS) -g $(LINKER_SCRIPT_ARM_FLAG) -O2 -funroll-loops $< -o $@
+#
+#%.ccomp.O2.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
+#	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#
+#%.ccomp.O0.i386: %.c $(COMPCERT_INSTALL)/bin/ccomp
+#	$(CCOMP_I386) $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#
+#%.gcc.O0.i386.o: %.c
+#	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#
+#%.gcc.O2.i386.o: %.c
+#	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#
+#%.gcc.O3.i386.o: %.c
+#	$(HOSTGCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+#
+#%.gcc48.O0.i386.o: %.c
+#	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#
+#%.gcc48.O2.i386.o: %.c
+#	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#
+#%.gcc48.O3.i386.o: %.c
+#	$(HOSTGCC4_8_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+#
+#%.gcc.O0.i386.o: %.c
+#	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O0 $< -o $@
+#
+#%.gcc.O2.i386.o: %.c
+#	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O2 $< -o $@
+#
+#%.gcc.O3.i386.o: %.c
+#	$(GCC_I386) -c $(CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -O3 $< -o $@
+#
+#%.msp430-gcc.O0: %.c
+#	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O0 $< -o $@
+#
+#%.msp430-gcc.O2: %.c
+#	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O2 $< -o $@
+#
+#%.msp430-gcc.O3: %.c
+#	$(MSP430_GCC) $(CFLAGS) $(LINKER_SCRIPT_MSP430_FLAG) -g -O3 $< -o $@
