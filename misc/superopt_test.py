@@ -35,9 +35,9 @@ for cp in cint_progs:
   cmd = "/bin/true && (/bin/true"
   for opt in opts:
     cmd = cmd + " && ("
-    cmd = cmd + llvm2tfg_build_dir + "/bin/llvm2tfg " + cint_prog + ".bc." + opt + " -o " + cint_prog + ".bc." + opt + ".etfg";
-    cmd = cmd + " && " + "rm -f " + cint_prog + ".bc." + opt + ".i386";
-    cmd = cmd + " && " + superopt_dir + "/build/etfg_i386/codegen " + cint_prog + ".bc." + opt + ".etfg -o " + cint_prog + ".bc." + opt + ".i386" + " -l " + cint_prog + ".bc." + opt + ".rewrite.log";
+    cmd = cmd + llvm2tfg_build_dir + "/bin/llvm2tfg " + cint_prog + ".bc." + opt + ".cg -o " + cint_prog + ".bc." + opt + ".cg.etfg";
+    cmd = cmd + " && " + "rm -f " + cint_prog + ".bc." + opt + ".cg.i386";
+    cmd = cmd + " && " + superopt_dir + "/build/etfg_i386/codegen " + cint_prog + ".bc." + opt + ".cg.etfg -o " + cint_prog + ".bc." + opt + ".cg.i386" + " -l " + cint_prog + ".bc." + opt + ".cg.rewrite.log";
     cmd = cmd + ")"
   cmd = cmd + ")"
   cmd = cmd + " && " + "(perl " + srcdir + "/misc/compare_commands.pl " + name
@@ -49,7 +49,7 @@ for cp in cint_progs:
       ccmd = ccmd + " " + ccmdo
       cint_profile_commands[cp].append((c,opt,ccmdo))
   for opt in opts:
-    ccmdo = "\"" + cint_prog + ".bc." + opt + ".i386\""
+    ccmdo = "\"" + cint_prog + ".bc." + opt + ".cg.i386\""
     ccmd = ccmd + " " + ccmdo
     cint_profile_commands[cp].append(("scg",opt,ccmdo))
   ccmd = ccmd + " \"\""

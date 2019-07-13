@@ -32,7 +32,7 @@ CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
 
 CINT_PROG_NAMES+= pcrack bubsort emptyloop fibo_iter hsearch binarytrees fib lists nsievebits nsieve qsort vmach #bzip2
 #NEEDS ENHANCED TRANSMAPS AND LIVENESS ANALYSIS FOR BEST PERFORMANCE: matmul matmul_noalias
-CINT_PROG_NAMES_EQCHECKER+= ctests glibcqsort
+CINT_PROG_NAMES_EQCHECKER+= ctests glibcqsort bzip2
 
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
 #USES UINT64: sha3 siphash24 quicksort
@@ -89,6 +89,7 @@ CINT_CCOMP_O0_PROGS = $(addsuffix .ccomp.O0, $(CINT_PROGS_CCOMP))
 CINT_BC_O0_PROGS = $(addsuffix .bc.O0, $(CINT_PROGS) $(CINT_PROGS_EQCHECKER))
 CINT_BC_O2_PROGS = $(addsuffix .bc.O2, $(CINT_PROGS) $(CINT_PROGS_EQCHECKER))
 CINT_BC_O3_PROGS = $(addsuffix .bc.O3, $(CINT_PROGS) $(CINT_PROGS_EQCHECKER))
+CINT_BC_O3cg_PROGS = $(addsuffix .bc.O3.cg, $(CINT_PROGS) $(CINT_PROGS_EQCHECKER))
 #CINT_I386_GCC4_8_O0_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O0_PROGS))
 #CINT_I386_GCC4_8_O2_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O2_PROGS))
 #CINT_I386_GCC4_8_O3_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O3_PROGS))
@@ -157,6 +158,7 @@ CINT_EQCHECKER_I386_PROGS = \
 CINT_I386_PROGS = \
   $(CINT_BC_O0_PROGS) \
   $(CINT_BC_O3_PROGS) \
+  $(CINT_BC_O3cg_PROGS) \
   $(CINT_I386_GCC_O0_PROGS) \
   $(CINT_I386_GCC_O3_PROGS) \
   $(CINT_I386_CLANG_O0_PROGS) \
