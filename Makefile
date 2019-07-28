@@ -4,14 +4,14 @@ include Make.conf
 all:: $(build) $(build)/Makefile
 	make -C $(build)
 
-.PHONY: cint superopt_test harvest_all svcomp
-$(MAKE_TARGETS) crosstool compcert lmem_run cint cint-msp430 superopt_test harvest_all svcomp:: $(build) $(build)/Makefile
+.PHONY: cint superopt_test harvest_all svcomp tsvc
+$(MAKE_TARGETS) crosstool compcert lmem_run cint cint-msp430 superopt_test harvest_all tsvc svcomp :: $(build) $(build)/Makefile
 	make -C $(build) $@
 
 $(build):
 	mkdir -p $@
 
-$(build)/Makefile: Makefile.build Makefile.cint Makefile.compcert Makefile.crosstool Makefile.svcomp Make.conf
+$(build)/Makefile: Makefile.build Makefile.cint Makefile.compcert Makefile.crosstool Makefile.svcomp Makefile.tsvc Make.conf
 	cp $< $@
 
 tar:: cleansrc

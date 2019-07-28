@@ -51,6 +51,7 @@ fi
 mkdir -p $build_dir/utils
 mkdir -p $build_dir/cint
 mkdir -p $build_dir/svcomp
+mkdir -p $build_dir/tsvc
 rm -f $build_dir/Makefile
 
 config_mak="$build_dir/config.mak"

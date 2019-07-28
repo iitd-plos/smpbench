@@ -30,9 +30,9 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 #CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
 
-CINT_PROG_NAMES+= pcrack bubsort emptyloop fibo_iter hsearch binarytrees fib lists nsievebits nsieve qsort vmach #bzip2
+#CINT_PROG_NAMES+= pcrack bubsort emptyloop fibo_iter hsearch binarytrees fib lists nsievebits nsieve qsort vmach #bzip2
 #NEEDS ENHANCED TRANSMAPS AND LIVENESS ANALYSIS FOR BEST PERFORMANCE: matmul matmul_noalias
-CINT_PROG_NAMES_EQCHECKER+= ctests glibcqsort bzip2
+CINT_PROG_NAMES+= ctests glibcqsort
 
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
 #USES UINT64: sha3 siphash24 quicksort
@@ -46,7 +46,6 @@ CINT_PROG_NAMES_EQCHECKER+= ctests glibcqsort bzip2
 #redundant: fibo_recursive fibo_recursive2
 
 CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
-CINT_PROGS_EQCHECKER=$(addprefix cint/, $(CINT_PROG_NAMES_EQCHECKER))
 CINT_PROGS_GCC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_CLANG=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_ICC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
@@ -57,28 +56,15 @@ COMPCERT_DIR=$(build)/installs/$(COMPCERT)
 COMPCERT_INSTALL=$(COMPCERT_DIR)-install
 CCOMP_I386=$(COMPCERT_INSTALL)/bin/ccomp -fvararg-calls -fno-fpu -funprototyped -fstruct-return -fno-tailcalls -L$(COMPCERT_INSTALL)/lib/compcert $(EMIT_RELOCS_FLAG)
 
-CINT_CLANG_O0_PROGS = $(addsuffix .clang.O0, $(CINT_PROGS_CLANG))
-CINT_CLANG_O2_PROGS = $(addsuffix .clang.O2, $(CINT_PROGS_CLANG))
-CINT_CLANG_O3_PROGS = $(addsuffix .clang.O3, $(CINT_PROGS_CLANG))
-CINT_LLC_O0_PROGS = $(addsuffix .llc.O0, $(CINT_PROGS_CLANG))
-CINT_LLC_O2_PROGS = $(addsuffix .llc.O2, $(CINT_PROGS_CLANG))
-CINT_LLC_O3_PROGS = $(addsuffix .llc.O3, $(CINT_PROGS_CLANG))
-CINT_I386_GCC_O0_PROGS = $(addsuffix .gcc.O0.i386, $(CINT_PROGS_GCC))
-CINT_I386_GCC_O2_PROGS = $(addsuffix .gcc.O2.i386, $(CINT_PROGS_GCC))
-CINT_I386_GCC_O3_PROGS = $(addsuffix .gcc.O3.i386, $(CINT_PROGS_GCC))
-CINT_I386_CLANG_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG_O0_PROGS))
-CINT_I386_CLANG_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG_O2_PROGS))
-CINT_I386_CLANG_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG_O3_PROGS))
-
-#CINT_GCC4_8_O0_PROGS = $(addsuffix .gcc48.O0, $(CINT_PROGS_GCC))
-#CINT_GCC4_8_O2_PROGS = $(addsuffix .gcc48.O2, $(CINT_PROGS_GCC))
-#CINT_GCC4_8_O3_PROGS = $(addsuffix .gcc48.O3, $(CINT_PROGS_GCC))
-#CINT_CLANG3_6_O0_PROGS = $(addsuffix .clang36.O0, $(CINT_PROGS_CLANG))
-#CINT_CLANG3_6_O2_PROGS = $(addsuffix .clang36.O2, $(CINT_PROGS_CLANG))
-#CINT_CLANG3_6_O3_PROGS = $(addsuffix .clang36.O3, $(CINT_PROGS_CLANG))
-#CINT_CLANG6_0_O0_PROGS = $(addsuffix .clang60.O0, $(CINT_PROGS_CLANG))
-#CINT_CLANG6_0_O2_PROGS = $(addsuffix .clang60.O2, $(CINT_PROGS_CLANG))
-#CINT_CLANG6_0_O3_PROGS = $(addsuffix .clang60.O3, $(CINT_PROGS_CLANG))
+CINT_GCC4_8_O0_PROGS = $(addsuffix .gcc48.O0, $(CINT_PROGS_GCC))
+CINT_GCC4_8_O2_PROGS = $(addsuffix .gcc48.O2, $(CINT_PROGS_GCC))
+CINT_GCC4_8_O3_PROGS = $(addsuffix .gcc48.O3, $(CINT_PROGS_GCC))
+CINT_CLANG3_6_O0_PROGS = $(addsuffix .clang36.O0, $(CINT_PROGS_CLANG))
+CINT_CLANG3_6_O2_PROGS = $(addsuffix .clang36.O2, $(CINT_PROGS_CLANG))
+CINT_CLANG3_6_O3_PROGS = $(addsuffix .clang36.O3, $(CINT_PROGS_CLANG))
+CINT_CLANG6_0_O0_PROGS = $(addsuffix .clang60.O0, $(CINT_PROGS_CLANG))
+CINT_CLANG6_0_O2_PROGS = $(addsuffix .clang60.O2, $(CINT_PROGS_CLANG))
+CINT_CLANG6_0_O3_PROGS = $(addsuffix .clang60.O3, $(CINT_PROGS_CLANG))
 CINT_ICC_O0_PROGS = $(addsuffix .icc.O0, $(CINT_PROGS_ICC))
 CINT_ICC_O2_PROGS = $(addsuffix .icc.O2, $(CINT_PROGS_ICC))
 CINT_ICC_O3_PROGS = $(addsuffix .icc.O3, $(CINT_PROGS_ICC))
@@ -86,19 +72,18 @@ CINT_ICC_O3_PROGS = $(addsuffix .icc.O3, $(CINT_PROGS_ICC))
 CINT_CCOMP_O2_PROGS = $(addsuffix .ccomp.O2, $(CINT_PROGS_CCOMP))
 CINT_CCOMP_O0_PROGS = $(addsuffix .ccomp.O0, $(CINT_PROGS_CCOMP))
 #CINT_BC_O0_PROGS = $(addsuffix .bc.O0, $(CINT_PROGS))  $(addsuffix .bc.O0.s, $(CINT_PROGS_CCOMP))
-CINT_BC_O0_PROGS = $(addsuffix .bc.O0, $(CINT_PROGS) $(CINT_PROGS_EQCHECKER))
-CINT_BC_O2_PROGS = $(addsuffix .bc.O2, $(CINT_PROGS) $(CINT_PROGS_EQCHECKER))
-CINT_BC_O3_PROGS = $(addsuffix .bc.O3, $(CINT_PROGS) $(CINT_PROGS_EQCHECKER))
-CINT_BC_O3cg_PROGS = $(addsuffix .bc.O3.cg, $(CINT_PROGS) $(CINT_PROGS_EQCHECKER))
-#CINT_I386_GCC4_8_O0_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O0_PROGS))
-#CINT_I386_GCC4_8_O2_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O2_PROGS))
-#CINT_I386_GCC4_8_O3_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O3_PROGS))
-#CINT_I386_CLANG3_6_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O0_PROGS))
-#CINT_I386_CLANG3_6_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O2_PROGS))
-#CINT_I386_CLANG3_6_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O3_PROGS))
-#CINT_I386_CLANG6_0_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O0_PROGS))
-#CINT_I386_CLANG6_0_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O2_PROGS))
-#CINT_I386_CLANG6_0_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O3_PROGS))
+CINT_BC_O0_PROGS = $(addsuffix .bc.O0, $(CINT_PROGS))
+CINT_BC_O2_PROGS = $(addsuffix .bc.O2, $(CINT_PROGS))
+CINT_BC_O3_PROGS = $(addsuffix .bc.O3, $(CINT_PROGS))
+CINT_I386_GCC4_8_O0_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O0_PROGS))
+CINT_I386_GCC4_8_O2_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O2_PROGS))
+CINT_I386_GCC4_8_O3_PROGS = $(addsuffix .i386, $(CINT_GCC4_8_O3_PROGS))
+CINT_I386_CLANG3_6_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O0_PROGS))
+CINT_I386_CLANG3_6_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O2_PROGS))
+CINT_I386_CLANG3_6_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG3_6_O3_PROGS))
+CINT_I386_CLANG6_0_O0_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O0_PROGS))
+CINT_I386_CLANG6_0_O2_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O2_PROGS))
+CINT_I386_CLANG6_0_O3_PROGS = $(addsuffix .i386, $(CINT_CLANG6_0_O3_PROGS))
 CINT_I386_LLC_O0_PROGS = $(addsuffix .i386, $(CINT_LLC_O0_PROGS))
 CINT_I386_LLC_O2_PROGS = $(addsuffix .i386, $(CINT_LLC_O2_PROGS))
 CINT_I386_LLC_O3_PROGS = $(addsuffix .i386, $(CINT_LLC_O3_PROGS))
@@ -109,15 +94,15 @@ CINT_I386_ICC_O2U_PROGS = $(addsuffix .i386, $(CINT_ICC_O2U_PROGS))
 CINT_I386_CCOMP_O0_PROGS = $(addsuffix .i386, $(CINT_CCOMP_O0_PROGS))
 CINT_I386_CCOMP_O2_PROGS = $(addsuffix .i386, $(CINT_CCOMP_O2_PROGS))
 
-CINT_EQCHECKER_I386_GCC_O0_PROGS =   $(addsuffix .gcc.eqchecker.O0.i386, $(CINT_PROGS_EQCHECKER))
-CINT_EQCHECKER_I386_GCC_O2_PROGS =   $(addsuffix .gcc.eqchecker.O2.i386, $(CINT_PROGS_EQCHECKER))
-CINT_EQCHECKER_I386_GCC_O3_PROGS =   $(addsuffix .gcc.eqchecker.O3.i386, $(CINT_PROGS_EQCHECKER))
-CINT_EQCHECKER_I386_CLANG_O0_PROGS = $(addsuffix .clang.eqchecker.O0.i386, $(CINT_PROGS_EQCHECKER))
-CINT_EQCHECKER_I386_CLANG_O2_PROGS = $(addsuffix .clang.eqchecker.O2.i386, $(CINT_PROGS_EQCHECKER))
-CINT_EQCHECKER_I386_CLANG_O3_PROGS = $(addsuffix .clang.eqchecker.O3.i386, $(CINT_PROGS_EQCHECKER))
-CINT_EQCHECKER_I386_ICC_O0_PROGS =   $(addsuffix .icc.eqchecker.O0.i386, $(CINT_PROGS_EQCHECKER))
-CINT_EQCHECKER_I386_ICC_O2_PROGS =   $(addsuffix .icc.eqchecker.O2.i386, $(CINT_PROGS_EQCHECKER))
-CINT_EQCHECKER_I386_ICC_O3_PROGS =   $(addsuffix .icc.eqchecker.O3.i386, $(CINT_PROGS_EQCHECKER))
+CINT_EQCHECKER_I386_GCC_O0_PROGS =   $(addsuffix .gcc.eqchecker.O0.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_GCC_O2_PROGS =   $(addsuffix .gcc.eqchecker.O2.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_GCC_O3_PROGS =   $(addsuffix .gcc.eqchecker.O3.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_CLANG_O0_PROGS = $(addsuffix .clang.eqchecker.O0.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_CLANG_O2_PROGS = $(addsuffix .clang.eqchecker.O2.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_CLANG_O3_PROGS = $(addsuffix .clang.eqchecker.O3.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_ICC_O0_PROGS =   $(addsuffix .icc.eqchecker.O0.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_ICC_O2_PROGS =   $(addsuffix .icc.eqchecker.O2.i386, $(CINT_PROGS))
+CINT_EQCHECKER_I386_ICC_O3_PROGS =   $(addsuffix .icc.eqchecker.O3.i386, $(CINT_PROGS))
 
 
 CINT_I386_ASPROGS_NAMES = hello_world.AS.i386 fibo.AS.i386 one_bbl.AS.i386 irreducible_cfg.AS.i386 sum8.AS.i386 \
@@ -156,18 +141,14 @@ CINT_EQCHECKER_I386_PROGS = \
   $(CINT_EQCHECKER_I386_ICC_O3_PROGS) \
 
 CINT_I386_PROGS = \
+  $(CINT_I386_GCC4_8_O0_PROGS) \
+  $(CINT_I386_GCC4_8_O3_PROGS) \
+  $(CINT_I386_CLANG3_6_O0_PROGS) \
+  $(CINT_I386_CLANG3_6_O3_PROGS) \
   $(CINT_BC_O0_PROGS) \
   $(CINT_BC_O3_PROGS) \
-  $(CINT_BC_O3cg_PROGS) \
-  $(CINT_I386_GCC_O0_PROGS) \
-  $(CINT_I386_GCC_O3_PROGS) \
-  $(CINT_I386_CLANG_O0_PROGS) \
-  $(CINT_I386_CLANG_O3_PROGS) \
-  $(CINT_I386_LLC_O0_PROGS) \
-  $(CINT_I386_LLC_O3_PROGS) \
   $(CINT_I386_ICC_O0_PROGS) \
   $(CINT_I386_ICC_O3_PROGS) \
-  $(CINT_I386_ASPROGS) \
   #$(CINT_I386_LLC_O0_PROGS) \
   #$(CINT_I386_LLC_O3_PROGS) \
   #$(CINT_I386_ASPROGS) \
@@ -176,15 +157,10 @@ CINT_I386_PROGS = \
   #$(CINT_I386_CLANG6_0_O3_PROGS) \
   #$(CINT_I386_CCOMP_O0_PROGS) \
   #$(CINT_I386_CCOMP_O2_PROGS) \
-  #$(CINT_I386_GCC4_8_O0_PROGS) \
-  #$(CINT_I386_GCC4_8_O3_PROGS) \
-  #$(CINT_I386_CLANG3_6_O0_PROGS) \
-  #$(CINT_I386_CLANG3_6_O3_PROGS) \
-
 
 #CINT_BC_PROGS = $(CINT_BC_O0_PROGS) $(CINT_BC_O2_PROGS) $(CINT_BC_O3_PROGS)
 CINT_BC_PROGS = $(CINT_BC_O0_PROGS) $(CINT_BC_O3_PROGS)
-CINT_LLVM_PROGS = $(CINT_LLVM_ASPROGS) $(CINT_BC_PROGS)
+CINT_LLVM_PROGS = $(CINT_BC_PROGS) #$(CINT_LLVM_ASPROGS) 
 
 
 CINT_MSP430_PROGS = \
@@ -193,8 +169,9 @@ CINT_MSP430_PROGS = \
   $(CINT_MSP430_GCC_O3_PROGS) \
 
 CINT_LLVM_PROGS_ASM = $(addsuffix .s, $(CINT_LLVM_PROGS))
+CINT_I386_PROGS_ASM = $(addsuffix .s, $(CINT_I386_PROGS))
 
-cint: $(CINT_I386_PROGS) $(CINT_EQCHECKER_I386_PROGS) $(CINT_LLVM_PROGS) $(CINT_LLVM_PROGS_ASM) # $(CINT_PPC_PROGS)
+cint: $(CINT_I386_PROGS) $(CINT_LLVM_PROGS) $(CINT_LLVM_PROGS_ASM) $(CINT_I386_PROGS_ASM) # $(CINT_EQCHECKER_I386_PROGS) $(CINT_PPC_PROGS)
 
 
 RED=`tput bold; tput setaf 1`
@@ -507,14 +484,15 @@ $(RANDOM_FILES): %: gen_randfile.pl
 	perl -I$(SRCDIR) -I$(DATA_RANDOM)/lib $(SRCDIR)/gen_randfile.pl $@
 
 clean::
-	rm -rf *.o utils/*.o mytime $(SYSBENCH) $(PFSCAN) $(PBZIP2) $(SPLASH) $(HPCC) $(GRAPH500) $(PARSEC) $(MEMCACHED) $(LINUX) cint/* svcomp/*
+	rm -rf *.o utils/*.o mytime $(SYSBENCH) $(PFSCAN) $(PBZIP2) $(SPLASH) $(HPCC) $(GRAPH500) $(PARSEC) $(MEMCACHED) $(LINUX) cint/* svcomp/* tsvc/*
 
 distclean:: clean
 	rm -f $(RANDOM_FILES)
 
-include $(SRCDIR)/Makefile.crosstool
-include $(SRCDIR)/Makefile.compcert
-include $(SRCDIR)/Makefile.cint
-include $(SRCDIR)/Makefile.svcomp
+#include $(SRCDIR)/Makefile.crosstool
+#include $(SRCDIR)/Makefile.compcert
+#include $(SRCDIR)/Makefile.cint
+#include $(SRCDIR)/Makefile.svcomp
+include $(SRCDIR)/Makefile.tsvc
 
 -include $(OBJS:.o=.d)

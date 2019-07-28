@@ -1,0 +1,32 @@
+prog1:vpv 
+prog1:vtv 
+prog1:vpvpv 
+prog1:vpvtv 
+prog1:vtvtv 
+prog1:s251 
+prog1:s1251 
+prog1:s1281 
+prog1:s000
+prog1:s1351 
+prog1:vpvts 
+prog1:s452 
+prog1:s1112 
+prog1:sum1d 
+prog1:vdotr 
+prog1:s121 
+prog1:s127 
+prog1:s162 
+prog1:s173 
+prog1:s351 
+prog1:s2244 
+prog1:s3251 
+prog1:s243  
+prog1:s122
+prog1:s112
+prog1:s1221
+prog1:s453
+# prog1:s176  nested loops
+# prog1:s243  passes in GCC 
+# fails in GCC  prog1:s112  
+# fails in GCC  prog1:s122  
+# fails in ICC  prog1:s1112 
