@@ -23,3 +23,40 @@ make cint
 
 For others:
 make build
+
+
+Instructions for Vectorization (TSVC) benchmarks
+------------------------------------------------
+
+# Source code is present in "tsvc/prog1.c"
+
+Compiler version:
+-----------------
+1. The compiler version being used is -- gcc-8, clang-6.0 and icc-18.0.3
+2. You can configure the compiler path in Make.conf by modifying the path specified in "CLANG6_0", "GCC8" and "ICC".
+
+Compile instructions:
+--------------------
+1. make tsvc
+2. The binary files will be generated at path "../smpbench-build/tsvc/"
+
+Instructions for running the benchmarks:
+----------------------------------------
+1. Copy the files in "tsvc/scripts/" folder in your home directory
+2. Execute tsvc_experiment.sh to run the eqchecker for benchmark suite for all three compilers.
+3. The default configuration is :
+   -- Number of parallel cores to use -- 15
+   -- Unroll factor for gcc, icc - 7
+   -- Unroll factor for clang - 15
+   -- lookahead - 6
+   -- Timeout - 30k seconds
+4. The run scripts assume that the "superopt", "llvm-build" and "smpbench-build" folders are present in home directory. 
+
+
+
+
+
+
+
+
+

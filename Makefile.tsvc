@@ -61,7 +61,7 @@ CLANG_I386_EQCHECKER_FLAGS= -m32 -fno-inline -fno-inline-functions -fno-inline-s
 VECTORIZE_FLAGS= -msse4.2
 GCC_PPC=powerpc-linux-gnu-gcc
 GCC_X86=gcc
-HOSTGCC4_8_I386=gcc-8 $(HOSTGCC48_I386_EQCHECKER_FLAGS) $(VECTORIZE_FLAGS)
+HOSTGCC4_8_I386=$(GCC8) $(HOSTGCC48_I386_EQCHECKER_FLAGS) $(VECTORIZE_FLAGS)
 
 AS_PPC=powerpc-linux-gnu-as
 LD_PPC=powerpc-linux-gnu-ld
@@ -78,8 +78,8 @@ CLANG3_6_I386=${CLANG6_0} $(CLANG_I386_EQCHECKER_FLAGS) $(VECTORIZE_FLAGS)
 
 ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -no-ansi-alias -falias -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c99 -ffreestanding
 
-ICC_I386=/opt/intel/system_studio_2018/bin/icc -m32 -mia32 $(ICC_I386_OPTS) $(VECTORIZE_FLAGS) 
-ICPC_I386=/opt/intel/system_studio_2018/bin/icpc  -m32 -mia32 $(ICC_I386_OPTS)
+ICC_I386=$(ICC) -m32 -mia32 $(ICC_I386_OPTS) $(VECTORIZE_FLAGS) 
+ICPC_I386=$(ICPC)  -m32 -mia32 $(ICC_I386_OPTS)
 
 ARM_PREFIX=/localhome/sbansal/gnuarm-4.0.2/bin
 GCC_ARM=$(ARM_PREFIX)/arm-elf-gcc
