@@ -32,7 +32,7 @@ CINT_GCC_CLANG_ICC_PROGS=$(addprefix cint/, $(CINT_GCC_CLANG_ICC_PROG_NAMES))
 
 CINT_PROG_NAMES+= pcrack bubsort emptyloop fibo_iter hsearch binarytrees fib lists nsievebits nsieve qsort vmach #bzip2
 #NEEDS ENHANCED TRANSMAPS AND LIVENESS ANALYSIS FOR BEST PERFORMANCE: matmul matmul_noalias
-CINT_PROG_NAMES_EQCHECKER+= ctests glibcqsort bzip2
+CINT_PROG_NAMES_EQCHECKER+= ctests glibcqsort bzip2 $(CINT_PROG_NAMES)
 
 #FLOATING_POINT: almabench bisect fft fftsp fftw integr mandelbrot nbody perlin spectral
 #USES UINT64: sha3 siphash24 quicksort
