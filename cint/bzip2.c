@@ -7,6 +7,7 @@
 #include <sys/time.h>
 #endif
 #include <string.h>
+#include "cint/ctests_helper.h"
 
 
 #define SPEC_CPU2000
