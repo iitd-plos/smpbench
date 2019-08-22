@@ -4317,7 +4317,7 @@ int spec_init () {
     /* Allocate some large chunks of memory, we can tune this later */
     for (i = 0; i < MAX_SPEC_FD; i++) {
 	int limit = spec_fd[i].limit;
-	mymemset(&spec_fd[i], 0, sizeof(*spec_fd));
+	memset(&spec_fd[i], 0, sizeof(*spec_fd));
 	spec_fd[i].limit = limit;
 	spec_fd[i].buf = (unsigned char *)malloc(limit+FUDGE_BUF);
 	if (spec_fd[i].buf == NULL) {
@@ -4388,7 +4388,7 @@ int spec_load (int num, char *filename, int size) {
 	int tmp = size - spec_fd[num].len;
 	if (tmp > spec_fd[num].len) tmp = spec_fd[num].len;
 	debug1(3,"Duplicating %d bytes\n", tmp);
-	mymemcpy(spec_fd[num].buf+spec_fd[num].len, spec_fd[num].buf, tmp);
+	memcpy(spec_fd[num].buf+spec_fd[num].len, spec_fd[num].buf, tmp);
 	spec_fd[num].len += tmp;
     }
     return 0;
@@ -4410,7 +4410,7 @@ int spec_read (int fd, unsigned char *buf, int size) {
     } else {
 	rc = size;
     }
-    mymemcpy(buf, &(spec_fd[fd].buf[spec_fd[fd].pos]), rc);
+    memcpy(buf, &(spec_fd[fd].buf[spec_fd[fd].pos]), rc);
     spec_fd[fd].pos += rc;
     debug1(4,"%d\n", rc);
     return rc;
@@ -4453,7 +4453,7 @@ int spec_rewind(int fd) {
     return 0;
 }
 int spec_reset(int fd) {
-    mymemset(spec_fd[fd].buf, 0, spec_fd[fd].len);
+    memset(spec_fd[fd].buf, 0, spec_fd[fd].len);
     spec_fd[fd].pos = spec_fd[fd].len = 0;
     return 0;
 }
@@ -4464,7 +4464,7 @@ int spec_write(int fd, unsigned char *buf, int size) {
 	fprintf(stderr, "spec_write: fd=%d, > MAX_SPEC_FD!\n", fd);
 	exit (1);
     }
-    mymemcpy(&(spec_fd[fd].buf[spec_fd[fd].pos]), buf, size); 
+    memcpy(&(spec_fd[fd].buf[spec_fd[fd].pos]), buf, size); 
     spec_fd[fd].len += size;
     spec_fd[fd].pos += size;
     debug1(4,"%d\n", size);
