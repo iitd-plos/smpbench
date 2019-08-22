@@ -3409,8 +3409,8 @@ void mySIGSEGVorSIGBUScatcher ( IntNative n )
                 "\twhich probably indicates a bug in bzip2.  Please\n"
                 "\treport it to me at: jseward@acm.org\n",
                 progName );
-      else
-      fprintf ( stderr,
+   else
+     fprintf ( stderr,
                 "\n%s: Caught a SIGSEGV or SIGBUS whilst decompressing,\n"
                 "\twhich probably indicates that the compressed data\n"
                 "\tis corrupted.\n",
@@ -3418,7 +3418,8 @@ void mySIGSEGVorSIGBUScatcher ( IntNative n )
 
    showFileNames();
    if (opMode == OM_Z)
-      cleanUpAndFail( 3 ); else
+     cleanUpAndFail( 3 );
+   else
       { cadvise(); cleanUpAndFail( 2 ); }
 }
 
@@ -4316,7 +4317,7 @@ int spec_init () {
     /* Allocate some large chunks of memory, we can tune this later */
     for (i = 0; i < MAX_SPEC_FD; i++) {
 	int limit = spec_fd[i].limit;
-	memset(&spec_fd[i], 0, sizeof(*spec_fd));
+	mymemset(&spec_fd[i], 0, sizeof(*spec_fd));
 	spec_fd[i].limit = limit;
 	spec_fd[i].buf = (unsigned char *)malloc(limit+FUDGE_BUF);
 	if (spec_fd[i].buf == NULL) {
@@ -4387,7 +4388,7 @@ int spec_load (int num, char *filename, int size) {
 	int tmp = size - spec_fd[num].len;
 	if (tmp > spec_fd[num].len) tmp = spec_fd[num].len;
 	debug1(3,"Duplicating %d bytes\n", tmp);
-	memcpy(spec_fd[num].buf+spec_fd[num].len, spec_fd[num].buf, tmp);
+	mymemcpy(spec_fd[num].buf+spec_fd[num].len, spec_fd[num].buf, tmp);
 	spec_fd[num].len += tmp;
     }
     return 0;
@@ -4409,7 +4410,7 @@ int spec_read (int fd, unsigned char *buf, int size) {
     } else {
 	rc = size;
     }
-    memcpy(buf, &(spec_fd[fd].buf[spec_fd[fd].pos]), rc);
+    mymemcpy(buf, &(spec_fd[fd].buf[spec_fd[fd].pos]), rc);
     spec_fd[fd].pos += rc;
     debug1(4,"%d\n", rc);
     return rc;
@@ -4452,7 +4453,7 @@ int spec_rewind(int fd) {
     return 0;
 }
 int spec_reset(int fd) {
-    memset(spec_fd[fd].buf, 0, spec_fd[fd].len);
+    mymemset(spec_fd[fd].buf, 0, spec_fd[fd].len);
     spec_fd[fd].pos = spec_fd[fd].len = 0;
     return 0;
 }
@@ -4463,7 +4464,7 @@ int spec_write(int fd, unsigned char *buf, int size) {
 	fprintf(stderr, "spec_write: fd=%d, > MAX_SPEC_FD!\n", fd);
 	exit (1);
     }
-    memcpy(&(spec_fd[fd].buf[spec_fd[fd].pos]), buf, size); 
+    mymemcpy(&(spec_fd[fd].buf[spec_fd[fd].pos]), buf, size); 
     spec_fd[fd].len += size;
     spec_fd[fd].pos += size;
     debug1(4,"%d\n", size);
