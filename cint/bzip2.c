@@ -4280,7 +4280,8 @@ int spec_write(int fd, unsigned char *buf, int size);
 int spec_putc(unsigned char ch, int fd);
 int debug_time();
 
-#define DEBUG
+//#define DEBUG
+#undef DEBUG
 
 #ifdef DEBUG
 int dbglvl=4;
@@ -4364,71 +4365,71 @@ int spec_random_load (int fd) {
 
 int spec_load (int num, char *filename, int size) {
 #define FILE_CHUNK (128*1024)
-    int fd, rc, i;
+  int fd, rc, i;
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
-    fd = open(filename, O_RDONLY|O_BINARY);
-    if (fd < 0) {
-	fprintf(stderr, "Can't open file %s: %s\n", filename, strerror(errno));
-	exit (1);
-    }
-    spec_fd[num].pos = spec_fd[num].len = 0;
-    for (i = 0 ; i < size; i+= rc) {
-	rc = read(fd, spec_fd[num].buf+i, FILE_CHUNK);
-	if (rc == 0) break;
-	if (rc < 0) {
-	    fprintf(stderr, "Error reading from %s: %s\n", filename, strerror(errno));
+  fd = open(filename, O_RDONLY|O_BINARY);
+  if (fd < 0) {
+	  fprintf(stderr, "Can't open file %s: %s\n", filename, mystrerrorno());
+	  exit (1);
+  }
+  spec_fd[num].pos = spec_fd[num].len = 0;
+  for (i = 0 ; i < size; i+= rc) {
+	  rc = read(fd, spec_fd[num].buf+i, FILE_CHUNK);
+	  if (rc == 0) break;
+	  if (rc < 0) {
+	    fprintf(stderr, "Error reading from %s: %s\n", filename, mystrerrorno());
 	    exit (1);
-	}
-	spec_fd[num].len += rc;
-    }
-    close(fd);
-    while (spec_fd[num].len < size) {
-	int tmp = size - spec_fd[num].len;
-	if (tmp > spec_fd[num].len) tmp = spec_fd[num].len;
-	debug1(3,"Duplicating %d bytes\n", tmp);
-	memcpy(spec_fd[num].buf+spec_fd[num].len, spec_fd[num].buf, tmp);
-	spec_fd[num].len += tmp;
-    }
-    return 0;
+	  }
+	  spec_fd[num].len += rc;
+  }
+  close(fd);
+  while (spec_fd[num].len < size) {
+	  int tmp = size - spec_fd[num].len;
+	  if (tmp > spec_fd[num].len) tmp = spec_fd[num].len;
+	  debug1(3,"Duplicating %d bytes\n", tmp);
+	  memcpy(spec_fd[num].buf+spec_fd[num].len, spec_fd[num].buf, tmp);
+	  spec_fd[num].len += tmp;
+  }
+  return 0;
 }
 
 int spec_read (int fd, unsigned char *buf, int size) {
-    int rc = 0;
-    debug3(4,"spec_read: %d, %p, %d = ", fd, (void *)buf, size);
-    if (fd > MAX_SPEC_FD) {
-	fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
-	exit (1);
-    }
-    if (spec_fd[fd].pos >= spec_fd[fd].len) {
-	debug(4,"EOF\n");
-	return EOF;
-    }
-    if (spec_fd[fd].pos + size >= spec_fd[fd].len) {
-	rc = spec_fd[fd].len - spec_fd[fd].pos;
-    } else {
-	rc = size;
-    }
-    memcpy(buf, &(spec_fd[fd].buf[spec_fd[fd].pos]), rc);
-    spec_fd[fd].pos += rc;
-    debug1(4,"%d\n", rc);
-    return rc;
+  int rc = 0;
+  debug3(4,"spec_read: %d, %p, %d = ", fd, (void *)buf, size);
+  if (fd > MAX_SPEC_FD) {
+	  fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
+	  exit (1);
+  }
+  if (spec_fd[fd].pos >= spec_fd[fd].len) {
+	  debug(4,"EOF\n");
+	  return EOF;
+  }
+  if (spec_fd[fd].pos + size >= spec_fd[fd].len) {
+	  rc = spec_fd[fd].len - spec_fd[fd].pos;
+  } else {
+	  rc = size;
+  }
+  memcpy(buf, &(spec_fd[fd].buf[spec_fd[fd].pos]), rc);
+  spec_fd[fd].pos += rc;
+  debug1(4,"%d\n", rc);
+  return rc;
 }
 int spec_getc (int fd) {
-    int rc = 0;
-    debug1(4,"spec_getc: %d = ", fd);
-    if (fd > MAX_SPEC_FD) {
-	fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
-	exit (1);
-    }
-    if (spec_fd[fd].pos >= spec_fd[fd].len) {
-	debug(4,"EOF\n");
-	return EOF;
-    }
-    rc = spec_fd[fd].buf[spec_fd[fd].pos++];
-    debug1(4,"%d\n", rc);
-    return rc;
+  int rc = 0;
+  debug1(4,"spec_getc: %d = ", fd);
+  if (fd > MAX_SPEC_FD) {
+	  fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
+	  exit (1);
+  }
+  if (spec_fd[fd].pos >= spec_fd[fd].len) {
+	  debug(4,"EOF\n");
+	  return EOF;
+  }
+  rc = spec_fd[fd].buf[spec_fd[fd].pos++];
+  debug1(4,"%d\n", rc);
+  return rc;
 }
 int spec_ungetc (unsigned char ch, int fd) {
     int rc = 0;
@@ -4484,100 +4485,100 @@ int spec_putc(unsigned char ch, int fd) {
 #define MB (1024*1024)
 #ifdef SPEC_CPU2000
 int main (int argc, char *argv[]) {
-    int i, level;
-    int input_size=64, compressed_size;
-    char *input_name="input.combined";
-    unsigned char *validate_array;
-    seedi = 10;
+  int i, level;
+  int input_size=64, compressed_size;
+  char *input_name="input.combined";
+  unsigned char *validate_array;
+  seedi = 10;
 
-    if (argc > 1) input_name=argv[1];
-    if (argc > 2) input_size=atoi(argv[2]);
-    if (argc > 3) 
-	compressed_size=atoi(argv[3]);
-    else
-	compressed_size=input_size;
+  if (argc > 1) input_name=argv[1];
+  if (argc > 2) input_size=atoi(argv[2]);
+  if (argc > 3) 
+	  compressed_size=atoi(argv[3]);
+  else
+	  compressed_size=input_size;
 
-    spec_fd[0].limit=input_size*MB;
-    spec_fd[1].limit=compressed_size*MB;
-    spec_fd[2].limit=input_size*MB;
-    spec_init();
+  spec_fd[0].limit=input_size*MB;
+  spec_fd[1].limit=compressed_size*MB;
+  spec_fd[2].limit=input_size*MB;
+  spec_init();
 
-    debug_time();
-    debug(2, "Loading Input Data\n");
-    spec_load(0, input_name, input_size*MB);
-    debug1(3, "Input data %d bytes in length\n", spec_fd[0].len);
+  debug_time();
+  debug(2, "Loading Input Data\n");
+  spec_load(0, input_name, input_size*MB);
+  debug1(3, "Input data %d bytes in length\n", spec_fd[0].len);
 
-    validate_array = (unsigned char *)malloc(input_size*MB/1024);
-    if (validate_array == NULL) {
-	printf ("main: Error mallocing memory!\n");
-	exit (1);
-    }
-    /* Save off one byte every ~1k for validation */
-    for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
-	validate_array[i] = spec_fd[0].buf[i*VALIDATE_SKIP];
-    }
+  validate_array = (unsigned char *)malloc(input_size*MB/1024);
+  if (validate_array == NULL) {
+	  printf ("main: Error mallocing memory!\n");
+	  exit (1);
+  }
+  /* Save off one byte every ~1k for validation */
+  for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
+	  validate_array[i] = spec_fd[0].buf[i*VALIDATE_SKIP];
+  }
 
 
 #ifdef DEBUG_DUMP
-    fd = open ("out.uncompressed", O_RDWR|O_CREAT, 0644);
-    write(fd, spec_fd[0].buf, spec_fd[0].len);
-    close(fd);
+  fd = open ("out.uncompressed", O_RDWR|O_CREAT, 0644);
+  write(fd, spec_fd[0].buf, spec_fd[0].len);
+  close(fd);
 #endif
 
-    spec_initbufs();
+  spec_initbufs();
 
-    for (level=7; level <= 9; level += 2) {
-	debug_time();
-	debug1(2, "Compressing Input Data, level %d\n", level);
+  for (level=7; level <= 9; level += 2) {
+	  debug_time();
+	  debug1(2, "Compressing Input Data, level %d\n", level);
 
-	spec_compress(0,1, level);
+	  spec_compress(0,1, level);
 
-	debug_time();
-	debug1(3, "Compressed data %d bytes in length\n", spec_fd[1].len);
+	  debug_time();
+	  debug1(3, "Compressed data %d bytes in length\n", spec_fd[1].len);
 
 #ifdef DEBUG_DUMP
-	{
+	  {
 	    char buf[256];
 	    sprintf(buf, "out.compress.%d", level);
 	    fd = open (buf, O_RDWR|O_CREAT, 0644);
 	    write(fd, spec_fd[1].buf, spec_fd[1].len);
 	    close(fd);
-	}
+	  }
 #endif
 
-	spec_reset(0);
-	spec_rewind(1);
+	  spec_reset(0);
+	  spec_rewind(1);
 
-	debug_time();
-	debug(2, "Uncompressing Data\n");
-	spec_uncompress(1,0, level);
-	debug_time();
-	debug1(3, "Uncompressed data %d bytes in length\n", spec_fd[0].len);
+	  debug_time();
+	  debug(2, "Uncompressing Data\n");
+	  spec_uncompress(1,0, level);
+	  debug_time();
+	  debug1(3, "Uncompressed data %d bytes in length\n", spec_fd[0].len);
 
 #ifdef DEBUG_DUMP
-	{
+	  {
 	    char buf[256];
 	    sprintf(buf, "out.uncompress.%d", level);
 	    fd = open (buf, O_RDWR|O_CREAT, 0644);
 	    write(fd, spec_fd[0].buf, spec_fd[0].len);
 	    close(fd);
-	}
+	  }
 #endif
 
-	for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
+	  for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
 	    if (validate_array[i] != spec_fd[0].buf[i*VALIDATE_SKIP]) {
-		printf ("Tested %dMB buffer: Miscompared!!\n", input_size);
-		exit (1);
+		    printf ("Tested %dMB buffer: Miscompared!!\n", input_size);
+		    exit (1);
 	    }
-	}
-	debug_time();
-	debug(3, "Uncompressed data compared correctly\n");
-	spec_reset(1);
-	spec_rewind(0);
-    }
-    printf ("Tested %dMB buffer: OK!\n", input_size);
+	  }
+	  debug_time();
+	  debug(3, "Uncompressed data compared correctly\n");
+	  spec_reset(1);
+	  spec_rewind(0);
+  }
+  printf ("Tested %dMB buffer: OK!\n", input_size);
 
-    return 0;
+  return 0;
 }
 
 #if defined(SPEC_BZIP)
@@ -4605,7 +4606,8 @@ void spec_uncompress(int in, int out, int lev) {
 #error You must have SPEC_BZIP defined!
 #endif
 
-int debug_time () {
+// prevent compiler from optimizing away calls to this function
+__attribute__((optnone)) int debug_time () {
 #ifdef TIMING_OUTPUT
     static int last = 0;
     struct timeval tv;

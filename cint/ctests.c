@@ -1212,7 +1212,7 @@ int cmpint(const void * i, const void * j)
 
 void rand_init(int* a, int* b, int n)
 {
-  for (int i = 0; i < n; i++) b[i] = a[i] = rand() & 0xFFFF;
+  for (int i = 0; i < n; i++) b[i] = a[i] = myrand() & 0xFFFF;
 }
 
 int equal_array(int* a, int* b, int n)

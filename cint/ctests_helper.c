@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -128,4 +129,10 @@ mystrdup(char const *s)
 int mytoupper(int c)
 {
   return toupper(c);
+}
+
+char*
+mystrerrorno()
+{
+  return strerror(errno);
 }
