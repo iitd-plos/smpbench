@@ -19,6 +19,7 @@ char *mystrdup(char const *);
 FILE *myfopen(char const *path, char const *mode);
 void *myrealloc(void *ptr, size_t size);
 int mytoupper(int c);
+char* mystrerrno();
 
 #define atoi my_atoi
 #define memset mymemset
