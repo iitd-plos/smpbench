@@ -6,92 +6,92 @@
 
 //const char interp_section[] __attribute__((section(".interp"))) = "/path/to/dynamic/linker";
 
-void myexit(int ec)
+void MYmyexit(int ec)
 {
   exit(ec);
 }
 
-#define NDATA (int *)mymalloc(ncol * sizeof(int))
-#define NLIST (struct _list *)mymalloc(sizeof(struct _list))
-#define NPLAY (struct _play *)mymalloc(sizeof(struct _play))
-void mymemset(void *s, int c, size_t n)
+#define NDATA (int *)MYmymalloc(ncol * sizeof(int))
+#define NLIST (struct _list *)MYmymalloc(sizeof(struct _list))
+#define NPLAY (struct _play *)MYmymalloc(sizeof(struct _play))
+void MYmymemset(void *s, int c, size_t n)
 {
   memset(s,c,n);
 }
 
-void *mymemcpy(void *a, const void *b, size_t sz)
+void *MYmymemcpy(void *a, const void *b, size_t sz)
 {
   return memcpy(a, b, sz);
 }
 
-int mymemcmp(const void *a, const void *b, size_t sz)
+int MYmymemcmp(const void *a, const void *b, size_t sz)
 {
   return memcmp(a, b, sz);
 }
 
-int mystrcmp(const char *s1, const char *s2)
+int MYmystrcmp(const char *s1, const char *s2)
 {
   return strcmp(s1,s2);
 }
 
-int mystrncmp(const char *s1, const char *s2, size_t n)
+int MYmystrncmp(const char *s1, const char *s2, size_t n)
 {
   return strncmp(s1,s2,n);
 }
 
-void *mymalloc(size_t size)
+void *MYmymalloc(size_t size)
 {
   return (void *)malloc(size);
 }
 
-void *mycalloc(size_t nmemb, size_t size)
+void *MYmycalloc(size_t nmemb, size_t size)
 {
   return (void *)calloc(nmemb, size);
 }
 
-void *myrealloc(void *ptr, size_t size)
+void *MYmyrealloc(void *ptr, size_t size)
 {
   return (void *)realloc(ptr, size);
 }
 
-FILE *myfopen(char const *path, char const *mode)
+FILE *MYmyfopen(char const *path, char const *mode)
 {
   return fopen(path, mode);
 }
 
-FILE *myfdopen(int fd, char const *mode)
+FILE *MYmyfdopen(int fd, char const *mode)
 {
   return fdopen(fd, mode);
 }
 
-FILE *myfreopen(char const *path, char const *mode, FILE *stream)
+FILE *MYmyfreopen(char const *path, char const *mode, FILE *stream)
 {
   return freopen(path, mode, stream);
 }
 
-int myfclose(FILE *fp)
+int MYmyfclose(FILE *fp)
 {
   return fclose(fp);
 }
 
-void myfree(void *ptr)
+void MYmyfree(void *ptr)
 {
   free(ptr);
 }
 
 
 int
-my_atoi(char const *s)
+MYmy_atoi(char const *s)
 {
   return atoi(s);
 }
 
-int myrand()
+int MYmyrand()
 {
   return rand();
 }
 
-char my_char_inc(char *i)
+char MYmy_char_inc(char *i)
 {
   char ret = *i + 1;
   *i = ret;
@@ -103,36 +103,36 @@ size_t address_taken_local_var_callee(char **a, char **b, char **c, char **d)
   return b - a + (d - c) + 2;
 }
 
-int myrand_char()
+int MYmyrand_char()
 {
   return rand() % 255;
 }
 
 void
-myprint_char(char c)
+MYmyprint_char(char c)
 {
   printf("%c", c);
 }
 
 void
-myprint_int(int c)
+MYmyprint_int(int c)
 {
   printf("%d", c);
 }
 
 char *
-mystrdup(char const *s)
+MYmystrdup(char const *s)
 {
   return strdup(s);
 }
 
-int mytoupper(int c)
+int MYmytoupper(int c)
 {
   return toupper(c);
 }
 
 char*
-mystrerrorno()
+MYmystrerrorno()
 {
   return strerror(errno);
 }
