@@ -4474,15 +4474,15 @@ int spec_ungetc (unsigned char ch, int fd) {
     debug1(4,"spec_ungetc: %d = ", fd);
     if (fd > MAX_SPEC_FD) {
 	fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
-	exit (1);
+	myexit (1);
     }
     if (spec_fd[fd].pos <= 0) {
 	fprintf(stderr, "spec_ungetc: pos %d <= 0\n", spec_fd[fd].pos);
-	exit (1);
+	myexit (1);
     }
     if (spec_fd[fd].buf[--spec_fd[fd].pos] != ch) {
 	fprintf(stderr, "spec_ungetc: can't unget something that wasn't what was in the buffer!\n");
-	exit (1);
+	myexit (1);
     }
     debug1(4,"%d\n", rc);
     return ch;
@@ -4501,7 +4501,7 @@ int spec_write(int fd, unsigned char *buf, int size) {
     debug3(4,"spec_write: %d, %p, %d = ", fd, (void *)buf, size);
     if (fd > MAX_SPEC_FD) {
 	fprintf(stderr, "spec_write: fd=%d, > MAX_SPEC_FD!\n", fd);
-	exit (1);
+	myexit (1);
     }
     memcpy(&(spec_fd[fd].buf[spec_fd[fd].pos]), buf, size); 
     spec_fd[fd].len += size;
@@ -4513,7 +4513,7 @@ int spec_putc(unsigned char ch, int fd) {
     debug2(4,"spec_putc: %d, %d = ", ch, fd);
     if (fd > MAX_SPEC_FD) {
 	fprintf(stderr, "spec_write: fd=%d, > MAX_SPEC_FD!\n", fd);
-	exit (1);
+	myexit (1);
     }
     spec_fd[fd].buf[spec_fd[fd].pos++] = ch;
     spec_fd[fd].len ++;
