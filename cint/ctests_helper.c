@@ -8,7 +8,7 @@
 
 void MYmyexit(int ec)
 {
-  exit(ec);
+  _exit(ec);
 }
 
 #define NDATA (int *)MYmymalloc(ncol * sizeof(int))
