@@ -1629,7 +1629,7 @@ void recvDecodingTables ( void )
          inUse16[i] = True; else 
          inUse16[i] = False;
 
-   for (i = 0; i < 256; i++) inUse[i] = False;
+   initinUseToFalse();
 
    for (i = 0; i < 16; i++)
       if (inUse16[i])
@@ -2389,12 +2389,22 @@ Int32 rNums[512] = {
 /*--- The Reversible Transformation (tm)          ---*/
 /*---------------------------------------------------*/
 
+// XXX this loop gets vectorized
+// moved to separate function to test inference
+// for rest of the code
+void initinUseToFalse()
+{
+  Int32 i;
+  for (i = 0; i < 256; i++)
+    inUse[i] = False;
+}
+
 /*---------------------------------------------*/
 void randomiseBlock ( void )
 {
    Int32 i;
    RAND_DECLS;
-   for (i = 0; i < 256; i++) inUse[i] = False;
+   initinUseToFalse();
 
    for (i = 0; i <= last; i++) {
       RAND_UPD_MASK;
@@ -2803,7 +2813,7 @@ void loadAndRLEsource ( FILE* src )
    last = -1;
    ch   = 0;
 
-   for (i = 0; i < 256; i++) inUse[i] = False;
+   initinUseToFalse();
 
    /*--- 20 is just a paranoia constant ---*/
    allowableBlockSize = 100000 * blockSize100k - 20;
