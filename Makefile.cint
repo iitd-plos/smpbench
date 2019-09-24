@@ -3,6 +3,7 @@ LINKER_SCRIPT=$(SRCDIR)/misc/ld.script
 #DATA_SECTIONS_FLAG=-fdata-sections -Wl,-T,$(LINKER_SCRIPT)
 EMIT_RELOCS_FLAG=-Wl,--emit-relocs
 DEBUG_FLAG=-g
+LLVM_OPT_FLAGS=-O3 -strip-debug
 
 
 #GCC48_I386_EQCHECKER_FLAGS= -m32 -g -fno-inline -fno-inline-functions -fno-inline-small-functions -fno-indirect-inlining -fno-partial-inlining -fno-inline-functions-called-once -fno-early-inlining -fno-whole-program -fipa-sra -fno-strict-overflow -fno-unit-at-a-time -fno-strict-aliasing -fno-optimize-sibling-calls -fno-stack-protector  --param scev-max-expr-size=0 -fkeep-inline-functions -fwrapv -std=c11 -DTIMING_OUTPUT -fno-reorder-blocks -fno-jump-tables -fno-zero-initialized-in-bss -fno-caller-saves $(EQCHECKER_DEFINES) $(EQCHECKER_NO_BUILTINS) ${INCLUDES}
@@ -282,7 +283,7 @@ cint/%.bc.O2: cint/%.bc.O0
 #see http://lists.llvm.org/pipermail/llvm-dev/2017-April/111989.html for the sequence of commands used to generate bc.O3 below
 cint/%.bc.O3: cint/%.c
 	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -m32 -O3 -emit-llvm $^ -c -o $@.tmp
-	$(LLVM_OPT) -O3 -strip-debug -o $@ $@.tmp
+	$(LLVM_OPT) $(LLVM_OPT_FLAGS) -o $@ $@.tmp
 
 cint/%.bc.O3.cg: cint/%.bc.O3
 	$(LLC) -O3 $< -o $<.cg.tmp
@@ -339,20 +340,20 @@ cint/%.s: cint/%
 
 %.llc.O0.i386: %.c
 	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
-	$(LLVM_OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(LLVM_OPT) $(LLVM_OPT_FLAGS) -o $@.tmp $@.tmp
 	$(LLC) -O0 -filetype=obj $@.tmp -o $@.tmp.o
 	$(CLANG_I386) -O0 $@.tmp.o $(LIBS) -o $@
 
 %.llc.O2.i386: %.c
 	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
-	$(LLVM_OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(LLVM_OPT) $(LLVM_OPT_FLAGS) -o $@.tmp $@.tmp
 	$(LLC) -O2 -filetype=obj $@.tmp -o $@.tmp.o
 	$(CLANG_I386) -O2 $@.tmp.o $(LIBS) -o $@
 
 
 %.llc.O3.i386: %.c
 	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -O3 -emit-llvm $^ -c -o $@.tmp
-	$(LLVM_OPT) -O3 -strip-debug -o $@.tmp $@.tmp
+	$(LLVM_OPT) $(LLVM_OPT_FLAGS) -o $@.tmp $@.tmp
 	$(LLC) -O3 -filetype=obj $@.tmp -o $@.tmp.o
 	$(CLANG_I386) -O3 $@.tmp.o $(LIBS) -o $@
 
