@@ -491,6 +491,7 @@ void    panic                 ( Char* )          NORETURN;
 void    ioError               ( void )           NORETURN;
 void    compressOutOfMemory   ( Int32, Int32 )   NORETURN;
 void    uncompressOutOfMemory ( Int32, Int32 )   NORETURN;
+void    myuncompressOutOfMemory ( Int32, Int32 ) NORETURN;
 void    blockOverrun          ( void )           NORETURN;
 void    badBlockHeader        ( void )           NORETURN;
 void    badBGLengths          ( void )           NORETURN;
@@ -1215,7 +1216,7 @@ void setDecompressStructureSizes ( Int32 newSize100k )
       if (ll8 == NULL || tt == NULL) {
          Int32 totalDraw
             = n * sizeof(UChar) + n * sizeof(UInt32);
-         uncompressOutOfMemory ( totalDraw, n );
+         myuncompressOutOfMemory ( totalDraw, n );
       }
 
    }
@@ -2047,11 +2048,13 @@ typedef
 #define QSORT_STACK_SIZE 1000
 
 
+// XXX local array turned global
+StackElem stack[QSORT_STACK_SIZE];
 void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
 {
    Int32 unLo, unHi, ltLo, gtHi, med, n, m;
    Int32 sp, lo, hi, d;
-   StackElem stack[QSORT_STACK_SIZE];
+   //StackElem stack[QSORT_STACK_SIZE];
 
    sp = 0;
    push ( loSt, hiSt, dSt );
@@ -2463,13 +2466,15 @@ INLINE Int32 indexIntoF ( Int32 indx, Int32 *cftab )
       tPos = GET_LL(tPos);
 
 
+// XXX local array turned global -- required in both undoReversibleTransformation_{small,fast}
+Int32  cftab[257], cftabAlso[257];
 #ifdef SPEC_CPU2000
 void undoReversibleTransformation_small ( int dst )
 #else
 void undoReversibleTransformation_small ( FILE* dst )
 #endif
 {
-   Int32  cftab[257], cftabAlso[257];
+   //Int32  cftab[257], cftabAlso[257];
    Int32  i, j, tmp, tPos;
    UChar  ch;
 
@@ -2612,7 +2617,7 @@ void undoReversibleTransformation_fast ( int dst )
 void undoReversibleTransformation_fast ( FILE* dst )
 #endif
 {
-   Int32  cftab[257];
+   //Int32  cftab[257];
    Int32  i, tPos;
    UChar  ch;
 
@@ -2930,10 +2935,11 @@ void compressStream ( FILE *stream, FILE *zStream )
       ERROR_IF_NOT_ZERO ( ferror(zStream) );
    }
 
-   if (verbosity >= 2 && nBlocksRandomised > 0)
-      fprintf ( stderr, "    %d block%s needed randomisation\n", 
-                        nBlocksRandomised,
-                        nBlocksRandomised == 1 ? "" : "s" );
+   // XXX we cannot match ITE on RODATA function args
+   //if (verbosity >= 2 && nBlocksRandomised > 0)
+   //   fprintf ( stderr, "    %d block%s needed randomisation\n", 
+   //                     nBlocksRandomised,
+   //                     nBlocksRandomised == 1 ? "" : "s" );
 
    /*--
       Now another magic 48-bit number, 0x177245385090, to
@@ -3191,11 +3197,12 @@ Bool testStream ( FILE *zStream )
       if (verbosity >= 2) fprintf ( stderr, "] " );
 
       if (storedBlockCRC != computedBlockCRC) {
-         bsFinishedWithStream();
-         fclose ( zStream );
-         fprintf ( stderr, "\n%s, block %d: computed CRC does not match stored one\n",
-                           inName, currBlockNo );
-         return False;
+        goto CRCmismatch;
+        // bsFinishedWithStream();
+        // fclose ( zStream );
+        // fprintf ( stderr, "\n%s, block %d: computed CRC does not match stored one\n",
+        //                   inName, currBlockNo );
+        // return False;
       }
 
       if (verbosity >= 2) fprintf ( stderr, "ok\n" );
@@ -3209,11 +3216,12 @@ Bool testStream ( FILE *zStream )
                 "    combined CRCs: stored = 0x%x, computed = 0x%x\n    ",
                 storedCombinedCRC, computedCombinedCRC );
    if (storedCombinedCRC != computedCombinedCRC) {
-      bsFinishedWithStream();
-      fclose ( zStream );
-      fprintf ( stderr, "\n%s: computed CRC does not match stored one\n",
-                        inName );
-      return False;
+     goto CRCmismatch;
+     // bsFinishedWithStream();
+     // fclose ( zStream );
+     // fprintf ( stderr, "\n%s: computed CRC does not match stored one\n",
+     //                   inName );
+     // return False;
    }
 
    bsFinishedWithStream ();
@@ -3221,6 +3229,14 @@ Bool testStream ( FILE *zStream )
    retVal = fclose ( zStream );
    ERROR_IF_EOF ( retVal );
    return True;
+
+CRCmismatch:
+   bsFinishedWithStream();
+   fclose ( zStream );
+   fprintf ( stderr, "\n%s: computed CRC does not match stored one\n",
+       inName );
+   return False;
+
 }
 
 
@@ -3399,22 +3415,31 @@ void mySignalCatcher ( IntNative n )
    cleanUpAndFail(1);
 }
 
-
 /*---------------------------------------------*/
-void mySIGSEGVorSIGBUScatcher ( IntNative n )
+void bug_compress()
 {
-   if (opMode == OM_Z)
       fprintf ( stderr,
                 "\n%s: Caught a SIGSEGV or SIGBUS whilst compressing,\n"
                 "\twhich probably indicates a bug in bzip2.  Please\n"
                 "\treport it to me at: jseward@acm.org\n",
                 progName );
-   else
+}
+
+void bug_decompress()
+{
      fprintf ( stderr,
                 "\n%s: Caught a SIGSEGV or SIGBUS whilst decompressing,\n"
                 "\twhich probably indicates that the compressed data\n"
                 "\tis corrupted.\n",
                 progName );
+}
+
+void mySIGSEGVorSIGBUScatcher ( IntNative n )
+{
+   if (opMode == OM_Z)
+     bug_compress();
+   else
+     bug_decompress();
 
    showFileNames();
    if (opMode == OM_Z)
@@ -3425,6 +3450,19 @@ void mySIGSEGVorSIGBUScatcher ( IntNative n )
 
 
 /*---------------------------------------------*/
+
+void myuncompressOutOfMemory ( Int32 draw, Int32 blockSize )
+{
+   fprintf ( stderr,
+             "\n%s: Can't allocate enough memory for decompression.\n"
+             "\tRequested %d bytes for a block size of %d.\n"
+             "\tTry selecting space-economic decompress (with flag -s)\n"
+             "\tand failing that, find a machine with more memory.\n",
+             progName, draw, blockSize );
+   showFileNames();
+   cleanUpAndFail(1);
+}
+
 void uncompressOutOfMemory ( Int32 draw, Int32 blockSize )
 {
    fprintf ( stderr,
@@ -4281,7 +4319,7 @@ int spec_putc(unsigned char ch, int fd);
 int debug_time();
 
 //#define DEBUG
-#undef DEBUG
+#undef DEBUG // XXX do not change this
 
 #ifdef DEBUG
 int dbglvl=4;
