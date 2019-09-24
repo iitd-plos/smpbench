@@ -972,6 +972,27 @@ void bsPutIntVS ( Int32 numBits, UInt32 c )
 }
 
 
+Int32 heap   [ MAX_ALPHA_SIZE + 2 ];
+Int32 weight [ MAX_ALPHA_SIZE * 2 ];
+Int32 parent [ MAX_ALPHA_SIZE * 2 ];
+
+void initWeightUsingfreq(Int32* freq, Int32 alphaSize)
+{
+  Int32 i;
+  for (i = 0; i < alphaSize; i++)
+    weight[i+1] = (freq[i] == 0 ? 1 : freq[i]) << 8;
+}
+
+void updateWeight(Int32 alphaSize)
+{
+  Int32 i, j;
+  for (i = 1; i < alphaSize; i++) {
+    j = weight[i] >> 8;
+    j = 1 + (j / 2);
+    weight[i] = j << 8;
+  }
+}
+
 /*---------------------------------------------*/
 void hbMakeCodeLengths ( UChar *len, 
                          Int32 *freq,
@@ -985,12 +1006,8 @@ void hbMakeCodeLengths ( UChar *len,
    Int32 nNodes, nHeap, n1, n2, i, j, k;
    Bool  tooLong;
 
-   Int32 heap   [ MAX_ALPHA_SIZE + 2 ];
-   Int32 weight [ MAX_ALPHA_SIZE * 2 ];
-   Int32 parent [ MAX_ALPHA_SIZE * 2 ]; 
 
-   for (i = 0; i < alphaSize; i++)
-      weight[i+1] = (freq[i] == 0 ? 1 : freq[i]) << 8;
+   initWeightUsingfreq(freq, alphaSize);
 
    while (True) {
 
@@ -1035,11 +1052,7 @@ void hbMakeCodeLengths ( UChar *len,
       
       if (! tooLong) break;
 
-      for (i = 1; i < alphaSize; i++) {
-         j = weight[i] >> 8;
-         j = 1 + (j / 2);
-         weight[i] = j << 8;
-      }
+      updateWeight(alphaSize);
    }
 }
 
@@ -1062,6 +1075,12 @@ void hbAssignCodes ( Int32 *code,
 }
 
 
+void initToZero(Int32 *base)
+{
+  Int32 i;
+   for (i = 0; i < MAX_CODE_LEN; i++) base[i] = 0;
+}
+
 /*---------------------------------------------*/
 void hbCreateDecodeTables ( Int32 *limit,
                             Int32 *base,
@@ -1078,12 +1097,12 @@ void hbCreateDecodeTables ( Int32 *limit,
       for (j = 0; j < alphaSize; j++)
          if (length[j] == i) { perm[pp] = j; pp++; };
 
-   for (i = 0; i < MAX_CODE_LEN; i++) base[i] = 0;
+   initToZero(base);
    for (i = 0; i < alphaSize; i++) base[length[i]+1]++;
 
    for (i = 1; i < MAX_CODE_LEN; i++) base[i] += base[i-1];
 
-   for (i = 0; i < MAX_CODE_LEN; i++) limit[i] = 0;
+   initToZero(limit);
    vec = 0;
 
    for (i = minLen; i <= maxLen; i++) {
@@ -1242,10 +1261,20 @@ void makeMaps ( void )
 }
 
 
+// local array made global
+UChar  yy[256];
+
+void inityy(Int32 n)
+{
+  Int32 i;
+  for (i = 0; i < n; i++)
+    yy[i] = (UChar) i;
+}
+
 /*---------------------------------------------*/
 void generateMTFValues ( void )
 {
-   UChar  yy[256];
+   //UChar  yy[256];
    Int32  i, j;
    UChar  tmp;
    UChar  tmp2;
@@ -1260,8 +1289,7 @@ void generateMTFValues ( void )
 
    wr = 0;
    zPend = 0;
-   for (i = 0; i < nInUse; i++) yy[i] = (UChar) i;
-   
+   inityy(nInUse);
 
    for (i = 0; i <= last; i++) {
       UChar ll_i;
@@ -1326,6 +1354,8 @@ void generateMTFValues ( void )
 #define LESSER_ICOST  0
 #define GREATER_ICOST 15
 
+// local array made global
+Bool inUse16[16];
 void sendMTFValues ( void )
 {
    Int32 v, t, i, j, gs, ge, totc, bt, bc, iter;
@@ -1528,7 +1558,7 @@ void sendMTFValues ( void )
 
    /*--- Transmit the mapping table. ---*/
    { 
-      Bool inUse16[16];
+      //Bool inUse16[16];
       for (i = 0; i < 16; i++) {
           inUse16[i] = False;
           for (j = 0; j < 16; j++)
@@ -1615,13 +1645,51 @@ void moveToFrontCodeAndSend ( void )
    sendMTFValues();
 }
 
+/*---------------------------------------------*/
+// XXX this loop gets vectorized
+// moved to separate function to test inference
+// for rest of the code
+void initinUseToFalse()
+{
+  Int32 i;
+  for (i = 0; i < 256; i++)
+    inUse[i] = False;
+}
+
+/*---------------------------------------------*/
+void createHuffmanDecodeTables(Int32 nGroups, Int32 alphaSize)
+{
+  Int32 t, i, minLen, maxLen;
+  for (t = 0; t < nGroups; t++) {
+    minLen = 32;
+    maxLen = 0;
+    for (i = 0; i < alphaSize; i++) {
+      if (len[t][i] > maxLen) maxLen = len[t][i];
+      if (len[t][i] < minLen) minLen = len[t][i];
+    }
+    hbCreateDecodeTables (
+        &limit[t][0], &base[t][0], &perm[t][0], &len[t][0],
+        minLen, maxLen, alphaSize
+        );
+    minLens[t] = minLen;
+  }
+}
+
+// local array made global
+UChar pos[N_GROUPS];
+
+void initpos(Int32 nGroups)
+{
+  UChar v;;
+  for (v = 0; v < nGroups; v++) pos[v] = v;
+}
 
 /*---------------------------------------------*/
 void recvDecodingTables ( void )
 {
    Int32 i, j, t, nGroups, nSelectors, alphaSize;
    Int32 minLen, maxLen;
-   Bool inUse16[16];
+   //Bool inUse16[16];
 
    /*--- Receive the mapping table ---*/
    for (i = 0; i < 16; i++)
@@ -1650,8 +1718,9 @@ void recvDecodingTables ( void )
 
    /*--- Undo the MTF values for the selectors. ---*/
    {
-      UChar pos[N_GROUPS], tmp, v;
-      for (v = 0; v < nGroups; v++) pos[v] = v;
+      //UChar pos[N_GROUPS], tmp, v;
+      UChar tmp, v;
+      initpos(nGroups);
    
       for (i = 0; i < nSelectors; i++) {
          v = selectorMtf[i];
@@ -1674,19 +1743,7 @@ void recvDecodingTables ( void )
    }
 
    /*--- Create the Huffman decoding tables ---*/
-   for (t = 0; t < nGroups; t++) {
-      minLen = 32;
-      maxLen = 0;
-      for (i = 0; i < alphaSize; i++) {
-         if (len[t][i] > maxLen) maxLen = len[t][i];
-         if (len[t][i] < minLen) minLen = len[t][i];
-      }
-      hbCreateDecodeTables ( 
-         &limit[t][0], &base[t][0], &perm[t][0], &len[t][0],
-         minLen, maxLen, alphaSize
-      );
-      minLens[t] = minLen;
-   }
+   createHuffmanDecodeTables(nGroups, alphaSize);
 }
 
 
@@ -1710,10 +1767,16 @@ void recvDecodingTables ( void )
 }
 
 
+void initUnzftab()
+{
+  Int32 i;
+  for (i = 0; i <= 255; i++) unzftab[i] = 0;
+}
+
 /*---------------------------------------------*/
 void getAndMoveToFrontDecode ( void )
 {
-   UChar  yy[256];
+   //UChar  yy[256];
    Int32  i, j, nextSym, limitLast;
    Int32  EOB, groupNo, groupPos;
 
@@ -1731,9 +1794,10 @@ void getAndMoveToFrontDecode ( void )
       in a separate pass, and so saves a block's worth of
       cache misses.
    --*/
-   for (i = 0; i <= 255; i++) unzftab[i] = 0;
+   initUnzftab();
 
-   for (i = 0; i <= 255; i++) yy[i] = (UChar) i;
+   inityy(256);
+
 
    last = -1;
 
@@ -2125,12 +2189,29 @@ void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
 #define SETMASK (1 << 21)
 #define CLEARMASK (~(SETMASK))
 
+// local arrays made global
+Int32 runningOrder[256];
+Int32 copy[256];
+Bool bigDone[256];
+
+void initrunningOrder()
+{
+  Int32 i;
+  for (i = 0; i <= 255; i++) runningOrder[i] = i;
+}
+
+void initbigDone()
+{
+  Int32 i;
+  for (i = 0; i <= 255; i++) bigDone[i] = False;
+}
+
 void sortIt ( void )
 {
    Int32 i, j, ss, sb;
-   Int32 runningOrder[256];
-   Int32 copy[256];
-   Bool bigDone[256];
+   //Int32 runningOrder[256];
+   //Int32 copy[256];
+   //Bool bigDone[256];
    UChar c1, c2;
    Int32 numQSorted;
 
@@ -2164,7 +2245,7 @@ void sortIt ( void )
    } else {
 
       numQSorted = 0;
-      for (i = 0; i <= 255; i++) bigDone[i] = False;
+      initbigDone();
 
       if (verbosity >= 4) fprintf ( stderr, "        bucket sorting ...\n" );
 
@@ -2197,7 +2278,7 @@ void sortIt ( void )
          big bucket.
       --*/
 
-      for (i = 0; i <= 255; i++) runningOrder[i] = i;
+      initrunningOrder();
 
       {
          Int32 vv;
@@ -2389,16 +2470,6 @@ Int32 rNums[512] = {
 /*--- The Reversible Transformation (tm)          ---*/
 /*---------------------------------------------------*/
 
-// XXX this loop gets vectorized
-// moved to separate function to test inference
-// for rest of the code
-void initinUseToFalse()
-{
-  Int32 i;
-  for (i = 0; i < 256; i++)
-    inUse[i] = False;
-}
-
 /*---------------------------------------------*/
 void randomiseBlock ( void )
 {
@@ -2478,6 +2549,21 @@ INLINE Int32 indexIntoF ( Int32 indx, Int32 *cftab )
 
 // XXX local array turned global -- required in both undoReversibleTransformation_{small,fast}
 Int32  cftab[257], cftabAlso[257];
+
+void setUpcftab()
+{
+  Int32 i;
+  cftab[0] = 0;
+  for (i = 1; i <= 256; i++) cftab[i] = unzftab[i-1];
+  for (i = 1; i <= 256; i++) cftab[i] += cftab[i-1];
+}
+
+void setUpcftabAlso()
+{
+  Int32 i;
+  for (i = 0; i <= 256; i++) cftabAlso[i] = cftab[i];
+}
+
 #ifdef SPEC_CPU2000
 void undoReversibleTransformation_small ( int dst )
 #else
@@ -2495,12 +2581,10 @@ void undoReversibleTransformation_small ( FILE* dst )
    --*/
 
    /*-- Set up cftab to facilitate generation of indexIntoF --*/
-   cftab[0] = 0;
-   for (i = 1; i <= 256; i++) cftab[i] = unzftab[i-1];
-   for (i = 1; i <= 256; i++) cftab[i] += cftab[i-1];
+   setUpcftab();
 
    /*-- Make a copy of it, used in generation of T --*/
-   for (i = 0; i <= 256; i++) cftabAlso[i] = cftab[i];
+   setUpcftabAlso();
 
    /*-- compute the T vector --*/
    for (i = 0; i <= last; i++) {
@@ -2638,9 +2722,7 @@ void undoReversibleTransformation_fast ( FILE* dst )
    --*/
 
    /*-- Set up cftab to facilitate generation of T^(-1) --*/
-   cftab[0] = 0;
-   for (i = 1; i <= 256; i++) cftab[i] = unzftab[i-1];
-   for (i = 1; i <= 256; i++) cftab[i] += cftab[i-1];
+   setUpcftab();
 
    /*-- compute the T^(-1) vector --*/
    for (i = 0; i <= last; i++) {
