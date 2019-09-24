@@ -7,9 +7,9 @@
 
 //const char interp_section[] __attribute__((section(".interp"))) = "/path/to/dynamic/linker";
 
-#define NDATA (int *)mymalloc(ncol * sizeof(int))
-#define NLIST (struct _list *)mymalloc(sizeof(struct _list))
-#define NPLAY (struct _play *)mymalloc(sizeof(struct _play))
+#define NDATA (int *)MYmymalloc(ncol * sizeof(int))
+#define NLIST (struct _list *)MYmymalloc(sizeof(struct _list))
+#define NPLAY (struct _play *)MYmymalloc(sizeof(struct _play))
 
 
 struct _list
@@ -28,7 +28,7 @@ struct _play
 
 int nrow = 3,ncol = 5;      /* global so as to avoid passing them all over the place */
 
-void *mymalloc(size_t size);
+void *MYmymalloc(size_t size);
 
 
 
@@ -109,8 +109,8 @@ void dump_list(struct _list *list) /* same for a _list structure */
   if (list != NULL)
     {
       dump_list(list -> next); /* dump the rest of it */
-      myfree(list -> data); /* and its _data structure */
-      myfree(list);
+      MYmyfree(list -> data); /* and its _data structure */
+      MYmyfree(list);
     }
 }
 
@@ -120,8 +120,8 @@ __attribute__((noinline)) void dump_play(struct _play *play) /* and for the enti
     {
       dump_play(play -> next);  /* dump the rest of the _play */
       dump_list(play -> first); /* its _list */
-      myfree(play -> state); /* and its _data */
-      myfree(play);
+      MYmyfree(play -> state); /* and its _data */
+      MYmyfree(play);
     }
 }
 
@@ -235,11 +235,11 @@ struct _list *make_list(int *data,int *value,int *all) /* create the whole _list
 	      if (col == 0) row = nrow - 1; /* break out if at first column */
 	      col = ncol - 1;               /* but make sure you break out */
 	    }                               /* of the col for-loop anyway */
-	  myfree(temp); /* dump this unneeded space */
+	  MYmyfree(temp); /* dump this unneeded space */
 	}
     }
   current = head -> next; /* skip first element */
-  myfree(head); /* dump it */
+  MYmyfree(head); /* dump it */
   if (current != NULL) *value = 1 - *value; /* invert value if its */
   return current;                           /* not the empty board */
 }
@@ -269,13 +269,13 @@ __attribute__((noinline)) struct _play *make_play(int all) /* make up the entire
 	  current = current -> next;      /* advance pointer */
 	  if (all == 2)                   /* if found flag is on */
 	    {
-	      myfree(temp);            /* dump current temp */
+	      MYmyfree(temp);            /* dump current temp */
 	      temp = make_data(nrow,ncol); /* and create one that will break */
 	    }
 	}
     }
   current = head -> next; /* skip first element */
-  myfree(head);             /* dump it */
+  MYmyfree(head);             /* dump it */
   return current;         /* and return pointer to start of list */
 }
 
@@ -310,11 +310,11 @@ void make_wanted(int *data) /* makes up the list of positions from the full boar
 	      if (col == 0) row = nrow - 1;
 	      col = ncol - 1;
 	    }
-	  myfree(temp);
+	  MYmyfree(temp);
 	}
     }
   current = head -> next;
-  myfree(head);
+  MYmyfree(head);
   wanted = current;
 }
 
@@ -378,7 +378,7 @@ int main_chomp(void)
           /* print it out nicely */
           printf("player %d plays at (%d,%d)\n",player,row,col);
           player = 1 - player; /* next player to do the same */
-          myfree(current);  /* dump for memory management */
+          MYmyfree(current);  /* dump for memory management */
         }
       current = temp; /* update board */
     }
@@ -494,10 +494,10 @@ fannkuch( int n )
   if( n < 1 ) return 0;
   r = n; didpr = 0; flipsmax = 0;
 
-  perm1 = mycalloc(n, sizeof(*perm1));
+  perm1 = MYmycalloc(n, sizeof(*perm1));
   init_perm1(perm1, n);
-  perm  = mycalloc(n, sizeof(*perm ));
-  count = mycalloc(n, sizeof(*count));
+  perm  = MYmycalloc(n, sizeof(*perm ));
+  count = MYmycalloc(n, sizeof(*count));
 
   for(;;) {
     if( didpr < 30 ) {
@@ -649,13 +649,13 @@ struct ht_ht {
 struct ht_node *ht_node_create(char *key) {
     char *newkey;
     struct ht_node *node;
-    if ((node = (struct ht_node *)mymalloc(sizeof(struct ht_node))) == 0) {
+    if ((node = (struct ht_node *)MYmymalloc(sizeof(struct ht_node))) == 0) {
 	perror("malloc ht_node");
-	exit(1);
+	MYmyexit(1);
     }
     if ((newkey = (char *)strdup(key)) == 0) {
 	perror("strdup newkey");
-	exit(1);
+	MYmyexit(1);
     }
     node->key = newkey;
     node->val = 0;
@@ -665,10 +665,10 @@ struct ht_node *ht_node_create(char *key) {
 
 __attribute__((noinline)) struct ht_ht *ht_create(int size) {
     int i = 0;
-    struct ht_ht *ht = (struct ht_ht *)mymalloc(sizeof(struct ht_ht));
+    struct ht_ht *ht = (struct ht_ht *)MYmymalloc(sizeof(struct ht_ht));
     while (ht_prime_list[i] < size) { i++; }
     ht->size = ht_prime_list[i];
-    ht->tbl = (struct ht_node **)mycalloc(ht->size, sizeof(struct ht_node *));
+    ht->tbl = (struct ht_node **)MYmycalloc(ht->size, sizeof(struct ht_node *));
     ht->iter_index = 0;
     ht->iter_next = 0;
     ht->items = 0;
@@ -686,12 +686,12 @@ void ht_destroy(struct ht_ht *ht) {
 	while (next) {
 	    cur = next;
 	    next = next->next;
-	    myfree(cur->key);
-	    myfree(cur);
+	    MYmyfree(cur->key);
+	    MYmyfree(cur);
 	}
     }
-    myfree(ht->tbl);
-    myfree(ht);
+    MYmyfree(ht->tbl);
+    MYmyfree(ht);
 }
 
 /*inline*/ struct ht_node *ht_find(struct ht_ht *ht, char *key) {
@@ -814,7 +814,7 @@ write_frequencies (int fl, char *buffer, long buflen)
       total = total + nd->val;
       size++;
     }
-  s = mycalloc (size, sizeof (sorter));
+  s = MYmycalloc (size, sizeof (sorter));
   i = 0;
   for (nd = ht_first (ht); nd != NULL; nd = ht_next (ht))
     {
@@ -833,7 +833,7 @@ write_frequencies (int fl, char *buffer, long buflen)
     printf ("%s %.3f\n", s[i].string, 100 * (float) s[i].num / total);
   printf ("\n");*/
   ht_destroy (ht);
-  myfree (s);
+  MYmyfree (s);
 }
 
 void
@@ -855,22 +855,22 @@ main_knucleotide ()
   long buflen, seqlen;
   FILE * f;
 
-  line = mymalloc (256);
+  line = MYmymalloc (256);
   if (!line)
     return 2;
   seqlen = 0;
   nothree = 1;
 
-  f = myfopen("knucleotide-input.txt", "r");
+  f = MYmyfopen("knucleotide-input.txt", "r");
   if (f == NULL) return 2;
 
   while (nothree && fgets (line, 255, f))
     if (line[0] == '>' && line[1] == 'T' && line[2] == 'H')
       nothree = 0;
-  myfree (line);
+  MYmyfree (line);
 
   buflen = 10240;
-  buffer = mymalloc (buflen + 1);
+  buffer = MYmymalloc (buflen + 1);
   if (!buffer)
     return 2;
   x = buffer;
@@ -891,7 +891,7 @@ main_knucleotide ()
 	      if (seqlen + 512 >= buflen)
 		{
 		  buflen = buflen + 10240;
-		  tmp = myrealloc (buffer, buflen + 1);
+		  tmp = MYmyrealloc (buffer, buflen + 1);
 		  if (tmp == NULL)
 		    return 2;
 		  buffer = tmp;
@@ -904,7 +904,7 @@ main_knucleotide ()
 	}
     }
   for (i = 0; i < seqlen; i++)
-    buffer[i] = mytoupper (buffer[i]);
+    buffer[i] = MYmytoupper (buffer[i]);
   write_frequencies (1, buffer, seqlen);
   write_frequencies (2, buffer, seqlen);
   write_count ("GGT", buffer, seqlen);
@@ -912,8 +912,8 @@ main_knucleotide ()
   write_count ("GGTATT", buffer, seqlen);
   write_count ("GGTATTTTAATT", buffer, seqlen);
   write_count ("GGTATTTTAATTTATAGT", buffer, seqlen);
-  myfree (buffer);
-  myfclose (f);
+  MYmyfree (buffer);
+  MYmyfclose (f);
   return 0;
 }
 
@@ -945,7 +945,7 @@ struct list * buildlist(int n)
 {
   struct list * r;
   if (n < 0) return NULL;
-  r = mymalloc(sizeof(struct list));
+  r = MYmymalloc(sizeof(struct list));
   r->hd = n;
   r->tl = buildlist(n - 1);
   return r;
@@ -955,7 +955,7 @@ struct list * reverselist (struct list * l)
 {
   struct list * r, * r2;
   for (r = NULL; l != NULL; l = l->tl) {
-    r2 = mymalloc(sizeof(struct list));
+    r2 = MYmymalloc(sizeof(struct list));
     r2->hd = l->hd;
     r2->tl = r;
     r = r2;
@@ -1037,7 +1037,7 @@ nsieve(unsigned int m)
 {
 	unsigned int count, i, j;
 	bits * a;
-        a = mymalloc((m / NBITS) * sizeof(bits));
+        a = MYmymalloc((m / NBITS) * sizeof(bits));
 	memset(a, (1 << 8) - 1, (m / NBITS) * sizeof(bits));
 	count = 0;
 	for (i = 2; i < m; ++i)
@@ -1108,7 +1108,7 @@ typedef unsigned char boolean;
 
 unsigned int nsieve_static(int m) {
     unsigned int count = 0, i, j;
-    boolean * flags = (boolean *) mymalloc(m * sizeof(boolean));
+    boolean * flags = (boolean *) MYmymalloc(m * sizeof(boolean));
     memset(flags, 1, m);
 
     for (i = 2; i < m; ++i)
@@ -1118,7 +1118,7 @@ unsigned int nsieve_static(int m) {
                 if (flags[j]) flags[j] = 0;
     }
 
-    myfree(flags);
+    MYmyfree(flags);
     return count;
 }
 
@@ -1212,7 +1212,7 @@ int cmpint(const void * i, const void * j)
 
 void rand_init(int* a, int* b, int n)
 {
-  for (int i = 0; i < n; i++) b[i] = a[i] = myrand() & 0xFFFF;
+  for (int i = 0; i < n; i++) b[i] = a[i] = MYmyrand() & 0xFFFF;
 }
 
 int equal_array(int* a, int* b, int n)
@@ -1228,8 +1228,8 @@ int main_qsort(int n, int bench)
   int i;
   int * a, * b;
 
-  a = mymalloc(n * sizeof(int));
-  b = mymalloc(n * sizeof(int));
+  a = MYmymalloc(n * sizeof(int));
+  b = MYmymalloc(n * sizeof(int));
   rand_init(a, b, n);
   quicksort(0, n - 1, a);
   if (!bench) {
@@ -1359,7 +1359,7 @@ void SHA1_rounds(struct SHA1Context * ctx , u32 *data)
 
 void SHA1_transform(struct SHA1Context * ctx)
 {
-  u32 *data = mymalloc(sizeof(u32) * 80);
+  u32 *data = MYmymalloc(sizeof(u32) * 80);
   int numwords = 16;
   SHA1_copy_and_swap(ctx->buffer, data, numwords);
   SHA1_rounds(ctx, data);
@@ -1453,8 +1453,8 @@ void do_test(unsigned char * txt, unsigned char * expected_output)
   unsigned char* output;
   int ok;
 
-  ctx = mymalloc(sizeof(struct SHA1Context));
-  output = mymalloc(sizeof(unsigned char)*20);
+  ctx = MYmymalloc(sizeof(struct SHA1Context));
+  output = MYmymalloc(sizeof(unsigned char)*20);
   SHA1_init(ctx);
   SHA1_add_data(ctx, txt, strlen((char *) txt));
   SHA1_finish(ctx, output);
@@ -1963,8 +1963,8 @@ void foo(int* ptr) {
   if (!ptr) {
     ptr = l;
   }
-  while (myrand() > 100) {
-    if (myrand() < 2) {
+  while (MYmyrand() > 100) {
+    if (MYmyrand() < 2) {
       ptr = b;
     } else {
       ptr = a;
@@ -2030,7 +2030,7 @@ char maplocals_example1(void)
 {
   int local0 = 0, local1 = 0;
   int *ptr = &local0;
-  int local3 = myrand();
+  int local3 = MYmyrand();
   while (!(local3 & 0x2)) {
     local3 = local3 * 1234567;
     if (local3 & 0x1) {
@@ -2046,14 +2046,14 @@ char maplocals_example1(void)
 int maplocals_example2()
 {
   int local0 = 0;
-  int *ptr = mymalloc(4);
+  int *ptr = MYmymalloc(4);
   if (!ptr) {
     ptr = &local0;
   }
-  int local3 = myrand();
+  int local3 = MYmyrand();
   while (!(*ptr & 0x2)) {
     *ptr += local3;
-    local3 = myrand();
+    local3 = MYmyrand();
   }
   return local0;
 }
@@ -2062,10 +2062,10 @@ int maplocals_example3(int n)
 {
   int a[42];
   a[0] = 123;
-  mymemset(a, sizeof a, 0);
+  MYmymemset(a, sizeof a, 0);
   int i;
   for (i = 0; i < n; i++) {
-    int j = myrand();
+    int j = MYmyrand();
     a[j]++;
   }
   return a[0];
@@ -2078,7 +2078,7 @@ char maplocals_example4(char *ptr, int i, int b)
   if (b != 0) {
     ptr = &local1;
   }
-  local2 = my_char_inc(ptr);
+  local2 = MYmy_char_inc(ptr);
   return local0 + local1[0] + local2;
 }
 
@@ -2089,11 +2089,11 @@ void maplocals_example5(void)
   local0[0] = 123;
   char *ptr = local0;
   while (ptr <= &local0[N]) {
-    *ptr = myrand_char();
+    *ptr = MYmyrand_char();
     ptr++;
   }
-  int i = myrand();
-  myprint_int((int)local0[i]);
+  int i = MYmyrand();
+  MYmyprint_int((int)local0[i]);
 }
 
 
@@ -2104,10 +2104,10 @@ int maplocals_example12(int *ptr)
   if (!ptr) {
     ptr = &local0;
   }
-  int local3 = myrand();
+  int local3 = MYmyrand();
   while (!(*ptr & 0x2)) {
     *ptr += local3;
-    local3 = myrand();
+    local3 = MYmyrand();
   }
   return local0;
 }
@@ -2116,7 +2116,7 @@ char maplocals_example11(void)
 {
   int local0 = 0, local1 = 1;
   int *ptr = &local0;
-  int local3 = myrand();
+  int local3 = MYmyrand();
   while (!(local3 & 0x2)) {
     local3 = local3 * 1234567;
     if (local3 & 0x1) {
@@ -2274,8 +2274,8 @@ int lerner3c( )
 int main()
 {
   printf("start tests\n");
-  char* a = (char*)mymalloc(100);
-  char* b = (char*)mymalloc(100);
+  char* a = (char*)MYmymalloc(100);
+  char* b = (char*)MYmymalloc(100);
   size_t aa = address_taken_local_var_caller(&a);
   sum_positive_globals(100);
   sum_positive_arg(sum_positive_g, 144);

@@ -1,32 +1,32 @@
 #ifndef CTESTS_HELPER_H
 #define CTESTS_HELPER_H
 
-void myexit(int ec);
-void mymemset(void *s, int c, size_t n);
-void *mymemcpy(void *a, const void *b, size_t sz);
-int mymemcmp(const void *a, const void *b, size_t sz);
-int mystrcmp(const char *s1, const char *s2);
-int mystrncmp(const char *s1, const char *s2, size_t n);
-int my_atoi(char const *s);
-int myrand();
-char my_char_inc(char const *i);
-int myrand_char();
-void myprint_char(char c);
-void myprint_int(int c);
-void myfree(void *ptr);
-void *mycalloc(size_t nmemb, size_t size);
-char *mystrdup(char const *);
-FILE *myfopen(char const *path, char const *mode);
-void *myrealloc(void *ptr, size_t size);
-int mytoupper(int c);
-char* mystrerrno();
+void MYmyexit(int ec);
+void MYmymemset(void *s, int c, size_t n);
+void *MYmymemcpy(void *a, const void *b, size_t sz);
+int MYmymemcmp(const void *a, const void *b, size_t sz);
+int MYmystrcmp(const char *s1, const char *s2);
+int MYmystrncmp(const char *s1, const char *s2, size_t n);
+int MYmy_atoi(char const *s);
+int MYmyrand();
+char MYmy_char_inc(char const *i);
+int MYmyrand_char();
+void MYmyprint_char(char c);
+void MYmyprint_int(int c);
+void MYmyfree(void *ptr);
+void *MYmycalloc(size_t nmemb, size_t size);
+char *MYmystrdup(char const *);
+FILE *MYmyfopen(char const *path, char const *mode);
+void *MYmyrealloc(void *ptr, size_t size);
+int MYmytoupper(int c);
+char* MYmystrerrno();
 
-#define atoi my_atoi
-#define memset mymemset
-#define memcpy mymemcpy
-#define memcmp mymemcmp
-#define strcmp mystrcmp
-#define strncmp mystrncmp
+#define atoi MYmy_atoi
+#define memset MYmymemset
+#define memcpy MYmymemcpy
+#define memcmp MYmymemcmp
+#define strcmp MYmystrcmp
+#define strncmp MYmystrncmp
 
 
 #endif
