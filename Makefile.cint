@@ -267,9 +267,17 @@ cint/%.bc.O3: cint/%.c
 	$(LLVM_OPT) $(LLVM_OPT_FLAGS) -o $@ $@.tmp
 
 cint/%.bc.O3.cg: cint/%.bc.O3
-	$(LLC) -O3 $< -o $<.cg.tmp
+	$(MYLLC) -O3 $< -o $<.cg.tmp
 	rm -f $<.cg.tmp
-	$(LLVM_AS) $@.ll -o $@
+	$(MYLLVM_AS) $@.ll -o $@
+
+#cint/%.bc.O3.cg: cint/%.c
+#	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -m32 -O3 -emit-llvm $^ -c -o $@.tmp
+#	$(MYLLC) -O3 $@.tmp -o $@.cg.tmp
+#	#rm -f $@.cg.tmp
+#	mv -f $@.tmp.cg.ll $@.ll
+#	$(MYLLVM_AS) $@.ll -o $@
+
 
 cint/%.s: cint/%
 	$(LLVM_DIS) < $< > $@
