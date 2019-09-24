@@ -354,6 +354,7 @@ int spec_reset(int fd);
 int spec_write(int fd, unsigned char *buf, int size);
 int spec_putc(unsigned char ch, int fd);
 int debug_time();
+void initinUseToFalse();
 
 /*--
   IntNative is your platform's `native' int size.
