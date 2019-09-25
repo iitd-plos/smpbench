@@ -136,3 +136,9 @@ MYmystrerrorno()
 {
   return strerror(errno);
 }
+
+void
+MYmydebug(int n)
+{
+  return;
+}

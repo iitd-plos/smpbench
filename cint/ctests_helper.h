@@ -20,6 +20,7 @@ FILE *MYmyfopen(char const *path, char const *mode);
 void *MYmyrealloc(void *ptr, size_t size);
 int MYmytoupper(int c);
 char* MYmystrerrno();
+void MYmydebug(int n);
 
 #define atoi MYmy_atoi
 #define memset MYmymemset
@@ -27,6 +28,8 @@ char* MYmystrerrno();
 #define memcmp MYmymemcmp
 #define strcmp MYmystrcmp
 #define strncmp MYmystrncmp
+
+#define DBG(l) MYmydebug(l)
 
 
 #endif
