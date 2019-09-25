@@ -980,14 +980,17 @@ Int32 parent [ MAX_ALPHA_SIZE * 2 ];
 void initWeightUsingfreq(Int32* freq, Int32 alphaSize)
 {
   Int32 i;
-  for (i = 0; i < alphaSize; i++)
+  for (i = 0; i < alphaSize; i++) {
+    DBG(__LINE__);
     weight[i+1] = (freq[i] == 0 ? 1 : freq[i]) << 8;
+  }
 }
 
 void updateWeight(Int32 alphaSize)
 {
   Int32 i, j;
   for (i = 1; i < alphaSize; i++) {
+    DBG(__LINE__);
     j = weight[i] >> 8;
     j = 1 + (j / 2);
     weight[i] = j << 8;
@@ -1082,7 +1085,10 @@ void hbAssignCodes ( Int32 *code,
 void initToZero(Int32 *base)
 {
   Int32 i;
-   for (i = 0; i < MAX_CODE_LEN; i++) base[i] = 0;
+   for (i = 0; i < MAX_CODE_LEN; i++) {
+     DBG(__LINE__);
+     base[i] = 0;
+   }
 }
 
 /*---------------------------------------------*/
@@ -1271,8 +1277,10 @@ UChar  yy[256];
 void inityy(Int32 n)
 {
   Int32 i;
-  for (i = 0; i < n; i++)
+  for (i = 0; i < n; i++) {
+    DBG(__LINE__);
     yy[i] = (UChar) i;
+  }
 }
 
 /*---------------------------------------------*/
