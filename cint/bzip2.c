@@ -1678,6 +1678,7 @@ void createHuffmanDecodeTables(Int32 nGroups, Int32 alphaSize)
     minLen = 32;
     maxLen = 0;
     for (i = 0; i < alphaSize; i++) {
+      DBG(__LINE__);
       if (len[t][i] > maxLen) maxLen = len[t][i];
       if (len[t][i] < minLen) minLen = len[t][i];
     }
