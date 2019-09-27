@@ -1263,6 +1263,7 @@ void makeMaps ( void )
    Int32 i;
    nInUse = 0;
    for (i = 0; i < 256; i++)
+      DBG(__LINE__);
       if (inUse[i]) {
          seqToUnseq[nInUse] = i;
          unseqToSeq[i] = nInUse;
