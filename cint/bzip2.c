@@ -1109,8 +1109,7 @@ void hbCreateDecodeTables ( Int32 *limit,
          DBG(__LINE__);
          if (length[j] == i) { perm[pp] = j; pp++; };
       }
-    }
-
+   }
    initToZero(base);
    for (i = 0; i < alphaSize; i++) {
       DBG(__LINE__);
@@ -1323,6 +1322,7 @@ void generateMTFValues ( void )
    for (i = 0; i <= last; i++) {
       DBG(__LINE__);
       UChar ll_i;
+      DBG(__LINE__);
 
       #if DEBUG
          assert (wr <= i);
@@ -1415,9 +1415,13 @@ void sendMTFValues ( void )
                 last+1, nMTF, nInUse );
 
    alphaSize = nInUse+2;
-   for (t = 0; t < N_GROUPS; t++)
-      for (v = 0; v < alphaSize; v++)
+   for (t = 0; t < N_GROUPS; t++) {
+      DBG(__LINE__);
+      for (v = 0; v < alphaSize; v++) {
+         DBG(__LINE__);
          len[t][v] = GREATER_ICOST;
+      }
+   }
 
    /*--- Decide how many coding tables to use ---*/
    if (nMTF <= 0) panic ( "sendMTFValues(0)" );
@@ -1433,10 +1437,12 @@ void sendMTFValues ( void )
       remF  = nMTF;
       gs = 0;
       while (nPart > 0) {
+         DBG(__LINE__);
          tFreq = remF / nPart;
          ge = gs-1;
          aFreq = 0;
          while (aFreq < tFreq && ge < alphaSize-1) {
+            DBG(__LINE__);
             ge++;
             aFreq += mtfFreq[ge];
          }
@@ -1454,11 +1460,12 @@ void sendMTFValues ( void )
                               nPart, gs, ge, aFreq/*, 
                               (100.0 * (float)aFreq) / (float)nMTF */);
  
-         for (v = 0; v < alphaSize; v++)
+         for (v = 0; v < alphaSize; v++) {
+            DBG(__LINE__);
             if (v >= gs && v <= ge) 
                len[nPart-1][v] = LESSER_ICOST; else
                len[nPart-1][v] = GREATER_ICOST;
- 
+         }
          nPart--;
          gs = ge+1;
          remF -= aFreq;
@@ -1469,17 +1476,23 @@ void sendMTFValues ( void )
       Iterate up to N_ITERS times to improve the tables.
    ---*/
    for (iter = 0; iter < N_ITERS; iter++) {
-
-      for (t = 0; t < nGroups; t++) fave[t] = 0;
-
-      for (t = 0; t < nGroups; t++)
-         for (v = 0; v < alphaSize; v++)
+      DBG(__LINE__);
+      for (t = 0; t < nGroups; t++) {
+        DBG(__LINE__);
+        fave[t] = 0;
+      }
+      for (t = 0; t < nGroups; t++) {
+         DBG(__LINE__);
+         for (v = 0; v < alphaSize; v++) {
+            DBG(__LINE__);
             rfreq[t][v] = 0;
-
+         }
+      }
       nSelectors = 0;
       totc = 0;
       gs = 0;
       while (True) {
+         DBG(__LINE__);
 
          /*--- Set group start & end marks. --*/
          if (gs >= nMTF) break;
@@ -1490,12 +1503,15 @@ void sendMTFValues ( void )
             Calculate the cost of this group as coded
             by each of the coding tables.
          --*/
-         for (t = 0; t < nGroups; t++) cost[t] = 0;
-
+         for (t = 0; t < nGroups; t++) {
+           DBG(__LINE__);
+           cost[t] = 0;
+         }
          if (nGroups == 6) {
             register UInt16 cost0, cost1, cost2, cost3, cost4, cost5;
             cost0 = cost1 = cost2 = cost3 = cost4 = cost5 = 0;
             for (i = gs; i <= ge; i++) { 
+               DBG(__LINE__);
                UInt16 icv = szptr[i];
                cost0 += len[0][icv];
                cost1 += len[1][icv];
@@ -1508,8 +1524,12 @@ void sendMTFValues ( void )
             cost[3] = cost3; cost[4] = cost4; cost[5] = cost5;
          } else {
             for (i = gs; i <= ge; i++) { 
+               DBG(__LINE__);
                UInt16 icv = szptr[i];
-               for (t = 0; t < nGroups; t++) cost[t] += len[t][icv];
+               for (t = 0; t < nGroups; t++) {
+                 DBG(__LINE__);
+                 cost[t] += len[t][icv];
+               }
             }
          }
  
@@ -1518,8 +1538,10 @@ void sendMTFValues ( void )
             and record its identity in the selector table.
          --*/
          bc = 999999999; bt = -1;
-         for (t = 0; t < nGroups; t++)
+         for (t = 0; t < nGroups; t++) {
+            DBG(__LINE__);
             if (cost[t] < bc) { bc = cost[t]; bt = t; };
+         }
          totc += bc;
          fave[bt]++;
          selector[nSelectors] = bt;
@@ -1528,9 +1550,10 @@ void sendMTFValues ( void )
          /*-- 
             Increment the symbol frequencies for the selected table.
           --*/
-         for (i = gs; i <= ge; i++)
+         for (i = gs; i <= ge; i++) {
+            DBG(__LINE__);
             rfreq[bt][ szptr[i] ]++;
-
+         }
          gs = ge+1;
       }
       if (verbosity >= 3) {
@@ -1545,8 +1568,10 @@ void sendMTFValues ( void )
       /*--
         Recompute the tables based on the accumulated frequencies.
       --*/
-      for (t = 0; t < nGroups; t++)
+      for (t = 0; t < nGroups; t++) {
+         DBG(__LINE__);
          hbMakeCodeLengths ( &len[t][0], &rfreq[t][0], alphaSize, 20 );
+      }
    }
 
 
@@ -1559,12 +1584,17 @@ void sendMTFValues ( void )
    /*--- Compute MTF values for the selectors. ---*/
    {
       UChar pos[N_GROUPS], ll_i, tmp2, tmp;
-      for (i = 0; i < nGroups; i++) pos[i] = i;
+      for (i = 0; i < nGroups; i++) {
+        DBG(__LINE__);
+        pos[i] = i;
+      }
       for (i = 0; i < nSelectors; i++) {
+         DBG(__LINE__);
          ll_i = selector[i];
          j = 0;
          tmp = pos[j];
          while ( ll_i != tmp ) {
+            DBG(__LINE__);
             j++;
             tmp2 = tmp;
             tmp = pos[j];
@@ -1580,6 +1610,7 @@ void sendMTFValues ( void )
       minLen = 32;
       maxLen = 0;
       for (i = 0; i < alphaSize; i++) {
+         DBG(__LINE__);
          if (len[t][i] > maxLen) maxLen = len[t][i];
          if (len[t][i] < minLen) minLen = len[t][i];
       }
@@ -1593,18 +1624,24 @@ void sendMTFValues ( void )
    { 
       //Bool inUse16[16];
       for (i = 0; i < 16; i++) {
+          DBG(__LINE__);
           inUse16[i] = False;
-          for (j = 0; j < 16; j++)
+          for (j = 0; j < 16; j++) {
+             DBG(__LINE__);
              if (inUse[i * 16 + j]) inUse16[i] = True;
+          }
       }
      
       nBytes = bytesOut;
-      for (i = 0; i < 16; i++)
+      for (i = 0; i < 16; i++) {
+         DBG(__LINE__);
          if (inUse16[i]) bsW(1,1); else bsW(1,0);
-
-      for (i = 0; i < 16; i++)
+      }
+      for (i = 0; i < 16; i++) {
+         DBG(__LINE__);
 	if (inUse16[i]) {
 	  for (j = 0; j < 16; j++) {
+      DBG(__LINE__);
 	    if (inUse[i * 16 + j]) {
 	      bsW(1,1);
 	    } else {
@@ -1612,6 +1649,7 @@ void sendMTFValues ( void )
 	    }
 	  }
 	}
+      }
 
       if (verbosity >= 3) 
          fprintf ( stderr, "      bytes: mapping %d, ", bytesOut-nBytes );
@@ -1649,6 +1687,7 @@ void sendMTFValues ( void )
    selCtr = 0;
    gs = 0;
    while (True) {
+      DBG(__LINE__);
       if (gs >= nMTF) break;
       ge = gs + G_SIZE - 1; 
       if (ge >= nMTF) ge = nMTF-1;
