@@ -1322,7 +1322,6 @@ void generateMTFValues ( void )
    for (i = 0; i <= last; i++) {
       DBG(__LINE__);
       UChar ll_i;
-      DBG(__LINE__);
 
       #if DEBUG
          assert (wr <= i);
