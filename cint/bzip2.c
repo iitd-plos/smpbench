@@ -1115,9 +1115,10 @@ void hbCreateDecodeTables ( Int32 *limit,
       DBG(__LINE__);
       base[length[i]+1]++;
    }
+
    for (i = 1; i < MAX_CODE_LEN; i++) {
-     DBG(__LINE__);
-     base[i] += base[i-1];
+      DBG(__LINE__);
+      base[i] += base[i-1];
    }
 
    initToZero(limit);
@@ -1319,8 +1320,8 @@ void generateMTFValues ( void )
    inityy(nInUse);
 
    for (i = 0; i <= last; i++) {
-      UChar ll_i;
       DBG(__LINE__);
+      UChar ll_i;
 
       #if DEBUG
          assert (wr <= i);
@@ -3407,6 +3408,7 @@ Bool testStream ( FILE *zStream )
      fclose ( zStream );
      fprintf ( stderr, "\n%s: bad magic number (ie, not created by bzip2)\n",
                        inName );
+     DBG(__LINE__); // required to prevent tail merge of fprintf with other exit paths
      return False;
    }
 
@@ -3437,6 +3439,7 @@ Bool testStream ( FILE *zStream )
          fprintf ( stderr,
                    "\n%s, block %d: bad header (not == 0x314159265359)\n",
                    inName, currBlockNo );
+         DBG(__LINE__); // required to prevent tail merge of fprintf with other exit paths
          return False;
       }
       storedBlockCRC = bsGetUInt32 ();
