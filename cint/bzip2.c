@@ -1103,25 +1103,38 @@ void hbCreateDecodeTables ( Int32 *limit,
    Int32 pp, i, j, vec;
 
    pp = 0;
-   for (i = minLen; i <= maxLen; i++)
-      for (j = 0; j < alphaSize; j++)
+   for (i = minLen; i <= maxLen; i++) {
+      DBG(__LINE__);
+      for (j = 0; j < alphaSize; j++) {
+         DBG(__LINE__);
          if (length[j] == i) { perm[pp] = j; pp++; };
+      }
+    }
 
    initToZero(base);
-   for (i = 0; i < alphaSize; i++) base[length[i]+1]++;
+   for (i = 0; i < alphaSize; i++) {
+      DBG(__LINE__);
+      base[length[i]+1]++;
+   }
 
-   for (i = 1; i < MAX_CODE_LEN; i++) base[i] += base[i-1];
+   for (i = 1; i < MAX_CODE_LEN; i++) {
+      DBG(__LINE__);
+      base[i] += base[i-1];
+   }
 
    initToZero(limit);
    vec = 0;
 
    for (i = minLen; i <= maxLen; i++) {
+      DBG(__LINE__);
       vec += (base[i+1] - base[i]);
       limit[i] = vec-1;
       vec <<= 1;
    }
-   for (i = minLen + 1; i <= maxLen; i++)
+   for (i = minLen + 1; i <= maxLen; i++) {
+      DBG(__LINE__);
       base[i] = ((limit[i-1] + 1) << 1) - base[i];
+   }
 }
 
 
@@ -1298,13 +1311,17 @@ void generateMTFValues ( void )
    makeMaps();
    EOB = nInUse+1;
 
-   for (i = 0; i <= EOB; i++) mtfFreq[i] = 0;
+   for (i = 0; i <= EOB; i++) {
+     DBG(__LINE__);
+     mtfFreq[i] = 0;
+   }
 
    wr = 0;
    zPend = 0;
    inityy(nInUse);
 
    for (i = 0; i <= last; i++) {
+      DBG(__LINE__);
       UChar ll_i;
 
       #if DEBUG
@@ -1319,6 +1336,7 @@ void generateMTFValues ( void )
       j = 0;
       tmp = yy[j];
       while ( ll_i != tmp ) {
+         DBG(__LINE__);
          j++;
          tmp2 = tmp;
          tmp = yy[j];
@@ -1332,6 +1350,7 @@ void generateMTFValues ( void )
          if (zPend > 0) {
             zPend--;
             while (True) {
+               DBG(__LINE__);
                switch (zPend % 2) {
                   case 0: szptr[wr] = RUNA; wr++; mtfFreq[RUNA]++; break;
                   case 1: szptr[wr] = RUNB; wr++; mtfFreq[RUNB]++; break;
@@ -1348,6 +1367,7 @@ void generateMTFValues ( void )
    if (zPend > 0) {
       zPend--;
       while (True) {
+         DBG(__LINE__);
          switch (zPend % 2) {
             case 0:  szptr[wr] = RUNA; wr++; mtfFreq[RUNA]++; break;
             case 1:  szptr[wr] = RUNB; wr++; mtfFreq[RUNB]++; break;
@@ -3350,6 +3370,7 @@ Bool testStream ( FILE *zStream )
      fclose ( zStream );
      fprintf ( stderr, "\n%s: bad magic number (ie, not created by bzip2)\n",
                        inName );
+     DBG(__LINE__); // required to prevent tail merge of fprintf with other exit paths
      return False;
    }
 
@@ -3380,6 +3401,7 @@ Bool testStream ( FILE *zStream )
          fprintf ( stderr,
                    "\n%s, block %d: bad header (not == 0x314159265359)\n",
                    inName, currBlockNo );
+         DBG(__LINE__); // required to prevent tail merge of fprintf with other exit paths
          return False;
       }
       storedBlockCRC = bsGetUInt32 ();
