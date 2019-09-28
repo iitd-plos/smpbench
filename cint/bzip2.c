@@ -949,6 +949,7 @@ void bsPutIntVS ( Int32 numBits, UInt32 c )
    Int32 zz, tmp;                                     \
    zz = z; tmp = heap[zz];                            \
    while (weight[tmp] < weight[heap[zz >> 1]]) {      \
+      DBG(__LINE__);                                  \
       heap[zz] = heap[zz >> 1];                       \
       zz >>= 1;                                       \
    }                                                  \
@@ -960,6 +961,7 @@ void bsPutIntVS ( Int32 numBits, UInt32 c )
    Int32 zz, yy, tmp;                                 \
    zz = z; tmp = heap[zz];                            \
    while (True) {                                     \
+      DBG(__LINE__);                                  \
       yy = zz << 1;                                   \
       if (yy > nHeap) break;                          \
       if (yy < nHeap &&                               \
@@ -1014,7 +1016,7 @@ void hbMakeCodeLengths ( UChar *len,
    initWeightUsingfreq(freq, alphaSize);
 
    while (True) {
-
+      DBG(__LINE__);
       nNodes = alphaSize;
       nHeap = 0;
 
@@ -1023,6 +1025,7 @@ void hbMakeCodeLengths ( UChar *len,
       parent[0] = -2;
 
       for (i = 1; i <= alphaSize; i++) {
+         DBG(__LINE__);
          parent[i] = -1;
          nHeap++;
          heap[nHeap] = i;
@@ -1032,6 +1035,7 @@ void hbMakeCodeLengths ( UChar *len,
          panic ( "hbMakeCodeLengths(1)" );
    
       while (nHeap > 1) {
+         DBG(__LINE__);
          n1 = heap[1]; heap[1] = heap[nHeap]; nHeap--; DOWNHEAP(1);
          n2 = heap[1]; heap[1] = heap[nHeap]; nHeap--; DOWNHEAP(1);
          nNodes++;
@@ -1047,9 +1051,10 @@ void hbMakeCodeLengths ( UChar *len,
 
       tooLong = False;
       for (i = 1; i <= alphaSize; i++) {
+         DBG(__LINE__);
          j = 0;
          k = i;
-         while (parent[k] >= 0) { k = parent[k]; j++; }
+         while (parent[k] >= 0) { DBG(__LINE__); k = parent[k]; j++; }
          len[i-1] = j;
          if (j > maxLen) tooLong = True;
       }
@@ -3408,7 +3413,7 @@ Bool testStream ( FILE *zStream )
      fclose ( zStream );
      fprintf ( stderr, "\n%s: bad magic number (ie, not created by bzip2)\n",
                        inName );
-     DBG(__LINE__); // required to prevent tail merge of fprintf with other exit paths
+     DBG2(__LINE__); // required to prevent tail merge of fprintf with other exit paths
      return False;
    }
 

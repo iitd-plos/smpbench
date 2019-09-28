@@ -30,6 +30,7 @@ void MYmydebug(int n);
 #define strncmp MYmystrncmp
 
 #define DBG(l) MYmydebug(l)
+#define DBG2(l) MYmydebug2(l)
 
 
 #endif

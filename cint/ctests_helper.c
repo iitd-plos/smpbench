@@ -142,3 +142,9 @@ MYmydebug(int n)
 {
   return;
 }
+
+void
+MYmydebug2(int n)
+{
+  return;
+}
