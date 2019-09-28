@@ -1103,25 +1103,36 @@ void hbCreateDecodeTables ( Int32 *limit,
    Int32 pp, i, j, vec;
 
    pp = 0;
-   for (i = minLen; i <= maxLen; i++)
-      for (j = 0; j < alphaSize; j++)
+   for (i = minLen; i <= maxLen; i++) {
+      DBG(__LINE__);
+      for (j = 0; j < alphaSize; j++) {
+         DBG(__LINE__);
          if (length[j] == i) { perm[pp] = j; pp++; };
-
+      }
+   }
    initToZero(base);
-   for (i = 0; i < alphaSize; i++) base[length[i]+1]++;
-
-   for (i = 1; i < MAX_CODE_LEN; i++) base[i] += base[i-1];
+   for (i = 0; i < alphaSize; i++) {
+      DBG(__LINE__);
+      base[length[i]+1]++;
+   }
+   for (i = 1; i < MAX_CODE_LEN; i++) {
+     DBG(__LINE__);
+     base[i] += base[i-1];
+   }
 
    initToZero(limit);
    vec = 0;
 
    for (i = minLen; i <= maxLen; i++) {
+      DBG(__LINE__);
       vec += (base[i+1] - base[i]);
       limit[i] = vec-1;
       vec <<= 1;
    }
-   for (i = minLen + 1; i <= maxLen; i++)
+   for (i = minLen + 1; i <= maxLen; i++) {
+      DBG(__LINE__);
       base[i] = ((limit[i-1] + 1) << 1) - base[i];
+   }
 }
 
 
