@@ -4838,6 +4838,7 @@ int main (int argc, char *argv[]) {
   }
   /* Save off one byte every ~1k for validation */
   for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
+    DBG(__LINE__);
 	  validate_array[i] = spec_fd[0].buf[i*VALIDATE_SKIP];
   }
 
@@ -4889,6 +4890,7 @@ int main (int argc, char *argv[]) {
 #endif
 
 	  for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
+      DBG(__LINE__);
 	    if (validate_array[i] != spec_fd[0].buf[i*VALIDATE_SKIP]) {
 		    printf ("Tested %dMB buffer: Miscompared!!\n", input_size);
 		    MYmyexit (1);
