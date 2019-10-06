@@ -944,40 +944,74 @@ void bsPutIntVS ( Int32 numBits, UInt32 c )
    (WEIGHTOF(zw1)+WEIGHTOF(zw2)) |                    \
    (1 + MYMAX(DEPTHOF(zw1),DEPTHOF(zw2)))
 
-#define UPHEAP(z)                                     \
-{                                                     \
-   Int32 zz, tmp;                                     \
-   zz = z; tmp = heap[zz];                            \
-   while (weight[tmp] < weight[heap[zz >> 1]]) {      \
-      DBG(__LINE__);                                  \
-      heap[zz] = heap[zz >> 1];                       \
-      zz >>= 1;                                       \
-   }                                                  \
-   heap[zz] = tmp;                                    \
-}
-
-#define DOWNHEAP(z)                                   \
-{                                                     \
-   Int32 zz, yy, tmp;                                 \
-   zz = z; tmp = heap[zz];                            \
-   while (True) {                                     \
-      DBG(__LINE__);                                  \
-      yy = zz << 1;                                   \
-      if (yy > nHeap) break;                          \
-      if (yy < nHeap &&                               \
-          weight[heap[yy+1]] < weight[heap[yy]])      \
-         yy++;                                        \
-      if (weight[tmp] < weight[heap[yy]]) break;      \
-      heap[zz] = heap[yy];                            \
-      zz = yy;                                        \
-   }                                                  \
-   heap[zz] = tmp;                                    \
-}
-
+//#define UPHEAP(z)                                     \
+//{                                                     \
+//   Int32 zz, tmp;                                     \
+//   zz = z; tmp = heap[zz];                            \
+//   while (weight[tmp] < weight[heap[zz >> 1]]) {      \
+//      DBG(__LINE__);                                  \
+//      heap[zz] = heap[zz >> 1];                       \
+//      zz >>= 1;                                       \
+//   }                                                  \
+//   heap[zz] = tmp;                                    \
+//}
+//
+//#define DOWNHEAP(z)                                   \
+//{                                                     \
+//   Int32 zz, yy, tmp;                                 \
+//   zz = z; tmp = heap[zz];                            \
+//   while (True) {                                     \
+//      DBG(__LINE__);                                  \
+//      yy = zz << 1;                                   \
+//      if (yy > nHeap) break;                          \
+//      if (yy < nHeap &&                               \
+//          weight[heap[yy+1]] < weight[heap[yy]])      \
+//         yy++;                                        \
+//      if (weight[tmp] < weight[heap[yy]]) break;      \
+//      heap[zz] = heap[yy];                            \
+//      zz = yy;                                        \
+//   }                                                  \
+//   heap[zz] = tmp;                                    \
+//}
 
 Int32 heap   [ MAX_ALPHA_SIZE + 2 ];
 Int32 weight [ MAX_ALPHA_SIZE * 2 ];
 Int32 parent [ MAX_ALPHA_SIZE * 2 ];
+
+Int32 nHeap;
+
+void
+UPHEAP(Int32 z)
+{
+   Int32 zz, tmp;
+   zz = z; tmp = heap[zz];
+   while (weight[tmp] < weight[heap[zz >> 1]]) {
+      DBG(__LINE__);
+      heap[zz] = heap[zz >> 1];
+      zz >>= 1;
+   }
+   heap[zz] = tmp;
+}
+
+void
+DOWNHEAP(Int32 z)
+{
+   Int32 zz, yy, tmp;
+   zz = z; tmp = heap[zz];
+   while (True) {
+      DBG(__LINE__);
+      yy = zz << 1;
+      if (yy > nHeap) break;
+      if (yy < nHeap &&
+          weight[heap[yy+1]] < weight[heap[yy]])
+         yy++;
+      if (weight[tmp] < weight[heap[yy]]) break;
+      heap[zz] = heap[yy];
+      zz = yy;
+   }
+   heap[zz] = tmp;
+}
+
 
 void initWeightUsingfreq(Int32* freq, Int32 alphaSize)
 {
@@ -1009,7 +1043,7 @@ void hbMakeCodeLengths ( UChar *len,
       Nodes and heap entries run from 1.  Entry 0
       for both the heap and nodes is a sentinel.
    --*/
-   Int32 nNodes, nHeap, n1, n2, i, j, k;
+   Int32 nNodes, n1, n2, i, j, k;
    Bool  tooLong;
 
 
@@ -1391,13 +1425,256 @@ void generateMTFValues ( void )
 #define LESSER_ICOST  0
 #define GREATER_ICOST 15
 
-// local array made global
+// local arrays made global
 Bool inUse16[16];
+UInt16 cost[N_GROUPS];
+Int32  fave[N_GROUPS];
+
+void
+generateInitialCodingTables(Int32 nGroups, Int32 alphaSize)
+{
+  Int32 v, gs, ge;
+  Int32 nPart, remF, tFreq, aFreq;
+
+  nPart = nGroups;
+  remF  = nMTF;
+  gs = 0;
+  while (nPart > 0) {
+    DBG(__LINE__);
+    tFreq = remF / nPart;
+    ge = gs-1;
+    aFreq = 0;
+    while (aFreq < tFreq && ge < alphaSize-1) {
+      DBG(__LINE__);
+      ge++;
+      aFreq += mtfFreq[ge];
+    }
+
+    if (ge > gs
+        && nPart != nGroups && nPart != 1
+        && ((nGroups-nPart) % 2 == 1)) {
+      aFreq -= mtfFreq[ge];
+      ge--;
+    }
+
+    if (verbosity >= 3)
+      fprintf ( stderr,
+          "      initial group %d, [%d .. %d], has %d syms\n",
+          nPart, gs, ge, aFreq/*,
+                                (100.0 * (float)aFreq) / (float)nMTF */);
+
+        for (v = 0; v < alphaSize; v++) {
+          DBG(__LINE__);
+          if (v >= gs && v <= ge)
+            len[nPart-1][v] = LESSER_ICOST; else
+              len[nPart-1][v] = GREATER_ICOST;
+        }
+    nPart--;
+    gs = ge+1;
+    remF -= aFreq;
+  }
+}
+
+// local array made global
+UChar pos[N_GROUPS];
+
+void
+computeMTFforSelectors(Int32 nGroups, Int32 nSelectors)
+{
+  Int32 i, j;
+  //UChar pos[N_GROUPS];
+  UChar ll_i, tmp2, tmp;
+  for (i = 0; i < nGroups; i++) {
+    DBG(__LINE__);
+    pos[i] = i;
+  }
+  for (i = 0; i < nSelectors; i++) {
+    DBG(__LINE__);
+    ll_i = selector[i];
+    j = 0;
+    tmp = pos[j];
+    while ( ll_i != tmp ) {
+      DBG(__LINE__);
+      j++;
+      tmp2 = tmp;
+      tmp = pos[j];
+      pos[j] = tmp2;
+    };
+    pos[0] = tmp;
+    selectorMtf[i] = j;
+  }
+}
+
+void
+calculateGroupCost(Int32 nGroups, Int32 gs, Int32 ge)
+{
+  Int32 t, i;
+
+  for (t = 0; t < nGroups; t++) {
+    DBG(__LINE__);
+    cost[t] = 0;
+  }
+  if (nGroups == 6) {
+    register UInt16 cost0, cost1, cost2, cost3, cost4, cost5;
+    cost0 = cost1 = cost2 = cost3 = cost4 = cost5 = 0;
+    for (i = gs; i <= ge; i++) {
+      DBG(__LINE__);
+      UInt16 icv = szptr[i];
+      cost0 += len[0][icv];
+      cost1 += len[1][icv];
+      cost2 += len[2][icv];
+      cost3 += len[3][icv];
+      cost4 += len[4][icv];
+      cost5 += len[5][icv];
+    }
+    cost[0] = cost0; cost[1] = cost1; cost[2] = cost2;
+    cost[3] = cost3; cost[4] = cost4; cost[5] = cost5;
+  } else {
+    for (i = gs; i <= ge; i++) {
+      DBG(__LINE__);
+      UInt16 icv = szptr[i];
+      for (t = 0; t < nGroups; t++) {
+        DBG(__LINE__);
+        cost[t] += len[t][icv];
+      }
+    }
+  }
+}
+
+void
+assignActualCodes(Int32 nGroups, Int32 alphaSize)
+{
+  Int32 t, i;
+  Int32 minLen, maxLen;
+  for (t = 0; t < nGroups; t++) {
+    minLen = 32;
+    maxLen = 0;
+    for (i = 0; i < alphaSize; i++) {
+      DBG(__LINE__);
+      if (len[t][i] > maxLen) maxLen = len[t][i];
+      if (len[t][i] < minLen) minLen = len[t][i];
+    }
+    if (maxLen > 20) panic ( "sendMTFValues(3)" );
+    if (minLen < 1)  panic ( "sendMTFValues(4)" );
+    hbAssignCodes ( &code[t][0], &len[t][0],
+        minLen, maxLen, alphaSize );
+  }
+}
+
+void
+transmitMappingTable()
+{
+  Int32 i, j;
+  Int32 nBytes;
+
+  //Bool inUse16[16];
+  for (i = 0; i < 16; i++) {
+    DBG(__LINE__);
+    inUse16[i] = False;
+    for (j = 0; j < 16; j++) {
+      DBG(__LINE__);
+      if (inUse[i * 16 + j]) inUse16[i] = True;
+    }
+  }
+
+  nBytes = bytesOut;
+  for (i = 0; i < 16; i++) {
+    DBG(__LINE__);
+    if (inUse16[i]) bsW(1,1); else bsW(1,0);
+  }
+  for (i = 0; i < 16; i++) {
+    DBG(__LINE__);
+	  if (inUse16[i]) {
+	    for (j = 0; j < 16; j++) {
+        DBG(__LINE__);
+	      if (inUse[i * 16 + j]) {
+	        bsW(1,1);
+	      } else {
+	        bsW(1,0);
+	      }
+	    }
+	  }
+  }
+
+  if (verbosity >= 3)
+    fprintf ( stderr, "      bytes: mapping %d, ", bytesOut-nBytes );
+}
+
+void
+transmitSelectors(Int32 nGroups, Int32 nSelectors)
+{
+  Int32 i, j;
+  Int32 nBytes;
+
+  nBytes = bytesOut;
+  bsW ( 3, nGroups );
+  bsW ( 15, nSelectors );
+  for (i = 0; i < nSelectors; i++) {
+    for (j = 0; j < selectorMtf[i]; j++) bsW(1,1);
+    bsW(1,0);
+  }
+  if (verbosity >= 3)
+    fprintf ( stderr, "selectors %d, ", bytesOut-nBytes );
+}
+
+void
+transmitCodingTables(Int32 nGroups, Int32 alphaSize)
+{
+  Int32 t, i;
+  Int32 nBytes;
+
+  nBytes = bytesOut;
+
+  for (t = 0; t < nGroups; t++) {
+    Int32 curr = len[t][0];
+    bsW ( 5, curr );
+    for (i = 0; i < alphaSize; i++) {
+      while (curr < len[t][i]) { bsW(2,2); curr++; /* 10 */ };
+      while (curr > len[t][i]) { bsW(2,3); curr--; /* 11 */ };
+      bsW ( 1, 0 );
+    }
+  }
+
+  if (verbosity >= 3)
+    fprintf ( stderr, "code lengths %d, ", bytesOut-nBytes );
+}
+
+void
+transmitBlockData(Int32 nGroups, Int32 nSelectors)
+{
+  Int32 i;
+  Int32 nBytes, selCtr, gs, ge;
+
+  nBytes = bytesOut;
+  selCtr = 0;
+  gs = 0;
+  while (True) {
+    DBG(__LINE__);
+    if (gs >= nMTF) break;
+    ge = gs + G_SIZE - 1;
+    if (ge >= nMTF) ge = nMTF-1;
+    for (i = gs; i <= ge; i++) {
+#if DEBUG
+      assert (selector[selCtr] < nGroups);
+#endif
+      bsW ( len  [selector[selCtr]] [szptr[i]],
+          code [selector[selCtr]] [szptr[i]] );
+    }
+
+    gs = ge+1;
+    selCtr++;
+  }
+  if (!(selCtr == nSelectors)) panic ( "sendMTFValues(5)" );
+
+  if (verbosity >= 3)
+    fprintf ( stderr, "codes %d\n", bytesOut-nBytes );
+}
+
 void sendMTFValues ( void )
 {
    Int32 v, t, i, j, gs, ge, totc, bt, bc, iter;
-   Int32 nSelectors, alphaSize, minLen, maxLen, selCtr;
-   Int32 nGroups, nBytes;
+   Int32 nSelectors, alphaSize;
+   Int32 nGroups;
 
    /*--
    UChar  len [N_GROUPS][MAX_ALPHA_SIZE];
@@ -1410,12 +1687,12 @@ void sendMTFValues ( void )
    --*/
 
 
-   UInt16 cost[N_GROUPS];
-   Int32  fave[N_GROUPS];
+   //UInt16 cost[N_GROUPS];
+   //Int32  fave[N_GROUPS];
 
    if (verbosity >= 3)
-      fprintf ( stderr, 
-                "      %d in block, %d after MTF & 1-2 coding, %d+2 syms in use\n", 
+      fprintf ( stderr,
+                "      %d in block, %d after MTF & 1-2 coding, %d+2 syms in use\n",
                 last+1, nMTF, nInUse );
 
    alphaSize = nInUse+2;
@@ -1434,148 +1711,80 @@ void sendMTFValues ( void )
                    nGroups = 6;
 
    /*--- Generate an initial set of coding tables ---*/
-   { 
-      Int32 nPart, remF, tFreq, aFreq;
+   generateInitialCodingTables(nGroups, alphaSize);
 
-      nPart = nGroups;
-      remF  = nMTF;
-      gs = 0;
-      while (nPart > 0) {
-         DBG(__LINE__);
-         tFreq = remF / nPart;
-         ge = gs-1;
-         aFreq = 0;
-         while (aFreq < tFreq && ge < alphaSize-1) {
-            DBG(__LINE__);
-            ge++;
-            aFreq += mtfFreq[ge];
-         }
-
-         if (ge > gs 
-             && nPart != nGroups && nPart != 1 
-             && ((nGroups-nPart) % 2 == 1)) {
-            aFreq -= mtfFreq[ge];
-            ge--;
-         }
-
-         if (verbosity >= 3)
-            fprintf ( stderr, 
-                      "      initial group %d, [%d .. %d], has %d syms\n",
-                              nPart, gs, ge, aFreq/*, 
-                              (100.0 * (float)aFreq) / (float)nMTF */);
- 
-         for (v = 0; v < alphaSize; v++) {
-            DBG(__LINE__);
-            if (v >= gs && v <= ge) 
-               len[nPart-1][v] = LESSER_ICOST; else
-               len[nPart-1][v] = GREATER_ICOST;
-         }
-         nPart--;
-         gs = ge+1;
-         remF -= aFreq;
-      }
-   }
-
-   /*--- 
+   /*---
       Iterate up to N_ITERS times to improve the tables.
    ---*/
    for (iter = 0; iter < N_ITERS; iter++) {
-      DBG(__LINE__);
-      for (t = 0; t < nGroups; t++) {
-        DBG(__LINE__);
-        fave[t] = 0;
-      }
-      for (t = 0; t < nGroups; t++) {
+     DBG(__LINE__);
+     for (t = 0; t < nGroups; t++) {
+       DBG(__LINE__);
+       fave[t] = 0;
+     }
+     for (t = 0; t < nGroups; t++) {
+       DBG(__LINE__);
+       for (v = 0; v < alphaSize; v++) {
          DBG(__LINE__);
-         for (v = 0; v < alphaSize; v++) {
-            DBG(__LINE__);
-            rfreq[t][v] = 0;
-         }
-      }
-      nSelectors = 0;
-      totc = 0;
-      gs = 0;
-      while (True) {
-         DBG(__LINE__);
+         rfreq[t][v] = 0;
+       }
+     }
+     nSelectors = 0;
+     totc = 0;
+     gs = 0;
+     while (True) {
+       DBG(__LINE__);
 
-         /*--- Set group start & end marks. --*/
-         if (gs >= nMTF) break;
-         ge = gs + G_SIZE - 1; 
-         if (ge >= nMTF) ge = nMTF-1;
+       /*--- Set group start & end marks. --*/
+       if (gs >= nMTF) break;
+       ge = gs + G_SIZE - 1;
+       if (ge >= nMTF) ge = nMTF-1;
 
-         /*-- 
-            Calculate the cost of this group as coded
-            by each of the coding tables.
+       /*--
+         Calculate the cost of this group as coded
+         by each of the coding tables.
          --*/
-         for (t = 0; t < nGroups; t++) {
-           DBG(__LINE__);
-           cost[t] = 0;
-         }
-         if (nGroups == 6) {
-            register UInt16 cost0, cost1, cost2, cost3, cost4, cost5;
-            cost0 = cost1 = cost2 = cost3 = cost4 = cost5 = 0;
-            for (i = gs; i <= ge; i++) { 
-               DBG(__LINE__);
-               UInt16 icv = szptr[i];
-               cost0 += len[0][icv];
-               cost1 += len[1][icv];
-               cost2 += len[2][icv];
-               cost3 += len[3][icv];
-               cost4 += len[4][icv];
-               cost5 += len[5][icv];
-            }
-            cost[0] = cost0; cost[1] = cost1; cost[2] = cost2;
-            cost[3] = cost3; cost[4] = cost4; cost[5] = cost5;
-         } else {
-            for (i = gs; i <= ge; i++) { 
-               DBG(__LINE__);
-               UInt16 icv = szptr[i];
-               for (t = 0; t < nGroups; t++) {
-                 DBG(__LINE__);
-                 cost[t] += len[t][icv];
-               }
-            }
-         }
- 
-         /*-- 
-            Find the coding table which is best for this group,
-            and record its identity in the selector table.
+       calculateGroupCost(nGroups, gs, ge);
+
+       /*--
+         Find the coding table which is best for this group,
+         and record its identity in the selector table.
          --*/
-         bc = 999999999; bt = -1;
-         for (t = 0; t < nGroups; t++) {
-            DBG(__LINE__);
-            if (cost[t] < bc) { bc = cost[t]; bt = t; };
-         }
-         totc += bc;
-         fave[bt]++;
-         selector[nSelectors] = bt;
-         nSelectors++;
-
-         /*-- 
-            Increment the symbol frequencies for the selected table.
-          --*/
-         for (i = gs; i <= ge; i++) {
-            DBG(__LINE__);
-            rfreq[bt][ szptr[i] ]++;
-         }
-         gs = ge+1;
-      }
-      if (verbosity >= 3) {
-         fprintf ( stderr, 
-                   "      pass %d: size is %d, grp uses are ", 
-                   iter+1, totc/8 );
-         for (t = 0; t < nGroups; t++)
-            fprintf ( stderr, "%d ", fave[t] );
-         fprintf ( stderr, "\n" );
-      }
-
-      /*--
-        Recompute the tables based on the accumulated frequencies.
-      --*/
-      for (t = 0; t < nGroups; t++) {
+       bc = 999999999; bt = -1;
+       for (t = 0; t < nGroups; t++) {
          DBG(__LINE__);
-         hbMakeCodeLengths ( &len[t][0], &rfreq[t][0], alphaSize, 20 );
-      }
+         if (cost[t] < bc) { bc = cost[t]; bt = t; };
+       }
+       totc += bc;
+       fave[bt]++;
+       selector[nSelectors] = bt;
+       nSelectors++;
+
+       /*--
+         Increment the symbol frequencies for the selected table.
+         --*/
+       for (i = gs; i <= ge; i++) {
+         DBG(__LINE__);
+         rfreq[bt][ szptr[i] ]++;
+       }
+       gs = ge+1;
+     }
+     if (verbosity >= 3) {
+       fprintf ( stderr,
+           "      pass %d: size is %d, grp uses are ",
+           iter+1, totc/8 );
+       for (t = 0; t < nGroups; t++)
+         fprintf ( stderr, "%d ", fave[t] );
+       fprintf ( stderr, "\n" );
+     }
+
+     /*--
+       Recompute the tables based on the accumulated frequencies.
+       --*/
+     for (t = 0; t < nGroups; t++) {
+       DBG(__LINE__);
+       hbMakeCodeLengths ( &len[t][0], &rfreq[t][0], alphaSize, 20 );
+     }
    }
 
 
@@ -1586,130 +1795,22 @@ void sendMTFValues ( void )
 
 
    /*--- Compute MTF values for the selectors. ---*/
-   {
-      UChar pos[N_GROUPS], ll_i, tmp2, tmp;
-      for (i = 0; i < nGroups; i++) {
-        DBG(__LINE__);
-        pos[i] = i;
-      }
-      for (i = 0; i < nSelectors; i++) {
-         DBG(__LINE__);
-         ll_i = selector[i];
-         j = 0;
-         tmp = pos[j];
-         while ( ll_i != tmp ) {
-            DBG(__LINE__);
-            j++;
-            tmp2 = tmp;
-            tmp = pos[j];
-            pos[j] = tmp2;
-         };
-         pos[0] = tmp;
-         selectorMtf[i] = j;
-      }
-   };
+   computeMTFforSelectors(nGroups, nSelectors);
 
    /*--- Assign actual codes for the tables. --*/
-   for (t = 0; t < nGroups; t++) {
-      minLen = 32;
-      maxLen = 0;
-      for (i = 0; i < alphaSize; i++) {
-         DBG(__LINE__);
-         if (len[t][i] > maxLen) maxLen = len[t][i];
-         if (len[t][i] < minLen) minLen = len[t][i];
-      }
-      if (maxLen > 20) panic ( "sendMTFValues(3)" );
-      if (minLen < 1)  panic ( "sendMTFValues(4)" );
-      hbAssignCodes ( &code[t][0], &len[t][0], 
-                      minLen, maxLen, alphaSize );
-   }
+   assignActualCodes(nGroups, alphaSize);
 
    /*--- Transmit the mapping table. ---*/
-   { 
-      //Bool inUse16[16];
-      for (i = 0; i < 16; i++) {
-          DBG(__LINE__);
-          inUse16[i] = False;
-          for (j = 0; j < 16; j++) {
-             DBG(__LINE__);
-             if (inUse[i * 16 + j]) inUse16[i] = True;
-          }
-      }
-     
-      nBytes = bytesOut;
-      for (i = 0; i < 16; i++) {
-         DBG(__LINE__);
-         if (inUse16[i]) bsW(1,1); else bsW(1,0);
-      }
-      for (i = 0; i < 16; i++) {
-         DBG(__LINE__);
-	if (inUse16[i]) {
-	  for (j = 0; j < 16; j++) {
-      DBG(__LINE__);
-	    if (inUse[i * 16 + j]) {
-	      bsW(1,1);
-	    } else {
-	      bsW(1,0);
-	    }
-	  }
-	}
-      }
-
-      if (verbosity >= 3) 
-         fprintf ( stderr, "      bytes: mapping %d, ", bytesOut-nBytes );
-   }
+   transmitMappingTable();
 
    /*--- Now the selectors. ---*/
-   nBytes = bytesOut;
-   bsW ( 3, nGroups );
-   bsW ( 15, nSelectors );
-   for (i = 0; i < nSelectors; i++) { 
-      for (j = 0; j < selectorMtf[i]; j++) bsW(1,1);
-      bsW(1,0);
-   }
-   if (verbosity >= 3)
-      fprintf ( stderr, "selectors %d, ", bytesOut-nBytes );
+   transmitSelectors(nGroups, nSelectors);
 
    /*--- Now the coding tables. ---*/
-   nBytes = bytesOut;
-
-   for (t = 0; t < nGroups; t++) {
-      Int32 curr = len[t][0];
-      bsW ( 5, curr );
-      for (i = 0; i < alphaSize; i++) {
-         while (curr < len[t][i]) { bsW(2,2); curr++; /* 10 */ };
-         while (curr > len[t][i]) { bsW(2,3); curr--; /* 11 */ };
-         bsW ( 1, 0 );
-      }
-   }
-
-   if (verbosity >= 3)
-      fprintf ( stderr, "code lengths %d, ", bytesOut-nBytes );
+   transmitCodingTables(nGroups, alphaSize);
 
    /*--- And finally, the block data proper ---*/
-   nBytes = bytesOut;
-   selCtr = 0;
-   gs = 0;
-   while (True) {
-      DBG(__LINE__);
-      if (gs >= nMTF) break;
-      ge = gs + G_SIZE - 1; 
-      if (ge >= nMTF) ge = nMTF-1;
-      for (i = gs; i <= ge; i++) { 
-         #if DEBUG
-            assert (selector[selCtr] < nGroups);
-         #endif
-         bsW ( len  [selector[selCtr]] [szptr[i]],
-               code [selector[selCtr]] [szptr[i]] );
-      }
-
-      gs = ge+1;
-      selCtr++;
-   }
-   if (!(selCtr == nSelectors)) panic ( "sendMTFValues(5)" );
-
-   if (verbosity >= 3)
-      fprintf ( stderr, "codes %d\n", bytesOut-nBytes );
+   transmitBlockData(nGroups, nSelectors);
 }
 
 
