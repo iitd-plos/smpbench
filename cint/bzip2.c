@@ -1003,8 +1003,9 @@ DOWNHEAP(Int32 z)
       yy = zz << 1;
       if (yy > nHeap) break;
       if (yy < nHeap &&
-          weight[heap[yy+1]] < weight[heap[yy]])
+          weight[heap[yy+1]] < weight[heap[yy]]) {
          yy++;
+      }
       if (weight[tmp] < weight[heap[yy]]) break;
       heap[zz] = heap[yy];
       zz = yy;
@@ -1313,13 +1314,14 @@ void makeMaps ( void )
 {
    Int32 i;
    nInUse = 0;
-   for (i = 0; i < 256; i++)
+   for (i = 0; i < 256; i++) {
       DBG(__LINE__);
       if (inUse[i]) {
          seqToUnseq[nInUse] = i;
          unseqToSeq[i] = nInUse;
          nInUse++;
       }
+   }
 }
 
 
