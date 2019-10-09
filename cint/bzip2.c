@@ -4732,6 +4732,11 @@ struct spec_fd_t {
 
 long int seedi;
 
+#undef read
+#undef write
+#undef ferror
+#undef getc
+#undef ungetc
 
 int spec_init () {
     int i, j;
