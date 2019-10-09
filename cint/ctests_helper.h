@@ -21,6 +21,7 @@ void *MYmyrealloc(void *ptr, size_t size);
 int MYmytoupper(int c);
 char* MYmystrerrno();
 void MYmydebug(int n);
+void MYmydebug2(int n);
 
 #define atoi MYmy_atoi
 #define memset MYmymemset
