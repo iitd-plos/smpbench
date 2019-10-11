@@ -814,29 +814,46 @@ void bsFinishedWithStream ( void )
 
 
 /*---------------------------------------------*/
-#define bsNEEDR(nz)                           \
-{                                             \
-   while (bsLive < nz) {                      \
-      Int32 zzi = fgetc ( bsStream );         \
-      if (zzi == EOF) compressedStreamEOF();  \
-      bsBuff = (bsBuff << 8) | (zzi & 0xffL); \
-      bsLive += 8;                            \
-   }                                          \
+//#define bsNEEDR(nz)                           \
+//{                                             \
+//   while (bsLive < nz) {                      \
+//      Int32 zzi = fgetc ( bsStream );         \
+//      if (zzi == EOF) compressedStreamEOF();  \
+//      bsBuff = (bsBuff << 8) | (zzi & 0xffL); \
+//      bsLive += 8;                            \
+//   }                                          \
+//}
+void bsNEEDR(Int32 nz)
+{
+   while (bsLive < nz) {
+      Int32 zzi = fgetc ( bsStream );
+      if (zzi == EOF) compressedStreamEOF();
+      bsBuff = (bsBuff << 8) | (zzi & 0xffL);
+      bsLive += 8;
+   }
 }
-
 
 /*---------------------------------------------*/
-#define bsNEEDW(nz)                           \
-{                                             \
-   while (bsLive >= 8) {                      \
-      fputc ( (UChar)(bsBuff >> 24),          \
-               bsStream );                    \
-      bsBuff <<= 8;                           \
-      bsLive -= 8;                            \
-      bytesOut++;                             \
-   }                                          \
+//#define bsNEEDW(nz)                           \
+//{                                             \
+//   while (bsLive >= 8) {                      \
+//      fputc ( (UChar)(bsBuff >> 24),          \
+//               bsStream );                    \
+//      bsBuff <<= 8;                           \
+//      bsLive -= 8;                            \
+//      bytesOut++;                             \
+//   }                                          \
+//}
+void bsNEEDW(Int32 nz)
+{
+   while (bsLive >= 8) {
+      fputc ( (UChar)(bsBuff >> 24),
+               bsStream );
+      bsBuff <<= 8;
+      bsLive -= 8;
+      bytesOut++;
+   }
 }
-
 
 /*---------------------------------------------*/
 #define bsR1(vz)                              \
@@ -1946,15 +1963,30 @@ void recvDecodingTables ( void )
 
 
 /*---------------------------------------------*/
+Int32 get_mtf_val_inner(Int32 groupNo)
+{
+   Int32 zt, zn, zvec, zj;
+   zt = selector[groupNo];
+   zn = minLens[zt];
+   zvec = bsR ( zn );
+   while (zvec > limit[zt][zn]) {
+      DBG(__LINE__);
+      zn++; bsR1(zj);
+      zvec = (zvec << 1) | zj;
+   };
+   return (perm[zt][zvec - base[zt][zn]]);
+}
+
 #define GET_MTF_VAL(lval)                 \
 {                                         \
-   Int32 zt, zn, zvec, zj;                \
+   /*Int32 zt, zn, zvec, zj;*/            \
    if (groupPos == 0) {                   \
       groupNo++;                          \
       groupPos = G_SIZE;                  \
    }                                      \
    groupPos--;                            \
-   zt = selector[groupNo];                \
+   lval = get_mtf_val_inner(groupNo);     \
+   /*zt = selector[groupNo];              \
    zn = minLens[zt];                      \
    zvec = bsR ( zn );                     \
    while (zvec > limit[zt][zn]) {         \
@@ -1962,7 +1994,7 @@ void recvDecodingTables ( void )
       zn++; bsR1(zj);                     \
       zvec = (zvec << 1) | zj;            \
    };                                     \
-   lval = perm[zt][zvec - base[zt][zn]];  \
+   lval = perm[zt][zvec - base[zt][zn]];*/\
 }
 
 
@@ -1978,109 +2010,109 @@ void initUnzftab()
 /*---------------------------------------------*/
 void getAndMoveToFrontDecode ( void )
 {
-   //UChar  yy[256];
-   Int32  i, j, nextSym, limitLast;
-   Int32  EOB, groupNo, groupPos;
+  //UChar  yy[256];
+  Int32  i, j, nextSym, limitLast;
+  Int32  EOB, groupNo, groupPos;
 
-   limitLast = 100000 * blockSize100k;
-   origPtr   = bsGetIntVS ( 24 );
+  limitLast = 100000 * blockSize100k;
+  origPtr   = bsGetIntVS ( 24 );
 
-   recvDecodingTables();
-   EOB      = nInUse+1;
-   groupNo  = -1;
-   groupPos = 0;
+  recvDecodingTables();
+  EOB      = nInUse+1;
+  groupNo  = -1;
+  groupPos = 0;
 
-   /*--
-      Setting up the unzftab entries here is not strictly
-      necessary, but it does save having to do it later
-      in a separate pass, and so saves a block's worth of
-      cache misses.
-   --*/
-   initUnzftab();
+  /*--
+    Setting up the unzftab entries here is not strictly
+    necessary, but it does save having to do it later
+    in a separate pass, and so saves a block's worth of
+    cache misses.
+    --*/
+  initUnzftab();
 
-   inityy(256);
+  inityy(256);
 
 
-   last = -1;
+  last = -1;
 
-   GET_MTF_VAL(nextSym);
+  GET_MTF_VAL(nextSym);
 
-   while (True) {
-      DBG(__LINE__);
+  while (True) {
+    DBG(__LINE__);
 
-      if (nextSym == EOB) break;
+    if (nextSym == EOB) break;
 
-      if (nextSym == RUNA || nextSym == RUNB) {
-         UChar ch;
-         Int32 s = -1;
-         Int32 N = 1;
-         do {
-            DBG(__LINE__);
-            if (nextSym == RUNA) s = s + (0+1) * N; else
-            if (nextSym == RUNB) s = s + (1+1) * N;
-            N = N * 2;
-            GET_MTF_VAL(nextSym);
-         }
-            while (nextSym == RUNA || nextSym == RUNB);
-
-         s++;
-         ch = seqToUnseq[yy[0]];
-         unzftab[ch] += s;
-
-         if (smallMode)
-            while (s > 0) {
-               DBG(__LINE__);
-               last++; 
-               ll16[last] = ch;
-               s--;
-            }
-         else
-            while (s > 0) {
-               DBG(__LINE__);
-               last++;
-               ll8[last] = ch;
-               s--;
-            };
-
-         if (last >= limitLast) blockOverrun();
-         continue;
-
-      } else {
-
-         UChar tmp;
-         last++; if (last >= limitLast) blockOverrun();
-
-         tmp = yy[nextSym-1];
-         unzftab[seqToUnseq[tmp]]++;
-         if (smallMode)
-            ll16[last] = seqToUnseq[tmp]; else
-            ll8[last]  = seqToUnseq[tmp];
-
-         /*--
-            This loop is hammered during decompression,
-            hence the unrolling.
-
-            for (j = nextSym-1; j > 0; j--) yy[j] = yy[j-1];
-         --*/
-
-         j = nextSym-1;
-         for (; j > 3; j -= 4) {
-            DBG(__LINE__);
-            yy[j]   = yy[j-1];
-            yy[j-1] = yy[j-2];
-            yy[j-2] = yy[j-3];
-            yy[j-3] = yy[j-4];
-         }
-         for (; j > 0; j--) {
-           DBG(__LINE__);
-           yy[j] = yy[j-1];
-         }
-
-         yy[0] = tmp;
-         GET_MTF_VAL(nextSym);
-         continue;
+    if (nextSym == RUNA || nextSym == RUNB) {
+      UChar ch;
+      Int32 s = -1;
+      Int32 N = 1;
+      do {
+        DBG(__LINE__);
+        if (nextSym == RUNA) s = s + (0+1) * N; else
+          if (nextSym == RUNB) s = s + (1+1) * N;
+        N = N * 2;
+        GET_MTF_VAL(nextSym);
       }
-   }
+      while (nextSym == RUNA || nextSym == RUNB);
+
+      s++;
+      ch = seqToUnseq[yy[0]];
+      unzftab[ch] += s;
+
+      if (smallMode)
+        while (s > 0) {
+          DBG(__LINE__);
+          last++; 
+          ll16[last] = ch;
+          s--;
+        }
+      else
+        while (s > 0) {
+          DBG(__LINE__);
+          last++;
+          ll8[last] = ch;
+          s--;
+        };
+
+      if (last >= limitLast) blockOverrun();
+      continue;
+
+    } else {
+
+      UChar tmp;
+      last++; if (last >= limitLast) blockOverrun();
+
+      tmp = yy[nextSym-1];
+      unzftab[seqToUnseq[tmp]]++;
+      if (smallMode)
+        ll16[last] = seqToUnseq[tmp]; else
+          ll8[last]  = seqToUnseq[tmp];
+
+      /*--
+        This loop is hammered during decompression,
+        hence the unrolling.
+
+        for (j = nextSym-1; j > 0; j--) yy[j] = yy[j-1];
+        --*/
+
+      j = nextSym-1;
+      for (; j > 3; j -= 4) {
+        DBG(__LINE__);
+        yy[j]   = yy[j-1];
+        yy[j-1] = yy[j-2];
+        yy[j-2] = yy[j-3];
+        yy[j-3] = yy[j-4];
+      }
+      for (; j > 0; j--) {
+        DBG(__LINE__);
+        yy[j] = yy[j-1];
+      }
+
+      yy[0] = tmp;
+      GET_MTF_VAL(nextSym);
+      continue;
+    }
+  }
 }
 
 
@@ -2436,217 +2468,226 @@ void initbigDone()
   }
 }
 
+void initftab()
+{
+  Int32 i, j;
+  UChar c1, c2;
+  for (i = 0; i <= 65536; i++) {
+    DBG(__LINE__);
+    ftab[i] = 0;
+  }
+
+  c1 = block[-1];
+  for (i = 0; i <= last; i++) {
+    DBG(__LINE__);
+    c2 = block[i];
+    ftab[(c1 << 8) + c2]++;
+    c1 = c2;
+  }
+
+  for (i = 1; i <= 65536; i++) {
+    DBG(__LINE__);
+    ftab[i] += ftab[i-1];
+  }
+
+  c1 = block[0];
+  for (i = 0; i < last; i++) {
+    DBG(__LINE__);
+    c2 = block[i+1];
+    j = (c1 << 8) + c2;
+    c1 = c2;
+    ftab[j]--;
+    zptr[ftab[j]] = i;
+  }
+  j = (block[last] << 8) + block[0];
+  ftab[j]--;
+  zptr[ftab[j]] = last;
+}
+
+void calculateRunningOrder()
+{
+  Int32 i, j;
+  Int32 vv;
+  Int32 h = 1;
+  do {
+    DBG(__LINE__);
+    h = 3 * h + 1;
+  } while (h <= 256);
+  do {
+    DBG(__LINE__);
+    h = h / 3;
+    for (i = h; i <= 255; i++) {
+      DBG(__LINE__);
+      vv = runningOrder[i];
+      j = i;
+      while ( BIGFREQ(runningOrder[j-h]) > BIGFREQ(vv) ) {
+        DBG(__LINE__);
+        runningOrder[j] = runningOrder[j-h];
+        j = j - h;
+        if (j <= (h - 1)) goto zero;
+      }
+zero:
+      runningOrder[j] = vv;
+    }
+  } while (h != 1);
+}
+
 void sortIt ( void )
 {
-   Int32 i, j, ss, sb;
-   //Int32 runningOrder[256];
-   //Int32 copy[256];
-   //Bool bigDone[256];
-   UChar c1, c2;
-   Int32 numQSorted;
+  Int32 i, j, ss, sb;
+  //Int32 runningOrder[256];
+  //Int32 copy[256];
+  //Bool bigDone[256];
+  UChar c1, c2;
+  Int32 numQSorted;
 
-   /*--
-      In the various block-sized structures, live data runs
-      from 0 to last+NUM_OVERSHOOT_BYTES inclusive.  First,
-      set up the overshoot area for block.
-   --*/
+  /*--
+    In the various block-sized structures, live data runs
+    from 0 to last+NUM_OVERSHOOT_BYTES inclusive.  First,
+    set up the overshoot area for block.
+    --*/
 
-   if (verbosity >= 4) fprintf ( stderr, "        sort initialise ...\n" );
-   for (i = 0; i < NUM_OVERSHOOT_BYTES; i++) {
-       DBG(__LINE__);
-       block[last+i+1] = block[i % (last+1)];
-   }
-   for (i = 0; i <= last+NUM_OVERSHOOT_BYTES; i++) {
-       DBG(__LINE__);
-       quadrant[i] = 0;
-   }
-   block[-1] = block[last];
+  if (verbosity >= 4) fprintf ( stderr, "        sort initialise ...\n" );
+  for (i = 0; i < NUM_OVERSHOOT_BYTES; i++) {
+    DBG(__LINE__);
+    block[last+i+1] = block[i % (last+1)];
+  }
+  for (i = 0; i <= last+NUM_OVERSHOOT_BYTES; i++) {
+    DBG(__LINE__);
+    quadrant[i] = 0;
+  }
+  block[-1] = block[last];
 
-   if (last < 4000) {
+  if (last < 4000) {
 
-      /*--
-         Use simpleSort(), since the full sorting mechanism
-         has quite a large constant overhead.
+    /*--
+      Use simpleSort(), since the full sorting mechanism
+      has quite a large constant overhead.
       --*/
-      if (verbosity >= 4) fprintf ( stderr, "        simpleSort ...\n" );
-      for (i = 0; i <= last; i++) {
-        DBG(__LINE__);
-        zptr[i] = i;
-      }
-      firstAttempt = False;
-      workDone = workLimit = 0;
-      simpleSort ( 0, last, 0 );
-      if (verbosity >= 4) fprintf ( stderr, "        simpleSort done.\n" );
+    if (verbosity >= 4) fprintf ( stderr, "        simpleSort ...\n" );
+    for (i = 0; i <= last; i++) {
+      DBG(__LINE__);
+      zptr[i] = i;
+    }
+    firstAttempt = False;
+    workDone = workLimit = 0;
+    simpleSort ( 0, last, 0 );
+    if (verbosity >= 4) fprintf ( stderr, "        simpleSort done.\n" );
 
-   } else {
+  } else {
 
-      numQSorted = 0;
-      initbigDone();
+    numQSorted = 0;
+    initbigDone();
 
-      if (verbosity >= 4) fprintf ( stderr, "        bucket sorting ...\n" );
+    if (verbosity >= 4) fprintf ( stderr, "        bucket sorting ...\n" );
 
-      for (i = 0; i <= 65536; i++) {
-        DBG(__LINE__);
-        ftab[i] = 0;
-      }
-
-      c1 = block[-1];
-      for (i = 0; i <= last; i++) {
-         DBG(__LINE__);
-         c2 = block[i];
-         ftab[(c1 << 8) + c2]++;
-         c1 = c2;
-      }
-
-      for (i = 1; i <= 65536; i++) {
-        DBG(__LINE__);
-        ftab[i] += ftab[i-1];
-      }
-
-      c1 = block[0];
-      for (i = 0; i < last; i++) {
-         DBG(__LINE__);
-         c2 = block[i+1];
-         j = (c1 << 8) + c2;
-         c1 = c2;
-         ftab[j]--;
-         zptr[ftab[j]] = i;
-      }
-      j = (block[last] << 8) + block[0];
-      ftab[j]--;
-      zptr[ftab[j]] = last;
-
-      /*--
-         Now ftab contains the first loc of every small bucket.
-         Calculate the running order, from smallest to largest
-         big bucket.
+    initftab();
+    /*--
+      Now ftab contains the first loc of every small bucket.
+      Calculate the running order, from smallest to largest
+      big bucket.
       --*/
 
-      initrunningOrder();
+    initrunningOrder();
+    calculateRunningOrder();
 
-      {
-         Int32 vv;
-         Int32 h = 1;
-         do {
-           DBG(__LINE__);
-           h = 3 * h + 1;
-         } while (h <= 256);
-         do {
-            DBG(__LINE__);
-            h = h / 3;
-            for (i = h; i <= 255; i++) {
-               DBG(__LINE__);
-               vv = runningOrder[i];
-               j = i;
-               while ( BIGFREQ(runningOrder[j-h]) > BIGFREQ(vv) ) {
-                  DBG(__LINE__);
-                  runningOrder[j] = runningOrder[j-h];
-                  j = j - h;
-                  if (j <= (h - 1)) goto zero;
-               }
-               zero:
-               runningOrder[j] = vv;
-            }
-         } while (h != 1);
+    /*--
+      The main sorting loop.
+      --*/
+
+    for (i = 0; i <= 255; i++) {
+      DBG(__LINE__);
+
+      /*--
+        Process big buckets, starting with the least full.
+        --*/
+      ss = runningOrder[i];
+
+      /*--
+        Complete the big bucket [ss] by quicksorting
+        any unsorted small buckets [ss, j].  Hopefully
+        previous pointer-scanning phases have already
+        completed many of the small buckets [ss, j], so
+        we don't have to sort them at all.
+        --*/
+      for (j = 0; j <= 255; j++) {
+        DBG(__LINE__);
+        sb = (ss << 8) + j;
+        if ( ! (ftab[sb] & SETMASK) ) {
+          Int32 lo = ftab[sb]   & CLEARMASK;
+          Int32 hi = (ftab[sb+1] & CLEARMASK) - 1;
+          if (hi > lo) {
+            if (verbosity >= 4)
+              fprintf ( stderr,
+                  "        qsort [0x%x, 0x%x]   done %d   this %d\n",
+                  ss, j, numQSorted, hi - lo + 1 );
+            qSort3 ( lo, hi, 2 );
+            numQSorted += ( hi - lo + 1 );
+            if (workDone > workLimit && firstAttempt) return;
+          }
+          ftab[sb] |= SETMASK;
+        }
       }
 
       /*--
-         The main sorting loop.
-      --*/
+        The ss big bucket is now done.  Record this fact,
+        and update the quadrant descriptors.  Remember to
+        update quadrants in the overshoot area too, if
+        necessary.  The "if (i < 255)" test merely skips
+        this updating for the last bucket processed, since
+        updating for the last bucket is pointless.
+        --*/
+      bigDone[ss] = True;
 
-      for (i = 0; i <= 255; i++) {
-         DBG(__LINE__);
+      if (i < 255) {
+        Int32 bbStart  = ftab[ss << 8] & CLEARMASK;
+        Int32 bbSize   = (ftab[(ss+1) << 8] & CLEARMASK) - bbStart;
+        Int32 shifts   = 0;
 
-         /*--
-            Process big buckets, starting with the least full.
-         --*/
-         ss = runningOrder[i];
+        while ((bbSize >> shifts) > 65534) {
+          DBG(__LINE__);
+          shifts++;
+        }
+        for (j = 0; j < bbSize; j++) {
+          DBG(__LINE__);
+          Int32 a2update     = zptr[bbStart + j];
+          UInt16 qVal        = (UInt16)(j >> shifts);
+          quadrant[a2update] = qVal;
+          if (a2update < NUM_OVERSHOOT_BYTES)
+            quadrant[a2update + last + 1] = qVal;
+        }
 
-         /*--
-            Complete the big bucket [ss] by quicksorting
-            any unsorted small buckets [ss, j].  Hopefully
-            previous pointer-scanning phases have already
-            completed many of the small buckets [ss, j], so
-            we don't have to sort them at all.
-         --*/
-         for (j = 0; j <= 255; j++) {
-            DBG(__LINE__);
-            sb = (ss << 8) + j;
-            if ( ! (ftab[sb] & SETMASK) ) {
-               Int32 lo = ftab[sb]   & CLEARMASK;
-               Int32 hi = (ftab[sb+1] & CLEARMASK) - 1;
-               if (hi > lo) {
-                  if (verbosity >= 4)
-                     fprintf ( stderr,
-                               "        qsort [0x%x, 0x%x]   done %d   this %d\n",
-                               ss, j, numQSorted, hi - lo + 1 );
-                  qSort3 ( lo, hi, 2 );
-                  numQSorted += ( hi - lo + 1 );
-                  if (workDone > workLimit && firstAttempt) return;
-               }
-               ftab[sb] |= SETMASK;
-            }
-         }
-
-         /*--
-            The ss big bucket is now done.  Record this fact,
-            and update the quadrant descriptors.  Remember to
-            update quadrants in the overshoot area too, if
-            necessary.  The "if (i < 255)" test merely skips
-            this updating for the last bucket processed, since
-            updating for the last bucket is pointless.
-         --*/
-         bigDone[ss] = True;
-
-         if (i < 255) {
-            Int32 bbStart  = ftab[ss << 8] & CLEARMASK;
-            Int32 bbSize   = (ftab[(ss+1) << 8] & CLEARMASK) - bbStart;
-            Int32 shifts   = 0;
-
-            while ((bbSize >> shifts) > 65534) {
-              DBG(__LINE__);
-              shifts++;
-            }
-            for (j = 0; j < bbSize; j++) {
-               DBG(__LINE__);
-               Int32 a2update     = zptr[bbStart + j];
-               UInt16 qVal        = (UInt16)(j >> shifts);
-               quadrant[a2update] = qVal;
-               if (a2update < NUM_OVERSHOOT_BYTES)
-                  quadrant[a2update + last + 1] = qVal;
-            }
-
-            if (! ( ((bbSize-1) >> shifts) <= 65535 )) panic ( "sortIt" );
-         }
-
-         /*--
-            Now scan this big bucket so as to synthesise the
-            sorted order for small buckets [t, ss] for all t != ss.
-         --*/
-         for (j = 0; j <= 255; j++) {
-            DBG(__LINE__);
-            copy[j] = ftab[(j << 8) + ss] & CLEARMASK;
-         }
-         for (j = ftab[ss << 8] & CLEARMASK;
-              j < (ftab[(ss+1) << 8] & CLEARMASK);
-              j++) {
-            DBG(__LINE__);
-            c1 = block[zptr[j]-1];
-            if ( ! bigDone[c1] ) {
-               zptr[copy[c1]] = zptr[j] == 0 ? last : zptr[j] - 1;
-               copy[c1] ++;
-            }
-         }
-
-         for (j = 0; j <= 255; j++) {
-           DBG(__LINE__);
-           ftab[(j << 8) + ss] |= SETMASK;
-         }
+        if (! ( ((bbSize-1) >> shifts) <= 65535 )) panic ( "sortIt" );
       }
-      if (verbosity >= 4)
-         fprintf ( stderr, "        %d pointers, %d sorted, %d scanned\n",
-                           last+1, numQSorted, (last+1) - numQSorted );
-   }
+
+      /*--
+        Now scan this big bucket so as to synthesise the
+        sorted order for small buckets [t, ss] for all t != ss.
+        --*/
+      for (j = 0; j <= 255; j++) {
+        DBG(__LINE__);
+        copy[j] = ftab[(j << 8) + ss] & CLEARMASK;
+      }
+      for (j = ftab[ss << 8] & CLEARMASK;
+          j < (ftab[(ss+1) << 8] & CLEARMASK);
+          j++) {
+        DBG(__LINE__);
+        c1 = block[zptr[j]-1];
+        if ( ! bigDone[c1] ) {
+          zptr[copy[c1]] = zptr[j] == 0 ? last : zptr[j] - 1;
+          copy[c1] ++;
+        }
+      }
+
+      for (j = 0; j <= 255; j++) {
+        DBG(__LINE__);
+        ftab[(j << 8) + ss] |= SETMASK;
+      }
+    }
+    if (verbosity >= 4)
+      fprintf ( stderr, "        %d pointers, %d sorted, %d scanned\n",
+          last+1, numQSorted, (last+1) - numQSorted );
+  }
 }
 
 
