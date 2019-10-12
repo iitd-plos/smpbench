@@ -844,7 +844,7 @@ void bsNEEDR(Int32 nz)
 //      bytesOut++;                             \
 //   }                                          \
 //}
-void bsNEEDW(Int32 nz)
+void bsNEEDW()
 {
    while (bsLive >= 8) {
       fputc ( (UChar)(bsBuff >> 24),
@@ -878,7 +878,7 @@ INLINE UInt32 bsR ( Int32 n )
 /*---------------------------------------------*/
 INLINE void bsW ( Int32 n, UInt32 v )
 {
-   bsNEEDW ( n );
+   bsNEEDW ();
    bsBuff |= (v << (32 - bsLive - n));
    bsLive += n;
 }
