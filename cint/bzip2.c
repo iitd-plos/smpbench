@@ -2504,15 +2504,21 @@ void initftab()
   zptr[ftab[j]] = last;
 }
 
-void calculateRunningOrder()
+Int32 calculateh()
 {
-  Int32 i, j;
-  Int32 vv;
   Int32 h = 1;
   do {
     DBG(__LINE__);
     h = 3 * h + 1;
   } while (h <= 256);
+  return h;
+}
+
+void calculateRunningOrder()
+{
+  Int32 i, j;
+  Int32 vv;
+  Int32 h = calculateh();
   do {
     DBG(__LINE__);
     h = h / 3;
