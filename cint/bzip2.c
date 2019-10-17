@@ -1480,14 +1480,15 @@ generateInitialCodingTables(Int32 nGroups, Int32 alphaSize)
       fprintf ( stderr,
           "      initial group %d, [%d .. %d], has %d syms\n",
           nPart, gs, ge, aFreq/*,
-                                (100.0 * (float)aFreq) / (float)nMTF */);
+          (100.0 * (float)aFreq) / (float)nMTF */);
 
-        for (v = 0; v < alphaSize; v++) {
-          DBG(__LINE__);
-          if (v >= gs && v <= ge)
-            len[nPart-1][v] = LESSER_ICOST; else
-              len[nPart-1][v] = GREATER_ICOST;
-        }
+    for (v = 0; v < alphaSize; v++) {
+      DBG(__LINE__);
+      if (v >= gs && v <= ge)
+        len[nPart-1][v] = LESSER_ICOST;
+      else
+        len[nPart-1][v] = GREATER_ICOST;
+    }
     nPart--;
     gs = ge+1;
     remF -= aFreq;
@@ -2504,9 +2505,10 @@ void initftab()
   zptr[ftab[j]] = last;
 }
 
+Int32 h; // made global to prevent closed form computation
 Int32 calculateh()
 {
-  Int32 h = 1;
+  h = 1;
   do {
     DBG(__LINE__);
     h = 3 * h + 1;
