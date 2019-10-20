@@ -2317,3 +2317,11 @@ __attribute__((noinline)) int sum_n(int n)
   for (i = 0; i < n; ++i);
   return i;
 }
+
+__attribute__((noinline)) void sink0(int* ptr, int n)
+{
+  int i = 0;
+  for (i = 0; i < n; ++i) {
+    *ptr = (i+1)**ptr;
+  }
+}
