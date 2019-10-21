@@ -250,7 +250,7 @@ cint/%.c.O0.eqchecker.bc: cint/%.c
 
 cint/%.c.O0.bc: cint/%.c
 	$(CLANG_I386) $(CFLAGS) -Xclang -disable-O0-optnone $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
-	$(LLVM_OPT) -mem2reg -strip-debug -o $@ $@.tmp
+	$(LLVM_OPT) -mem2reg -strip-debug -die -o $@ $@.tmp
 
 cint/%.bc.O0: cint/%.c.O0.bc cint/ctests_helper.c.O0.bc
 	$(LLVM_LINK) $^ -o $@
