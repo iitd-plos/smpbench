@@ -166,7 +166,7 @@ TYPE s122(int count) {
 
 TYPE s127(int count) {
   int j = -1;
-	if(count >0 && count < 32768)
+	if(count>0 && count < 32768)
 	{
   for (int i = 0; i < count*4-1; i++) {
     j++;
@@ -190,7 +190,7 @@ TYPE s162(int count) {
 
 TYPE s173(int count) {
   int k = count*4;
-	if(count >0 && count < 32768)
+	if(count>0 && count < 32768)
 	{
   for (int i = 0; i < k; i++) {
     a[i+k] = a[i] + b[i];
@@ -282,12 +282,13 @@ TYPE s1281(int count) {
 TYPE s351(int count) {
 	TYPE alpha = c[0];
   if(count>0 && count<32768) {
- for (int i = 0; i < count*8-5; i+=5) {
-    a1[i] += alpha * b1[i];
-    a1[i + 1] += alpha * b1[i + 1];
-    a1[i + 2] += alpha * b1[i + 2];
-    a1[i + 3] += alpha * b1[i + 3];
-    a1[i + 4] += alpha * b1[i + 4];
+ for (int i = 0; i < ((count*8)/5)-1; i+=1) {
+    int i1 = 5*i; 
+    a1[i1] += alpha * b1[i1];
+    a1[i1 + 1] += alpha * b1[i1 + 1];
+    a1[i1 + 2] += alpha * b1[i1 + 2];
+    a1[i1 + 3] += alpha * b1[i1 + 3];
+    a1[i1 + 4] += alpha * b1[i1 + 4];
   } 
  }
   return 0;
@@ -318,10 +319,10 @@ TYPE s452(int count) {
 }
 
 TYPE vpv(int count) {
-  if(count>0 && count<32768) {
- for (int i = 0; i < count*8; i++) {
-    a[i] += b[i];
-  } 
+ if(count>0 && count<32768) {
+   for (int i = 0; i < count*8; i++) {
+     a[i] += b[i];
+   } 
  }
   return 0;
 }
@@ -381,30 +382,42 @@ TYPE vdotr(int count) {
   return sum;
 }
 
-
 TYPE s453(int count) {
+  TYPE s = 0.;
   if(count>0 && count<32768) {
  for (int i = 0; i < count*8; i++) {
-    a[i] = val1 * b[i];
-    val1 += val;
+    s += val;
+    a[i] = s * b[i];
   } 
  }
   return 0;
 }
 
+
 // vectorizes with gcc 
 TYPE s176(int count) {
-  int m = count;
+  //int m = count;
   if(count>0 && count<32768) {
- for (int j = 0; j < m; j++) {
-    for (int i = 0; i < m; i++) {
-      a[i] += b[i+m-j-1] * c[j];
+ for (int j = 0; j < count; j++) {
+    for (int i = 0; i < count; i++) {
+      a[i] += b[i+count-j-1] * c[j];
     }
   }
  	}
   return 0;
 }
 
+TYPE nested(int count) {
+  //int m = count;
+  if(count>0 && count<32768) {
+ for (int j = 0; j < count; j++) {
+    for (int i = 0; i < count; i++) {
+      a[j*count + i] = 0;
+    }
+  }
+ 	}
+  return 0;
+}
 /*
 //NP
 TYPE s111(int count) {

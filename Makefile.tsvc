@@ -1,5 +1,5 @@
 
-TSVC_PROG_NAMES=prog1
+TSVC_PROG_NAMES=prog1 prog2
 
 TSVC_PROGS=$(addprefix tsvc/, $(TSVC_PROG_NAMES))
 
@@ -38,10 +38,10 @@ TSVC_I386_PROGS = \
   $(TSVC_I386_HOSTGCC4_8_O3_PROGS) \
   $(TSVC_I386_CLANG3_6_O0_PROGS) \
   $(TSVC_I386_CLANG3_6_O2_PROGS) \
-  $(TSVC_I386_CLANG3_6_O3_PROGS) \
-  $(TSVC_I386_ICC_O0_PROGS) \
-  $(TSVC_I386_ICC_O2_PROGS) \
-  $(TSVC_I386_ICC_O3_PROGS) 
+  $(TSVC_I386_CLANG3_6_O3_PROGS) 
+#   $(TSVC_I386_ICC_O0_PROGS) \
+#   $(TSVC_I386_ICC_O2_PROGS) \
+#   $(TSVC_I386_ICC_O3_PROGS) 
 
 TSVC_BC_PROGS = $(TSVC_BC_O0_PROGS) $(TSVC_BC_O2_PROGS) $(TSVC_BC_O3_PROGS)
 TSVC_LLVM_PROGS = $(TSVC_BC_PROGS)
@@ -74,7 +74,7 @@ LD_PPC_SYSTEM=$(LD_PPC)
 
 #CLANG3_6_I386=${CLANG3_6} $(CLANG_I386_EQCHECKER_FLAGS) $(VECTORIZE_FLAGS)
 CLANG6_0_I386=${CLANG6_0} $(CLANG_I386_EQCHECKER_FLAGS)
-CLANG3_6_I386=${CLANG6_0} $(CLANG_I386_EQCHECKER_FLAGS) $(VECTORIZE_FLAGS)
+CLANG3_6_I386=${CLANG8_0} $(CLANG_I386_EQCHECKER_FLAGS) $(VECTORIZE_FLAGS)
 
 ICC_I386_OPTS= -g -no-ip -nolib-inline -fno-optimize-sibling-calls -fargument-alias -no-ansi-alias -falias -fno-jump-tables -fno-builtin -inline-level=0 -fno-omit-frame-pointer -fno-strict-aliasing -fno-strict-overflow -fwrapv -fabi-version=1 -fno-inline-functions -finline-limit=0 -no-inline-calloc -no-inline-factor=0 -Dexit=myexit -qno-opt-multi-version-aggressive -std=c99 -ffreestanding
 
@@ -88,34 +88,34 @@ LD_ARM=$(ARM_PREFIX)/arm-elf-ld
 
 tsvc/%.gcc48.O0.i386.o: tsvc/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O0 $< -o $@
-tsvc/%.gcc48.O0.i386: tsvc/%.gcc48.O0.i386.o tsvc/tsvc_helper.gcc48.O0.i386.o
+tsvc/%.gcc48.O0.i386: tsvc/%.gcc48.O0.i386.o 
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
 tsvc/%.gcc48.O2.i386.o: tsvc/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O2 $< -o $@
-tsvc/%.gcc48.O2.i386: tsvc/%.gcc48.O2.i386.o tsvc/tsvc_helper.gcc48.O2.i386.o 
+tsvc/%.gcc48.O2.i386: tsvc/%.gcc48.O2.i386.o  
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
 tsvc/%.gcc48.O3.i386.o: tsvc/%.c
 	$(HOSTGCC4_8_I386) -c $(CFLAGS) -g -O3 $< -o $@
-tsvc/%.gcc48.O3.i386: tsvc/%.gcc48.O3.i386.o tsvc/tsvc_helper.gcc48.O3.i386.o 
+tsvc/%.gcc48.O3.i386: tsvc/%.gcc48.O3.i386.o  
 	$(HOSTGCC4_8_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 # clang36
 
 tsvc/%.clang36.O0.i386.o: tsvc/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
-tsvc/%.clang36.O0.i386: tsvc/%.clang36.O0.i386.o tsvc/tsvc_helper.clang36.O0.i386.o
+tsvc/%.clang36.O0.i386: tsvc/%.clang36.O0.i386.o 
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
 tsvc/%.clang36.O2.i386.o: tsvc/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O2 $< -o $@
-tsvc/%.clang36.O2.i386: tsvc/%.clang36.O2.i386.o tsvc/tsvc_helper.clang36.O2.i386.o
+tsvc/%.clang36.O2.i386: tsvc/%.clang36.O2.i386.o 
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
 tsvc/%.clang36.O3.i386.o: tsvc/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O3 $< -o $@
-tsvc/%.clang36.O3.i386: tsvc/%.clang36.O3.i386.o tsvc/tsvc_helper.clang36.O3.i386.o
+tsvc/%.clang36.O3.i386: tsvc/%.clang36.O3.i386.o 
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 # clang-6.0
@@ -139,17 +139,17 @@ tsvc/%.clang36.O3.i386: tsvc/%.clang36.O3.i386.o tsvc/tsvc_helper.clang36.O3.i38
 
 tsvc/%.icc.O0.i386.o: tsvc/%.c
 	$(CLANG3_6_I386) -c $(CFLAGS) -g -O0 $< -o $@
-tsvc/%.icc.O0.i386: tsvc/%.icc.O0.i386.o tsvc/tsvc_helper.icc.O0.i386.o
+tsvc/%.icc.O0.i386: tsvc/%.icc.O0.i386.o
 	$(CLANG3_6_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
 tsvc/%.icc.O2.i386.o: tsvc/%.c
 	$(ICC_I386) -c $(CFLAGS) -g -O2 $< -o $@
-tsvc/%.icc.O2.i386: tsvc/%.icc.O2.i386.o tsvc/tsvc_helper.icc.O2.i386.o
+tsvc/%.icc.O2.i386: tsvc/%.icc.O2.i386.o
 	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
 tsvc/%.icc.O3.i386.o: tsvc/%.c
 	$(ICC_I386) -c $(CFLAGS) -g -O3 $< -o $@
-tsvc/%.icc.O3.i386: tsvc/%.icc.O3.i386.o tsvc/tsvc_helper.icc.O3.i386.o
+tsvc/%.icc.O3.i386: tsvc/%.icc.O3.i386.o
 	$(ICC_I386) $(CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 # ccomp
@@ -171,7 +171,7 @@ tsvc/%.c.O0.bc: tsvc/%.c
 	CLANG_REVERSE_ARGS=1 ${CLANG3_6} $(EQCHECKER_DEFINES) $(INCLUDES) -m32 -O0 -emit-llvm $^ -c -o $@.tmp
 	${LLVM_OPT} -mem2reg -o $@ $@.tmp
 
-tsvc/%.bc.O0: tsvc/%.c.O0.bc tsvc/tsvc_helper.c.O0.bc
+tsvc/%.bc.O0: tsvc/%.c.O0.bc
 	${LLVM_LINK} $^ -o $@
 
 tsvc/%.bc.O2: tsvc/%.bc.O0
