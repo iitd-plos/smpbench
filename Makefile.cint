@@ -68,6 +68,13 @@ cint/ctests_helper.icc.eqchecker.O3.i386.o: cint/ctests_helper.c
 cint/%.icc.eqchecker.O3.i386: cint/%.icc.eqchecker.O3.i386.o cint/ctests_helper.icc.eqchecker.O3.i386.o
 	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
+cint/%.ccomp.eqchecker.O2.i386.o: cint/%.c
+	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 $< -o $@
+cint/ctests_helper.ccomp.eqchecker.O2.i386.o: cint/ctests_helper.c
+	$(CCOMP_I386) -c $(CCOMP_CFLAGS) -g -O2 $< -o $@
+cint/%.ccomp.eqchecker.O2.i386: cint/%.ccomp.eqchecker.O2.i386.o cint/ctests_helper.ccomp.eqchecker.O2.i386.o
+	$(CCOMP_I386) $(CCOMP_CFLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+
 
 #cint/%.gcc48.O0.i386.o: cint/%.c
 #	$(GCC4_8_I386) -c $(CFLAGS)  -O0 $< -o $@

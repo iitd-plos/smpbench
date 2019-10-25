@@ -18,6 +18,8 @@ typedef struct tn {
     long          item;
 } treeNode;
 
+void *malloc(size_t);
+void free(void *);
 
 treeNode* NewTreeNode(treeNode* left, treeNode* right, long item)
 {

@@ -5,7 +5,7 @@ COQ_DIR=$(build)/installs/$(COQ)
 
 OCAML_INSTALL=$(OCAML_DIR)-install
 MENHIR_INSTALL=$(MENHIR_DIR)-install
-COMPCERT_INSTALL=$(COMPCERT_DIR)-install
+#COMPCERT_INSTALL=$(COMPCERT_DIR)-install
 COQ_INSTALL=$(COQ_DIR)-install
 
 ML_INCLUDES = -I $(OCAML_INSTALL)/lib/ocaml -I $(Z3_DIR)/build/api/ml -I $(abuild)/ml

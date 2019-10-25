@@ -10,6 +10,9 @@
 //#include <stdlib.h>
 #include <string.h>
 
+void *malloc(size_t);
+void free(void *);
+
 typedef unsigned int bits;
 #define	NBITS	(8 * sizeof(bits))
 

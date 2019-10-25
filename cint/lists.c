@@ -4,6 +4,9 @@
 #include <stddef.h>
 //#include <stdlib.h>
 
+void *malloc(size_t);
+void free(void *);
+
 struct list { int hd; struct list * tl; };
 
 struct list * buildlist(int n)

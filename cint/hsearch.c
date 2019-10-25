@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <assert.h>
 
+void *malloc(size_t);
+void free(void *);
+
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
 #define modulus(v,d) (((unsigned long)v)%(d))
 #define NUM_BUCKETS 13

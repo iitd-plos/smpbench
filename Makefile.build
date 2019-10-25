@@ -53,9 +53,9 @@ CINT_PROGS_ICC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
 CINT_PROGS_CCOMP=$(CINT_PROGS)
 
 EMIT_RELOCS_FLAG=-Wl,--emit-relocs
-COMPCERT_DIR=$(build)/installs/$(COMPCERT)
-COMPCERT_INSTALL=$(COMPCERT_DIR)-install
-CCOMP_I386=$(COMPCERT_INSTALL)/bin/ccomp -fvararg-calls -fno-fpu -funprototyped -fstruct-return -fno-tailcalls -L$(COMPCERT_INSTALL)/lib/compcert $(EMIT_RELOCS_FLAG)
+#COMPCERT_DIR=$(build)/installs/$(COMPCERT)
+#COMPCERT_INSTALL=$(COMPCERT_DIR)-install
+CCOMP_I386=$(COMPCERT_INSTALL_BIN)/ccomp -fvararg-calls -fno-fpu -funprototyped -fstruct-return -fno-tailcalls -L$(COMPCERT_INSTALL_LIB) $(EMIT_RELOCS_FLAG)
 
 CINT_CLANG_O0_PROGS = $(addsuffix .clang.O0, $(CINT_PROGS_CLANG))
 CINT_CLANG_O2_PROGS = $(addsuffix .clang.O2, $(CINT_PROGS_CLANG))
@@ -115,6 +115,7 @@ CINT_EQCHECKER_I386_GCC_O3_PROGS =   $(addsuffix .gcc.eqchecker.O3.i386, $(CINT_
 CINT_EQCHECKER_I386_CLANG_O0_PROGS = $(addsuffix .clang.eqchecker.O0.i386, $(CINT_PROGS_EQCHECKER))
 CINT_EQCHECKER_I386_CLANG_O2_PROGS = $(addsuffix .clang.eqchecker.O2.i386, $(CINT_PROGS_EQCHECKER))
 CINT_EQCHECKER_I386_CLANG_O3_PROGS = $(addsuffix .clang.eqchecker.O3.i386, $(CINT_PROGS_EQCHECKER))
+CINT_EQCHECKER_I386_CCOMP_O2_PROGS = $(addsuffix .ccomp.eqchecker.O2.i386, $(CINT_PROGS_EQCHECKER))
 CINT_EQCHECKER_I386_ICC_O0_PROGS =   $(addsuffix .icc.eqchecker.O0.i386, $(CINT_PROGS_EQCHECKER))
 CINT_EQCHECKER_I386_ICC_O2_PROGS =   $(addsuffix .icc.eqchecker.O2.i386, $(CINT_PROGS_EQCHECKER))
 CINT_EQCHECKER_I386_ICC_O3_PROGS =   $(addsuffix .icc.eqchecker.O3.i386, $(CINT_PROGS_EQCHECKER))
@@ -154,6 +155,7 @@ CINT_EQCHECKER_I386_PROGS = \
   $(CINT_EQCHECKER_I386_CLANG_O3_PROGS) \
   $(CINT_EQCHECKER_I386_ICC_O0_PROGS) \
   $(CINT_EQCHECKER_I386_ICC_O3_PROGS) \
+  $(CINT_EQCHECKER_I386_CCOMP_O2_PROGS) \
 
 CINT_I386_PROGS = \
   $(CINT_BC_O0_PROGS) \

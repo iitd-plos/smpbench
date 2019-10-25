@@ -7,6 +7,9 @@
 //#include <stdlib.h>
 #include <string.h>
 
+void *malloc(size_t);
+void free(void *);
+
 #define memset mymemset
 
 typedef unsigned char boolean;
