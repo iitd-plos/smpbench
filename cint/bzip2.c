@@ -2540,6 +2540,68 @@ zero:
   } while (h != 1);
 }
 
+void setupOvershootArea()
+{
+  Int32 i;
+  for (i = 0; i < NUM_OVERSHOOT_BYTES; i++) {
+    DBG(__LINE__);
+    block[last+i+1] = block[i % (last+1)];
+  }
+  for (i = 0; i <= last+NUM_OVERSHOOT_BYTES; i++) {
+    DBG(__LINE__);
+    quadrant[i] = 0;
+  }
+  block[-1] = block[last];
+}
+
+void synthesisSortedOrderforSmallBuckets(Int32 ss)
+{
+  Int32 j;
+
+  for (j = 0; j <= 255; j++) {
+    DBG(__LINE__);
+    copy[j] = ftab[(j << 8) + ss] & CLEARMASK;
+  }
+  for (j = ftab[ss << 8] & CLEARMASK;
+      j < (ftab[(ss+1) << 8] & CLEARMASK);
+      j++) {
+    DBG(__LINE__);
+    UChar c1 = block[zptr[j]-1];
+    if ( ! bigDone[c1] ) {
+      zptr[copy[c1]] = zptr[j] == 0 ? last : zptr[j] - 1;
+      copy[c1] ++;
+    }
+  }
+
+  for (j = 0; j <= 255; j++) {
+    DBG(__LINE__);
+    ftab[(j << 8) + ss] |= SETMASK;
+  }
+}
+
+void updateQuadrantDescriptors(Int32 ss)
+{
+  Int32 j;
+  Int32 bbStart  = ftab[ss << 8] & CLEARMASK;
+  Int32 bbSize   = (ftab[(ss+1) << 8] & CLEARMASK) - bbStart;
+  Int32 shifts   = 0;
+
+  while ((bbSize >> shifts) > 65534) {
+    DBG(__LINE__);
+    shifts++;
+  }
+  for (j = 0; j < bbSize; j++) {
+    DBG(__LINE__);
+    Int32 a2update     = zptr[bbStart + j];
+    UInt16 qVal        = (UInt16)(j >> shifts);
+    quadrant[a2update] = qVal;
+    if (a2update < NUM_OVERSHOOT_BYTES)
+      quadrant[a2update + last + 1] = qVal;
+  }
+
+  if (! ( ((bbSize-1) >> shifts) <= 65535 )) panic ( "sortIt" );
+}
+
 void sortIt ( void )
 {
   Int32 i, j, ss, sb;
@@ -2556,15 +2618,7 @@ void sortIt ( void )
     --*/
 
   if (verbosity >= 4) fprintf ( stderr, "        sort initialise ...\n" );
-  for (i = 0; i < NUM_OVERSHOOT_BYTES; i++) {
-    DBG(__LINE__);
-    block[last+i+1] = block[i % (last+1)];
-  }
-  for (i = 0; i <= last+NUM_OVERSHOOT_BYTES; i++) {
-    DBG(__LINE__);
-    quadrant[i] = 0;
-  }
-  block[-1] = block[last];
+  setupOvershootArea();
 
   if (last < 4000) {
 
@@ -2648,49 +2702,14 @@ void sortIt ( void )
       bigDone[ss] = True;
 
       if (i < 255) {
-        Int32 bbStart  = ftab[ss << 8] & CLEARMASK;
-        Int32 bbSize   = (ftab[(ss+1) << 8] & CLEARMASK) - bbStart;
-        Int32 shifts   = 0;
-
-        while ((bbSize >> shifts) > 65534) {
-          DBG(__LINE__);
-          shifts++;
-        }
-        for (j = 0; j < bbSize; j++) {
-          DBG(__LINE__);
-          Int32 a2update     = zptr[bbStart + j];
-          UInt16 qVal        = (UInt16)(j >> shifts);
-          quadrant[a2update] = qVal;
-          if (a2update < NUM_OVERSHOOT_BYTES)
-            quadrant[a2update + last + 1] = qVal;
-        }
-
-        if (! ( ((bbSize-1) >> shifts) <= 65535 )) panic ( "sortIt" );
+        updateQuadrantDescriptors(ss);
       }
 
       /*--
         Now scan this big bucket so as to synthesise the
         sorted order for small buckets [t, ss] for all t != ss.
         --*/
-      for (j = 0; j <= 255; j++) {
-        DBG(__LINE__);
-        copy[j] = ftab[(j << 8) + ss] & CLEARMASK;
-      }
-      for (j = ftab[ss << 8] & CLEARMASK;
-          j < (ftab[(ss+1) << 8] & CLEARMASK);
-          j++) {
-        DBG(__LINE__);
-        c1 = block[zptr[j]-1];
-        if ( ! bigDone[c1] ) {
-          zptr[copy[c1]] = zptr[j] == 0 ? last : zptr[j] - 1;
-          copy[c1] ++;
-        }
-      }
-
-      for (j = 0; j <= 255; j++) {
-        DBG(__LINE__);
-        ftab[(j << 8) + ss] |= SETMASK;
-      }
+      synthesisSortedOrderforSmallBuckets(ss);
     }
     if (verbosity >= 4)
       fprintf ( stderr, "        %d pointers, %d sorted, %d scanned\n",
@@ -4964,7 +4983,8 @@ int spec_putc(unsigned char ch, int fd) {
 
 #define MB (1024*1024)
 #ifdef SPEC_CPU2000
-int main (int argc, char *argv[]) {
+int main (int argc, char *argv[])
+{
   int i, level;
   int input_size=64, compressed_size;
   char *input_name="input.combined";
