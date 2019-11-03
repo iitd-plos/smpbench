@@ -276,7 +276,7 @@ cint/%.bc.O3: cint/%.c
 cint/%.bc.O3.cg: cint/%.bc.O3
 	$(MYLLC) -O3 $< -o $<.cg.tmp
 	rm -f $<.cg.tmp
-	$(MYLLVM_AS) $@.ll -o $@
+#	$(MYLLVM_AS) $@.ll -o $@
 
 #cint/%.bc.O3.cg: cint/%.c
 #	$(CLANG_I386) $(CFLAGS) -Xclang -disable-llvm-passes $(INCLUDES) -m32 -O3 -emit-llvm $^ -c -o $@.tmp
