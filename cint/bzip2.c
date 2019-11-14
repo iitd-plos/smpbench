@@ -2335,7 +2335,7 @@ void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
    push ( loSt, hiSt, dSt );
 
    while (sp > 0) {
-      //DBG(__LINE__);
+      DBG(__LINE__);
 
       if (sp >= QSORT_STACK_SIZE) panic ( "stack overflow in qSort3" );
 
@@ -2357,7 +2357,7 @@ void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
       while (True) {
         DBG(__LINE__);
          while (True) {
-            //DBG(__LINE__);
+            DBG(__LINE__);
             if (unLo > unHi) break;
             n = ((Int32)block[zptr[unLo]+d]) - med;
             if (n == 0) { swap(zptr[unLo], zptr[ltLo]); ltLo++; unLo++; continue; };
@@ -2365,7 +2365,7 @@ void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
             unLo++;
          }
          while (True) {
-            //DBG(__LINE__);
+            DBG(__LINE__);
             if (unLo > unHi) break;
             n = ((Int32)block[zptr[unHi]+d]) - med;
             if (n == 0) { swap(zptr[unHi], zptr[gtHi]); gtHi--; unHi--; continue; };
@@ -2835,10 +2835,11 @@ void setUpcftab()
   Int32 i;
   cftab[0] = 0;
   for (i = 1; i <= 256; i++) {
-    DBG(__LINE__); // non-bisimilar transformation -- loop iterator and writes move from 256 down to 0
+    DBG(__LINE__); // required to prevent non-bisimilar transformation -- loop iterator and writes move from 256 down to 0
     cftab[i] = unzftab[i-1];
   }
   for (i = 1; i <= 256; i++) {
+    DBG(__LINE__); // required because otherwise compiler hoists the load out of loop and the corresponding LLVM var is not added to eqclasses because it is defined inside the loop body and is not live at start of body.
     cftab[i] += cftab[i-1];
   }
 }
