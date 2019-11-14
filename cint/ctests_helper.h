@@ -30,8 +30,13 @@ void MYmydebug2(int n);
 #define strcmp MYmystrcmp
 #define strncmp MYmystrncmp
 
-#define DBG(l) MYmydebug(l)
-#define DBG2(l) MYmydebug2(l)
+void (*dbgptr)(int) = MYmydebug;
+void (*dbgptr2)(int) = MYmydebug2;
+
+#define DBG(l) dbgptr(l)
+#define DBG2(l) dbgptr2(l)
+//#define DBG(l) MYmydebug(l)
+//#define DBG2(l) MYmydebug2(l)
 
 
 #endif
