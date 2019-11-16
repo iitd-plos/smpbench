@@ -1445,6 +1445,7 @@ generateInitialCodingTables(Int32 nGroups, Int32 alphaSize)
   remF  = nMTF;
   gs = 0;
   while (nPart > 0) {
+    DBG(__LINE__); // can remove this?
     tFreq = remF / nPart;
     ge = gs-1;
     aFreq = 0;
@@ -1467,6 +1468,7 @@ generateInitialCodingTables(Int32 nGroups, Int32 alphaSize)
           (100.0 * (float)aFreq) / (float)nMTF */);
 
     for (v = 0; v < alphaSize; v++) {
+      DBG(__LINE__); // required to prevent vectorization with loads from RODATA
       if (v >= gs && v <= ge)
         len[nPart-1][v] = LESSER_ICOST;
       else
@@ -1551,7 +1553,7 @@ assignActualCodes(Int32 nGroups, Int32 alphaSize)
     minLen = 32;
     maxLen = 0;
     for (i = 0; i < alphaSize; i++) {
-      DBG(__LINE__);
+      DBG(__LINE__); // needed to prevent vectorization
       if (len[t][i] > maxLen) maxLen = len[t][i];
       if (len[t][i] < minLen) minLen = len[t][i];
     }
@@ -1695,9 +1697,9 @@ void sendMTFValues ( void )
 
    alphaSize = nInUse+2;
    for (t = 0; t < N_GROUPS; t++) {
-      //DBG(__LINE__);
+      DBG(__LINE__); // easy anchor
       for (v = 0; v < alphaSize; v++) {
-         DBG(__LINE__);
+         DBG(__LINE__); // required for preventing vectorization with RODATA load
          len[t][v] = GREATER_ICOST;
       }
    }
@@ -1717,13 +1719,13 @@ void sendMTFValues ( void )
    for (iter = 0; iter < N_ITERS; iter++) {
      DBG(__LINE__);
      for (t = 0; t < nGroups; t++) {
-       //DBG(__LINE__);
+       DBG(__LINE__); // prevents vectorization?
        fave[t] = 0;
      }
      for (t = 0; t < nGroups; t++) {
        DBG(__LINE__);
        for (v = 0; v < alphaSize; v++) {
-         //DBG(__LINE__);
+         DBG(__LINE__); // prevents vectorization?
          rfreq[t][v] = 0;
        }
      }
@@ -1731,7 +1733,7 @@ void sendMTFValues ( void )
      totc = 0;
      gs = 0;
      while (True) {
-       //DBG(__LINE__);
+       DBG(__LINE__); // easy anchor
 
        /*--- Set group start & end marks. --*/
        if (gs >= nMTF) break;
@@ -1762,7 +1764,7 @@ void sendMTFValues ( void )
          Increment the symbol frequencies for the selected table.
          --*/
        for (i = gs; i <= ge; i++) {
-         //DBG(__LINE__);
+         DBG(__LINE__); // easy anchor, vectorization does not happen because szptr may alias with rfreq?
          rfreq[bt][ szptr[i] ]++;
        }
        gs = ge+1;
@@ -1839,7 +1841,7 @@ void createHuffmanDecodeTables(Int32 nGroups, Int32 alphaSize)
     minLen = 32;
     maxLen = 0;
     for (i = 0; i < alphaSize; i++) {
-      DBG(__LINE__);
+      DBG(__LINE__); // need to prevent vectorization
       if (len[t][i] > maxLen) maxLen = len[t][i];
       if (len[t][i] < minLen) minLen = len[t][i];
     }
