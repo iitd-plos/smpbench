@@ -1157,7 +1157,6 @@ void hbCreateDecodeTables ( Int32 *limit,
    }
    initToZero(base);
    for (i = 0; i < alphaSize; i++) {
-      //DBG(__LINE__);
       base[length[i]+1]++;
    }
 
@@ -1170,7 +1169,6 @@ void hbCreateDecodeTables ( Int32 *limit,
    vec = 0;
 
    for (i = minLen; i <= maxLen; i++) {
-      //DBG(__LINE__);
       vec += (base[i+1] - base[i]);
       limit[i] = vec-1;
       vec <<= 1;
@@ -1379,7 +1377,6 @@ void generateMTFValues ( void )
       j = 0;
       tmp = yy[j];
       while ( ll_i != tmp ) {
-         //DBG(__LINE__);
          j++;
          tmp2 = tmp;
          tmp = yy[j];
@@ -1696,6 +1693,7 @@ void sendMTFValues ( void )
                 last+1, nMTF, nInUse );
 
    alphaSize = nInUse+2;
+   // loop versioning in clang
    for (t = 0; t < N_GROUPS; t++) {
       DBG(__LINE__); // easy anchor
       for (v = 0; v < alphaSize; v++) {
@@ -1722,6 +1720,7 @@ void sendMTFValues ( void )
        DBG(__LINE__); // prevents vectorization?
        fave[t] = 0;
      }
+     // loop versioning in clang
      for (t = 0; t < nGroups; t++) {
        DBG(__LINE__);
        for (v = 0; v < alphaSize; v++) {
@@ -4556,10 +4555,8 @@ IntNative main ( IntNative argc, Char *argv[] )
 
    /*-- Look at the flags. --*/
    for (aa = argList; aa != NULL; aa = aa->link) {
-      DBG(__LINE__);
       if (aa->name[0] == '-' && aa->name[1] != '-') {
          for (j = 1; aa->name[j] != '\0'; j++) {
-            DBG(__LINE__);
             switch (aa->name[j]) {
                case 'c': srcMode          = SM_F2O; break;
                case 'd': opMode           = OM_UNZ; break;
@@ -4594,7 +4591,6 @@ IntNative main ( IntNative argc, Char *argv[] )
 
    /*-- And again ... --*/
    for (aa = argList; aa != NULL; aa = aa->link) {
-      DBG(__LINE__);
       if (ISFLAG("--stdout"))            srcMode          = SM_F2O;  else
       if (ISFLAG("--decompress"))        opMode           = OM_UNZ;  else
       if (ISFLAG("--compress"))          opMode           = OM_Z;    else
@@ -4663,7 +4659,6 @@ IntNative main ( IntNative argc, Char *argv[] )
          testf ( NULL );
          else
          for (aa = argList; aa != NULL; aa = aa->link) {
-            DBG(__LINE__);
             if (aa->name[0] != '-') {
                numFilesProcessed++;
                testf ( aa->name );
@@ -4765,7 +4760,6 @@ int spec_init () {
 	    MYmyexit(1);
 	}
 	for (j = 0; j < limit; j+=1024) {
-      //DBG(__LINE__);
 	    spec_fd[i].buf[j] = 0;
 	}
     }
