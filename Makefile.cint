@@ -1,8 +1,6 @@
 LINKER_SCRIPT=$(SRCDIR)/misc/ld.script
 
 #DATA_SECTIONS_FLAG=-fdata-sections -Wl,-T,$(LINKER_SCRIPT)
-EMIT_RELOCS_FLAG=-Wl,--emit-relocs
-DEBUG_FLAG=-g
 LLVM_OPT_FLAGS=-O3 -strip-debug
 
 cint/%.gcc.eqchecker.O0.i386.o: cint/%.c
