@@ -7,7 +7,6 @@
 #include <sys/time.h>
 #endif
 #include <string.h>
-#include "cint/ctests_helper.h"
 
 
 #define SPEC_CPU2000
@@ -344,7 +343,7 @@ void spec_initbufs();
 void spec_compress(int in, int out, int level);
 void spec_uncompress(int in, int out, int level);
 int spec_init ();
-//int spec_random_load (int fd);
+int spec_random_load (int fd);
 int spec_load (int num, char *filename, int size);
 int spec_read (int fd, unsigned char *buf, int size);
 int spec_getc (int fd);
@@ -354,7 +353,6 @@ int spec_reset(int fd);
 int spec_write(int fd, unsigned char *buf, int size);
 int spec_putc(unsigned char ch, int fd);
 int debug_time();
-void initinUseToFalse();
 
 /*--
   IntNative is your platform's `native' int size.
@@ -492,7 +490,6 @@ void    panic                 ( Char* )          NORETURN;
 void    ioError               ( void )           NORETURN;
 void    compressOutOfMemory   ( Int32, Int32 )   NORETURN;
 void    uncompressOutOfMemory ( Int32, Int32 )   NORETURN;
-void    myuncompressOutOfMemory ( Int32, Int32 ) NORETURN;
 void    blockOverrun          ( void )           NORETURN;
 void    badBlockHeader        ( void )           NORETURN;
 void    badBGLengths          ( void )           NORETURN;
@@ -814,46 +811,29 @@ void bsFinishedWithStream ( void )
 
 
 /*---------------------------------------------*/
-//#define bsNEEDR(nz)                           \
-//{                                             \
-//   while (bsLive < nz) {                      \
-//      Int32 zzi = fgetc ( bsStream );         \
-//      if (zzi == EOF) compressedStreamEOF();  \
-//      bsBuff = (bsBuff << 8) | (zzi & 0xffL); \
-//      bsLive += 8;                            \
-//   }                                          \
-//}
-void bsNEEDR(Int32 nz)
-{
-   while (bsLive < nz) {
-      Int32 zzi = fgetc ( bsStream );
-      if (zzi == EOF) compressedStreamEOF();
-      bsBuff = (bsBuff << 8) | (zzi & 0xffL);
-      bsLive += 8;
-   }
+#define bsNEEDR(nz)                           \
+{                                             \
+   while (bsLive < nz) {                      \
+      Int32 zzi = fgetc ( bsStream );         \
+      if (zzi == EOF) compressedStreamEOF();  \
+      bsBuff = (bsBuff << 8) | (zzi & 0xffL); \
+      bsLive += 8;                            \
+   }                                          \
 }
 
+
 /*---------------------------------------------*/
-//#define bsNEEDW(nz)                           \
-//{                                             \
-//   while (bsLive >= 8) {                      \
-//      fputc ( (UChar)(bsBuff >> 24),          \
-//               bsStream );                    \
-//      bsBuff <<= 8;                           \
-//      bsLive -= 8;                            \
-//      bytesOut++;                             \
-//   }                                          \
-//}
-void bsNEEDW()
-{
-   while (bsLive >= 8) {
-      fputc ( (UChar)(bsBuff >> 24),
-               bsStream );
-      bsBuff <<= 8;
-      bsLive -= 8;
-      bytesOut++;
-   }
+#define bsNEEDW(nz)                           \
+{                                             \
+   while (bsLive >= 8) {                      \
+      fputc ( (UChar)(bsBuff >> 24),          \
+               bsStream );                    \
+      bsBuff <<= 8;                           \
+      bsLive -= 8;                            \
+      bytesOut++;                             \
+   }                                          \
 }
+
 
 /*---------------------------------------------*/
 #define bsR1(vz)                              \
@@ -878,7 +858,7 @@ INLINE UInt32 bsR ( Int32 n )
 /*---------------------------------------------*/
 INLINE void bsW ( Int32 n, UInt32 v )
 {
-   bsNEEDW ();
+   bsNEEDW ( n );
    bsBuff |= (v << (32 - bsLive - n));
    bsLive += n;
 }
@@ -961,91 +941,34 @@ void bsPutIntVS ( Int32 numBits, UInt32 c )
    (WEIGHTOF(zw1)+WEIGHTOF(zw2)) |                    \
    (1 + MYMAX(DEPTHOF(zw1),DEPTHOF(zw2)))
 
-//#define UPHEAP(z)                                     \
-//{                                                     \
-//   Int32 zz, tmp;                                     \
-//   zz = z; tmp = heap[zz];                            \
-//   while (weight[tmp] < weight[heap[zz >> 1]]) {      \
-//      heap[zz] = heap[zz >> 1];                       \
-//      zz >>= 1;                                       \
-//   }                                                  \
-//   heap[zz] = tmp;                                    \
-//}
-//
-//#define DOWNHEAP(z)                                   \
-//{                                                     \
-//   Int32 zz, yy, tmp;                                 \
-//   zz = z; tmp = heap[zz];                            \
-//   while (True) {                                     \
-//      yy = zz << 1;                                   \
-//      if (yy > nHeap) break;                          \
-//      if (yy < nHeap &&                               \
-//          weight[heap[yy+1]] < weight[heap[yy]])      \
-//         yy++;                                        \
-//      if (weight[tmp] < weight[heap[yy]]) break;      \
-//      heap[zz] = heap[yy];                            \
-//      zz = yy;                                        \
-//   }                                                  \
-//   heap[zz] = tmp;                                    \
-//}
-
-Int32 heap   [ MAX_ALPHA_SIZE + 2 ];
-Int32 weight [ MAX_ALPHA_SIZE * 2 ];
-Int32 parent [ MAX_ALPHA_SIZE * 2 ];
-
-Int32 nHeap;
-
-void
-UPHEAP(Int32 z)
-{
-   Int32 zz, tmp;
-   zz = z; tmp = heap[zz];
-   while (weight[tmp] < weight[heap[zz >> 1]]) {
-      heap[zz] = heap[zz >> 1];
-      zz >>= 1;
-   }
-   heap[zz] = tmp;
+#define UPHEAP(z)                                     \
+{                                                     \
+   Int32 zz, tmp;                                     \
+   zz = z; tmp = heap[zz];                            \
+   while (weight[tmp] < weight[heap[zz >> 1]]) {      \
+      heap[zz] = heap[zz >> 1];                       \
+      zz >>= 1;                                       \
+   }                                                  \
+   heap[zz] = tmp;                                    \
 }
 
-void
-DOWNHEAP(Int32 z)
-{
-   Int32 zz, yy, tmp;
-   zz = z; tmp = heap[zz];
-   while (True) {
-      yy = zz << 1;
-      if (yy > nHeap) break;
-      if (yy < nHeap &&
-          weight[heap[yy+1]] < weight[heap[yy]]) {
-         yy++;
-      }
-      if (weight[tmp] < weight[heap[yy]]) break;
-      heap[zz] = heap[yy];
-      zz = yy;
-   }
-   heap[zz] = tmp;
+#define DOWNHEAP(z)                                   \
+{                                                     \
+   Int32 zz, yy, tmp;                                 \
+   zz = z; tmp = heap[zz];                            \
+   while (True) {                                     \
+      yy = zz << 1;                                   \
+      if (yy > nHeap) break;                          \
+      if (yy < nHeap &&                               \
+          weight[heap[yy+1]] < weight[heap[yy]])      \
+         yy++;                                        \
+      if (weight[tmp] < weight[heap[yy]]) break;      \
+      heap[zz] = heap[yy];                            \
+      zz = yy;                                        \
+   }                                                  \
+   heap[zz] = tmp;                                    \
 }
 
-
-void initWeightUsingfreq(Int32* freq, Int32 alphaSize)
-{
-  Int32 i;
-  for (i = 0; i < alphaSize; i++) {
-    DBG(__LINE__); // required to prevent vectorization with RODATA load
-    weight[i+1] = (freq[i] == 0 ? 1 : freq[i]) << 8;
-  }
-}
-
-void updateWeight(Int32 alphaSize)
-{
-  Int32 i, j;
-  for (i = 1; i < alphaSize; i++) {
-    DBG(__LINE__); // does not pass (at any unroll-factor) without this
-    j = weight[i] >> 8;
-    j = 1 + (j / 2);
-    weight[i] = j << 8;
-  }
-}
 
 /*---------------------------------------------*/
 void hbMakeCodeLengths ( UChar *len, 
@@ -1057,13 +980,18 @@ void hbMakeCodeLengths ( UChar *len,
       Nodes and heap entries run from 1.  Entry 0
       for both the heap and nodes is a sentinel.
    --*/
-   Int32 nNodes, n1, n2, i, j, k;
+   Int32 nNodes, nHeap, n1, n2, i, j, k;
    Bool  tooLong;
 
+   Int32 heap   [ MAX_ALPHA_SIZE + 2 ];
+   Int32 weight [ MAX_ALPHA_SIZE * 2 ];
+   Int32 parent [ MAX_ALPHA_SIZE * 2 ]; 
 
-   initWeightUsingfreq(freq, alphaSize);
+   for (i = 0; i < alphaSize; i++)
+      weight[i+1] = (freq[i] == 0 ? 1 : freq[i]) << 8;
 
    while (True) {
+
       nNodes = alphaSize;
       nHeap = 0;
 
@@ -1096,17 +1024,20 @@ void hbMakeCodeLengths ( UChar *len,
 
       tooLong = False;
       for (i = 1; i <= alphaSize; i++) {
-         DBG(__LINE__);
          j = 0;
          k = i;
-         while (parent[k] >= 0) { DBG(__LINE__); k = parent[k]; j++; }
+         while (parent[k] >= 0) { k = parent[k]; j++; }
          len[i-1] = j;
          if (j > maxLen) tooLong = True;
       }
       
       if (! tooLong) break;
 
-      updateWeight(alphaSize);
+      for (i = 1; i < alphaSize; i++) {
+         j = weight[i] >> 8;
+         j = 1 + (j / 2);
+         weight[i] = j << 8;
+      }
    }
 }
 
@@ -1122,21 +1053,12 @@ void hbAssignCodes ( Int32 *code,
 
    vec = 0;
    for (n = minLen; n <= maxLen; n++) {
-      for (i = 0; i < alphaSize; i++) {
+      for (i = 0; i < alphaSize; i++)
          if (length[i] == n) { code[i] = vec; vec++; };
-      }
       vec <<= 1;
    }
 }
 
-
-void initToZero(Int32 *base)
-{
-  Int32 i;
-   for (i = 0; i < MAX_CODE_LEN; i++) {
-     base[i] = 0;
-   }
-}
 
 /*---------------------------------------------*/
 void hbCreateDecodeTables ( Int32 *limit,
@@ -1150,35 +1072,25 @@ void hbCreateDecodeTables ( Int32 *limit,
    Int32 pp, i, j, vec;
 
    pp = 0;
-   for (i = minLen; i <= maxLen; i++) {
-      for (j = 0; j < alphaSize; j++) {
+   for (i = minLen; i <= maxLen; i++)
+      for (j = 0; j < alphaSize; j++)
          if (length[j] == i) { perm[pp] = j; pp++; };
-      }
-   }
-   initToZero(base);
-   for (i = 0; i < alphaSize; i++) {
-      //DBG(__LINE__);
-      base[length[i]+1]++;
-   }
 
-   for (i = 1; i < MAX_CODE_LEN; i++) {
-      DBG(__LINE__);
-      base[i] += base[i-1];
-   }
+   for (i = 0; i < MAX_CODE_LEN; i++) base[i] = 0;
+   for (i = 0; i < alphaSize; i++) base[length[i]+1]++;
 
-   initToZero(limit);
+   for (i = 1; i < MAX_CODE_LEN; i++) base[i] += base[i-1];
+
+   for (i = 0; i < MAX_CODE_LEN; i++) limit[i] = 0;
    vec = 0;
 
    for (i = minLen; i <= maxLen; i++) {
-      //DBG(__LINE__);
       vec += (base[i+1] - base[i]);
       limit[i] = vec-1;
       vec <<= 1;
    }
-   for (i = minLen + 1; i <= maxLen; i++) {
-      DBG(__LINE__);
+   for (i = minLen + 1; i <= maxLen; i++)
       base[i] = ((limit[i-1] + 1) << 1) - base[i];
-   }
 }
 
 
@@ -1302,7 +1214,7 @@ void setDecompressStructureSizes ( Int32 newSize100k )
       if (ll8 == NULL || tt == NULL) {
          Int32 totalDraw
             = n * sizeof(UChar) + n * sizeof(UInt32);
-         myuncompressOutOfMemory ( totalDraw, n );
+         uncompressOutOfMemory ( totalDraw, n );
       }
 
    }
@@ -1319,32 +1231,19 @@ void makeMaps ( void )
 {
    Int32 i;
    nInUse = 0;
-   for (i = 0; i < 256; i++) {
+   for (i = 0; i < 256; i++)
       if (inUse[i]) {
          seqToUnseq[nInUse] = i;
          unseqToSeq[i] = nInUse;
          nInUse++;
       }
-   }
 }
 
-
-// local array made global
-UChar  yy[256];
-
-void inityy(Int32 n)
-{
-  Int32 i;
-  for (i = 0; i < n; i++) {
-    DBG(__LINE__); // required to prevent vectorization with RODATA load
-    yy[i] = (UChar) i;
-  }
-}
 
 /*---------------------------------------------*/
 void generateMTFValues ( void )
 {
-   //UChar  yy[256];
+   UChar  yy[256];
    Int32  i, j;
    UChar  tmp;
    UChar  tmp2;
@@ -1355,16 +1254,14 @@ void generateMTFValues ( void )
    makeMaps();
    EOB = nInUse+1;
 
-   for (i = 0; i <= EOB; i++) {
-     mtfFreq[i] = 0;
-   }
+   for (i = 0; i <= EOB; i++) mtfFreq[i] = 0;
 
    wr = 0;
    zPend = 0;
-   inityy(nInUse);
+   for (i = 0; i < nInUse; i++) yy[i] = (UChar) i;
+   
 
    for (i = 0; i <= last; i++) {
-      DBG(__LINE__);
       UChar ll_i;
 
       #if DEBUG
@@ -1379,7 +1276,6 @@ void generateMTFValues ( void )
       j = 0;
       tmp = yy[j];
       while ( ll_i != tmp ) {
-         //DBG(__LINE__);
          j++;
          tmp2 = tmp;
          tmp = yy[j];
@@ -1393,7 +1289,6 @@ void generateMTFValues ( void )
          if (zPend > 0) {
             zPend--;
             while (True) {
-               DBG(__LINE__);
                switch (zPend % 2) {
                   case 0: szptr[wr] = RUNA; wr++; mtfFreq[RUNA]++; break;
                   case 1: szptr[wr] = RUNB; wr++; mtfFreq[RUNB]++; break;
@@ -1410,7 +1305,6 @@ void generateMTFValues ( void )
    if (zPend > 0) {
       zPend--;
       while (True) {
-         DBG(__LINE__);
          switch (zPend % 2) {
             case 0:  szptr[wr] = RUNA; wr++; mtfFreq[RUNA]++; break;
             case 1:  szptr[wr] = RUNB; wr++; mtfFreq[RUNB]++; break;
@@ -1430,251 +1324,11 @@ void generateMTFValues ( void )
 #define LESSER_ICOST  0
 #define GREATER_ICOST 15
 
-// local arrays made global
-Bool inUse16[16];
-UInt16 cost[N_GROUPS];
-Int32  fave[N_GROUPS];
-
-void
-generateInitialCodingTables(Int32 nGroups, Int32 alphaSize)
-{
-  Int32 v, gs, ge;
-  Int32 nPart, remF, tFreq, aFreq;
-
-  nPart = nGroups;
-  remF  = nMTF;
-  gs = 0;
-  while (nPart > 0) {
-    DBG(__LINE__); // can remove this?
-    tFreq = remF / nPart;
-    ge = gs-1;
-    aFreq = 0;
-    while (aFreq < tFreq && ge < alphaSize-1) {
-      ge++;
-      aFreq += mtfFreq[ge];
-    }
-
-    if (ge > gs
-        && nPart != nGroups && nPart != 1
-        && ((nGroups-nPart) % 2 == 1)) {
-      aFreq -= mtfFreq[ge];
-      ge--;
-    }
-
-    if (verbosity >= 3)
-      fprintf ( stderr,
-          "      initial group %d, [%d .. %d], has %d syms\n",
-          nPart, gs, ge, aFreq/*,
-          (100.0 * (float)aFreq) / (float)nMTF */);
-
-    for (v = 0; v < alphaSize; v++) {
-      DBG(__LINE__); // required to prevent vectorization with loads from RODATA
-      if (v >= gs && v <= ge)
-        len[nPart-1][v] = LESSER_ICOST;
-      else
-        len[nPart-1][v] = GREATER_ICOST;
-    }
-    nPart--;
-    gs = ge+1;
-    remF -= aFreq;
-  }
-}
-
-// local array made global
-UChar pos[N_GROUPS];
-
-void
-computeMTFforSelectors(Int32 nGroups, Int32 nSelectors)
-{
-  Int32 i, j;
-  //UChar pos[N_GROUPS];
-  UChar ll_i, tmp2, tmp;
-  for (i = 0; i < nGroups; i++) {
-    DBG(__LINE__); // required to prevent vectorization with RODATA load
-    pos[i] = i;
-  }
-  for (i = 0; i < nSelectors; i++) {
-    ll_i = selector[i];
-    j = 0;
-    tmp = pos[j];
-    while ( ll_i != tmp ) {
-      j++;
-      tmp2 = tmp;
-      tmp = pos[j];
-      pos[j] = tmp2;
-    };
-    pos[0] = tmp;
-    selectorMtf[i] = j;
-  }
-}
-
-void
-calculateGroupCost(Int32 nGroups, Int32 gs, Int32 ge)
-{
-  Int32 t, i;
-
-  for (t = 0; t < nGroups; t++) {
-    DBG(__LINE__);
-    cost[t] = 0;
-  }
-  if (nGroups == 6) {
-    register UInt16 cost0, cost1, cost2, cost3, cost4, cost5;
-    cost0 = cost1 = cost2 = cost3 = cost4 = cost5 = 0;
-    for (i = gs; i <= ge; i++) {
-      DBG(__LINE__);
-      UInt16 icv = szptr[i];
-      cost0 += len[0][icv];
-      cost1 += len[1][icv];
-      cost2 += len[2][icv];
-      cost3 += len[3][icv];
-      cost4 += len[4][icv];
-      cost5 += len[5][icv];
-    }
-    cost[0] = cost0; cost[1] = cost1; cost[2] = cost2;
-    cost[3] = cost3; cost[4] = cost4; cost[5] = cost5;
-  } else {
-    for (i = gs; i <= ge; i++) {
-      DBG(__LINE__);
-      UInt16 icv = szptr[i];
-      for (t = 0; t < nGroups; t++) {
-        DBG(__LINE__);
-        cost[t] += len[t][icv];
-      }
-    }
-  }
-}
-
-void
-assignActualCodes(Int32 nGroups, Int32 alphaSize)
-{
-  Int32 t, i;
-  Int32 minLen, maxLen;
-  for (t = 0; t < nGroups; t++) {
-    minLen = 32;
-    maxLen = 0;
-    for (i = 0; i < alphaSize; i++) {
-      DBG(__LINE__); // needed to prevent vectorization
-      if (len[t][i] > maxLen) maxLen = len[t][i];
-      if (len[t][i] < minLen) minLen = len[t][i];
-    }
-    if (maxLen > 20) panic ( "sendMTFValues(3)" );
-    if (minLen < 1)  panic ( "sendMTFValues(4)" );
-    hbAssignCodes ( &code[t][0], &len[t][0],
-        minLen, maxLen, alphaSize );
-  }
-}
-
-void
-transmitMappingTable()
-{
-  Int32 i, j;
-  Int32 nBytes;
-
-  //Bool inUse16[16];
-  for (i = 0; i < 16; i++) {
-    inUse16[i] = False;
-    for (j = 0; j < 16; j++) {
-      DBG(__LINE__); // XXX vectorized code does not pass with unroll-factor 4
-      if (inUse[i * 16 + j]) inUse16[i] = True;
-    }
-  }
-
-  nBytes = bytesOut;
-  for (i = 0; i < 16; i++) {
-    bsW(1, !!(inUse16[i]));
-    //if (inUse16[i]) bsW(1,1); else bsW(1,0);
-  }
-  for (i = 0; i < 16; i++) {
-	  if (inUse16[i]) {
-	    for (j = 0; j < 16; j++) {
-        bsW(1, !!(inUse[i * 16 + j]));
-	      //if (inUse[i * 16 + j]) {
-	      //  bsW(1,1);
-	      //} else {
-	      //  bsW(1,0);
-	      //}
-	    }
-	  }
-  }
-
-  if (verbosity >= 3)
-    fprintf ( stderr, "      bytes: mapping %d, ", bytesOut-nBytes );
-}
-
-void
-transmitSelectors(Int32 nGroups, Int32 nSelectors)
-{
-  Int32 i, j;
-  Int32 nBytes;
-
-  nBytes = bytesOut;
-  bsW ( 3, nGroups );
-  bsW ( 15, nSelectors );
-  for (i = 0; i < nSelectors; i++) {
-    for (j = 0; j < selectorMtf[i]; j++) bsW(1,1);
-    bsW(1,0);
-  }
-  if (verbosity >= 3)
-    fprintf ( stderr, "selectors %d, ", bytesOut-nBytes );
-}
-
-void
-transmitCodingTables(Int32 nGroups, Int32 alphaSize)
-{
-  Int32 t, i;
-  Int32 nBytes;
-
-  nBytes = bytesOut;
-
-  for (t = 0; t < nGroups; t++) {
-    Int32 curr = len[t][0];
-    bsW ( 5, curr );
-    for (i = 0; i < alphaSize; i++) {
-      while (curr < len[t][i]) { bsW(2,2); curr++; /* 10 */ };
-      while (curr > len[t][i]) { bsW(2,3); curr--; /* 11 */ };
-      bsW ( 1, 0 );
-    }
-  }
-
-  if (verbosity >= 3)
-    fprintf ( stderr, "code lengths %d, ", bytesOut-nBytes );
-}
-
-void
-transmitBlockData(Int32 nGroups, Int32 nSelectors)
-{
-  Int32 i;
-  Int32 nBytes, selCtr, gs, ge;
-
-  nBytes = bytesOut;
-  selCtr = 0;
-  gs = 0;
-  while (True) {
-    if (gs >= nMTF) break;
-    ge = gs + G_SIZE - 1;
-    if (ge >= nMTF) ge = nMTF-1;
-    for (i = gs; i <= ge; i++) {
-#if DEBUG
-      assert (selector[selCtr] < nGroups);
-#endif
-      bsW ( len  [selector[selCtr]] [szptr[i]],
-          code [selector[selCtr]] [szptr[i]] );
-    }
-
-    gs = ge+1;
-    selCtr++;
-  }
-  if (!(selCtr == nSelectors)) panic ( "sendMTFValues(5)" );
-
-  if (verbosity >= 3)
-    fprintf ( stderr, "codes %d\n", bytesOut-nBytes );
-}
-
 void sendMTFValues ( void )
 {
    Int32 v, t, i, j, gs, ge, totc, bt, bc, iter;
-   Int32 nSelectors, alphaSize;
-   Int32 nGroups;
+   Int32 nSelectors, alphaSize, minLen, maxLen, selCtr;
+   Int32 nGroups, nBytes;
 
    /*--
    UChar  len [N_GROUPS][MAX_ALPHA_SIZE];
@@ -1687,22 +1341,18 @@ void sendMTFValues ( void )
    --*/
 
 
-   //UInt16 cost[N_GROUPS];
-   //Int32  fave[N_GROUPS];
+   UInt16 cost[N_GROUPS];
+   Int32  fave[N_GROUPS];
 
    if (verbosity >= 3)
-      fprintf ( stderr,
-                "      %d in block, %d after MTF & 1-2 coding, %d+2 syms in use\n",
+      fprintf ( stderr, 
+                "      %d in block, %d after MTF & 1-2 coding, %d+2 syms in use\n", 
                 last+1, nMTF, nInUse );
 
    alphaSize = nInUse+2;
-   for (t = 0; t < N_GROUPS; t++) {
-      DBG(__LINE__); // easy anchor
-      for (v = 0; v < alphaSize; v++) {
-         DBG(__LINE__); // required for preventing vectorization with RODATA load
+   for (t = 0; t < N_GROUPS; t++)
+      for (v = 0; v < alphaSize; v++)
          len[t][v] = GREATER_ICOST;
-      }
-   }
 
    /*--- Decide how many coding tables to use ---*/
    if (nMTF <= 0) panic ( "sendMTFValues(0)" );
@@ -1711,79 +1361,127 @@ void sendMTFValues ( void )
                    nGroups = 6;
 
    /*--- Generate an initial set of coding tables ---*/
-   generateInitialCodingTables(nGroups, alphaSize);
+   { 
+      Int32 nPart, remF, tFreq, aFreq;
 
-   /*---
+      nPart = nGroups;
+      remF  = nMTF;
+      gs = 0;
+      while (nPart > 0) {
+         tFreq = remF / nPart;
+         ge = gs-1;
+         aFreq = 0;
+         while (aFreq < tFreq && ge < alphaSize-1) {
+            ge++;
+            aFreq += mtfFreq[ge];
+         }
+
+         if (ge > gs 
+             && nPart != nGroups && nPart != 1 
+             && ((nGroups-nPart) % 2 == 1)) {
+            aFreq -= mtfFreq[ge];
+            ge--;
+         }
+
+         if (verbosity >= 3)
+            fprintf ( stderr, 
+                      "      initial group %d, [%d .. %d], has %d syms (%4.1f%%)\n",
+                              nPart, gs, ge, aFreq, 
+                              (100.0 * (float)aFreq) / (float)nMTF );
+ 
+         for (v = 0; v < alphaSize; v++)
+            if (v >= gs && v <= ge) 
+               len[nPart-1][v] = LESSER_ICOST; else
+               len[nPart-1][v] = GREATER_ICOST;
+ 
+         nPart--;
+         gs = ge+1;
+         remF -= aFreq;
+      }
+   }
+
+   /*--- 
       Iterate up to N_ITERS times to improve the tables.
    ---*/
    for (iter = 0; iter < N_ITERS; iter++) {
-     DBG(__LINE__);
-     for (t = 0; t < nGroups; t++) {
-       DBG(__LINE__); // prevents vectorization?
-       fave[t] = 0;
-     }
-     for (t = 0; t < nGroups; t++) {
-       DBG(__LINE__);
-       for (v = 0; v < alphaSize; v++) {
-         DBG(__LINE__); // prevents vectorization?
-         rfreq[t][v] = 0;
-       }
-     }
-     nSelectors = 0;
-     totc = 0;
-     gs = 0;
-     while (True) {
-       DBG(__LINE__); // easy anchor
 
-       /*--- Set group start & end marks. --*/
-       if (gs >= nMTF) break;
-       ge = gs + G_SIZE - 1;
-       if (ge >= nMTF) ge = nMTF-1;
+      for (t = 0; t < nGroups; t++) fave[t] = 0;
 
-       /*--
-         Calculate the cost of this group as coded
-         by each of the coding tables.
+      for (t = 0; t < nGroups; t++)
+         for (v = 0; v < alphaSize; v++)
+            rfreq[t][v] = 0;
+
+      nSelectors = 0;
+      totc = 0;
+      gs = 0;
+      while (True) {
+
+         /*--- Set group start & end marks. --*/
+         if (gs >= nMTF) break;
+         ge = gs + G_SIZE - 1; 
+         if (ge >= nMTF) ge = nMTF-1;
+
+         /*-- 
+            Calculate the cost of this group as coded
+            by each of the coding tables.
          --*/
-       calculateGroupCost(nGroups, gs, ge);
+         for (t = 0; t < nGroups; t++) cost[t] = 0;
 
-       /*--
-         Find the coding table which is best for this group,
-         and record its identity in the selector table.
+         if (nGroups == 6) {
+            register UInt16 cost0, cost1, cost2, cost3, cost4, cost5;
+            cost0 = cost1 = cost2 = cost3 = cost4 = cost5 = 0;
+            for (i = gs; i <= ge; i++) { 
+               UInt16 icv = szptr[i];
+               cost0 += len[0][icv];
+               cost1 += len[1][icv];
+               cost2 += len[2][icv];
+               cost3 += len[3][icv];
+               cost4 += len[4][icv];
+               cost5 += len[5][icv];
+            }
+            cost[0] = cost0; cost[1] = cost1; cost[2] = cost2;
+            cost[3] = cost3; cost[4] = cost4; cost[5] = cost5;
+         } else {
+            for (i = gs; i <= ge; i++) { 
+               UInt16 icv = szptr[i];
+               for (t = 0; t < nGroups; t++) cost[t] += len[t][icv];
+            }
+         }
+ 
+         /*-- 
+            Find the coding table which is best for this group,
+            and record its identity in the selector table.
          --*/
-       bc = 999999999; bt = -1;
-       for (t = 0; t < nGroups; t++) {
-         DBG(__LINE__);
-         if (cost[t] < bc) { bc = cost[t]; bt = t; };
-       }
-       totc += bc;
-       fave[bt]++;
-       selector[nSelectors] = bt;
-       nSelectors++;
+         bc = 999999999; bt = -1;
+         for (t = 0; t < nGroups; t++)
+            if (cost[t] < bc) { bc = cost[t]; bt = t; };
+         totc += bc;
+         fave[bt]++;
+         selector[nSelectors] = bt;
+         nSelectors++;
 
-       /*--
-         Increment the symbol frequencies for the selected table.
-         --*/
-       for (i = gs; i <= ge; i++) {
-         DBG(__LINE__); // easy anchor, vectorization does not happen because szptr may alias with rfreq?
-         rfreq[bt][ szptr[i] ]++;
-       }
-       gs = ge+1;
-     }
-     if (verbosity >= 3) {
-       fprintf ( stderr,
-           "      pass %d: size is %d, grp uses are ",
-           iter+1, totc/8 );
-       for (t = 0; t < nGroups; t++)
-         fprintf ( stderr, "%d ", fave[t] );
-       fprintf ( stderr, "\n" );
-     }
+         /*-- 
+            Increment the symbol frequencies for the selected table.
+          --*/
+         for (i = gs; i <= ge; i++)
+            rfreq[bt][ szptr[i] ]++;
 
-     /*--
-       Recompute the tables based on the accumulated frequencies.
-       --*/
-     for (t = 0; t < nGroups; t++) {
-       hbMakeCodeLengths ( &len[t][0], &rfreq[t][0], alphaSize, 20 );
-     }
+         gs = ge+1;
+      }
+      if (verbosity >= 3) {
+         fprintf ( stderr, 
+                   "      pass %d: size is %d, grp uses are ", 
+                   iter+1, totc/8 );
+         for (t = 0; t < nGroups; t++)
+            fprintf ( stderr, "%d ", fave[t] );
+         fprintf ( stderr, "\n" );
+      }
+
+      /*--
+        Recompute the tables based on the accumulated frequencies.
+      --*/
+      for (t = 0; t < nGroups; t++)
+         hbMakeCodeLengths ( &len[t][0], &rfreq[t][0], alphaSize, 20 );
    }
 
 
@@ -1794,22 +1492,116 @@ void sendMTFValues ( void )
 
 
    /*--- Compute MTF values for the selectors. ---*/
-   computeMTFforSelectors(nGroups, nSelectors);
+   {
+      UChar pos[N_GROUPS], ll_i, tmp2, tmp;
+      for (i = 0; i < nGroups; i++) pos[i] = i;
+      for (i = 0; i < nSelectors; i++) {
+         ll_i = selector[i];
+         j = 0;
+         tmp = pos[j];
+         while ( ll_i != tmp ) {
+            j++;
+            tmp2 = tmp;
+            tmp = pos[j];
+            pos[j] = tmp2;
+         };
+         pos[0] = tmp;
+         selectorMtf[i] = j;
+      }
+   };
 
    /*--- Assign actual codes for the tables. --*/
-   assignActualCodes(nGroups, alphaSize);
+   for (t = 0; t < nGroups; t++) {
+      minLen = 32;
+      maxLen = 0;
+      for (i = 0; i < alphaSize; i++) {
+         if (len[t][i] > maxLen) maxLen = len[t][i];
+         if (len[t][i] < minLen) minLen = len[t][i];
+      }
+      if (maxLen > 20) panic ( "sendMTFValues(3)" );
+      if (minLen < 1)  panic ( "sendMTFValues(4)" );
+      hbAssignCodes ( &code[t][0], &len[t][0], 
+                      minLen, maxLen, alphaSize );
+   }
 
    /*--- Transmit the mapping table. ---*/
-   transmitMappingTable();
+   { 
+      Bool inUse16[16];
+      for (i = 0; i < 16; i++) {
+          inUse16[i] = False;
+          for (j = 0; j < 16; j++)
+             if (inUse[i * 16 + j]) inUse16[i] = True;
+      }
+     
+      nBytes = bytesOut;
+      for (i = 0; i < 16; i++)
+         if (inUse16[i]) bsW(1,1); else bsW(1,0);
+
+      for (i = 0; i < 16; i++)
+	if (inUse16[i]) {
+	  for (j = 0; j < 16; j++) {
+	    if (inUse[i * 16 + j]) {
+	      bsW(1,1);
+	    } else {
+	      bsW(1,0);
+	    }
+	  }
+	}
+
+      if (verbosity >= 3) 
+         fprintf ( stderr, "      bytes: mapping %d, ", bytesOut-nBytes );
+   }
 
    /*--- Now the selectors. ---*/
-   transmitSelectors(nGroups, nSelectors);
+   nBytes = bytesOut;
+   bsW ( 3, nGroups );
+   bsW ( 15, nSelectors );
+   for (i = 0; i < nSelectors; i++) { 
+      for (j = 0; j < selectorMtf[i]; j++) bsW(1,1);
+      bsW(1,0);
+   }
+   if (verbosity >= 3)
+      fprintf ( stderr, "selectors %d, ", bytesOut-nBytes );
 
    /*--- Now the coding tables. ---*/
-   transmitCodingTables(nGroups, alphaSize);
+   nBytes = bytesOut;
+
+   for (t = 0; t < nGroups; t++) {
+      Int32 curr = len[t][0];
+      bsW ( 5, curr );
+      for (i = 0; i < alphaSize; i++) {
+         while (curr < len[t][i]) { bsW(2,2); curr++; /* 10 */ };
+         while (curr > len[t][i]) { bsW(2,3); curr--; /* 11 */ };
+         bsW ( 1, 0 );
+      }
+   }
+
+   if (verbosity >= 3)
+      fprintf ( stderr, "code lengths %d, ", bytesOut-nBytes );
 
    /*--- And finally, the block data proper ---*/
-   transmitBlockData(nGroups, nSelectors);
+   nBytes = bytesOut;
+   selCtr = 0;
+   gs = 0;
+   while (True) {
+      if (gs >= nMTF) break;
+      ge = gs + G_SIZE - 1; 
+      if (ge >= nMTF) ge = nMTF-1;
+      for (i = gs; i <= ge; i++) { 
+         #if DEBUG
+            assert (selector[selCtr] < nGroups);
+         #endif
+         bsW ( len  [selector[selCtr]] [szptr[i]],
+               code [selector[selCtr]] [szptr[i]] );
+      }
+
+      gs = ge+1;
+      selCtr++;
+   }
+   if (!(selCtr == nSelectors)) panic ( "sendMTFValues(5)" );
+
+   if (verbosity >= 3)
+      fprintf ( stderr, "codes %d\n", bytesOut-nBytes );
 }
 
 
@@ -1821,70 +1613,27 @@ void moveToFrontCodeAndSend ( void )
    sendMTFValues();
 }
 
-/*---------------------------------------------*/
-// XXX this loop gets vectorized
-// moved to separate function to test inference
-// for rest of the code
-void initinUseToFalse()
-{
-  Int32 i;
-  for (i = 0; i < 256; i++) {
-    inUse[i] = False;
-  }
-}
-
-/*---------------------------------------------*/
-void createHuffmanDecodeTables(Int32 nGroups, Int32 alphaSize)
-{
-  Int32 t, i, minLen, maxLen;
-  for (t = 0; t < nGroups; t++) {
-    minLen = 32;
-    maxLen = 0;
-    for (i = 0; i < alphaSize; i++) {
-      DBG(__LINE__); // need to prevent vectorization
-      if (len[t][i] > maxLen) maxLen = len[t][i];
-      if (len[t][i] < minLen) minLen = len[t][i];
-    }
-    hbCreateDecodeTables (
-        &limit[t][0], &base[t][0], &perm[t][0], &len[t][0],
-        minLen, maxLen, alphaSize
-        );
-    minLens[t] = minLen;
-  }
-}
-
-// local array made global
-UChar pos[N_GROUPS];
-
-void initpos(Int32 nGroups)
-{
-  UChar v;;
-  for (v = 0; v < nGroups; v++) {
-    DBG(__LINE__); // required to prevent vectorization with RODATA load
-    pos[v] = v;
-  }
-}
 
 /*---------------------------------------------*/
 void recvDecodingTables ( void )
 {
    Int32 i, j, t, nGroups, nSelectors, alphaSize;
    Int32 minLen, maxLen;
-   //Bool inUse16[16];
+   Bool inUse16[16];
 
    /*--- Receive the mapping table ---*/
-   for (i = 0; i < 16; i++) {
+   for (i = 0; i < 16; i++)
       if (bsR(1) == 1) 
          inUse16[i] = True; else 
          inUse16[i] = False;
-   }
-   initinUseToFalse();
 
-   for (i = 0; i < 16; i++) {
+   for (i = 0; i < 256; i++) inUse[i] = False;
+
+   for (i = 0; i < 16; i++)
       if (inUse16[i])
          for (j = 0; j < 16; j++)
             if (bsR(1) == 1) inUse[i * 16 + j] = True;
-   }
+
    makeMaps();
    alphaSize = nInUse+2;
 
@@ -1893,24 +1642,19 @@ void recvDecodingTables ( void )
    nSelectors = bsR ( 15 );
    for (i = 0; i < nSelectors; i++) {
       j = 0;
-      while (bsR(1) == 1) {
-        j++;
-      }
+      while (bsR(1) == 1) j++;
       selectorMtf[i] = j;
    }
 
    /*--- Undo the MTF values for the selectors. ---*/
    {
-      //UChar pos[N_GROUPS], tmp, v;
-      UChar tmp, v;
-      initpos(nGroups);
+      UChar pos[N_GROUPS], tmp, v;
+      for (v = 0; v < nGroups; v++) pos[v] = v;
    
       for (i = 0; i < nSelectors; i++) {
          v = selectorMtf[i];
          tmp = pos[v];
-         while (v > 0) {
-           pos[v] = pos[v-1]; v--;
-         }
+         while (v > 0) { pos[v] = pos[v-1]; v--; }
          pos[0] = tmp;
          selector[i] = tmp;
       }
@@ -1928,158 +1672,139 @@ void recvDecodingTables ( void )
    }
 
    /*--- Create the Huffman decoding tables ---*/
-   createHuffmanDecodeTables(nGroups, alphaSize);
+   for (t = 0; t < nGroups; t++) {
+      minLen = 32;
+      maxLen = 0;
+      for (i = 0; i < alphaSize; i++) {
+         if (len[t][i] > maxLen) maxLen = len[t][i];
+         if (len[t][i] < minLen) minLen = len[t][i];
+      }
+      hbCreateDecodeTables ( 
+         &limit[t][0], &base[t][0], &perm[t][0], &len[t][0],
+         minLen, maxLen, alphaSize
+      );
+      minLens[t] = minLen;
+   }
 }
 
 
 /*---------------------------------------------*/
-Int32 get_mtf_val_inner(Int32 groupNo)
-{
-   Int32 zt, zn, zvec, zj;
-   zt = selector[groupNo];
-   zn = minLens[zt];
-   zvec = bsR ( zn );
-   while (zvec > limit[zt][zn]) {
-      zn++; bsR1(zj);
-      zvec = (zvec << 1) | zj;
-   };
-   return (perm[zt][zvec - base[zt][zn]]);
-}
-
 #define GET_MTF_VAL(lval)                 \
 {                                         \
-   /*Int32 zt, zn, zvec, zj;*/            \
+   Int32 zt, zn, zvec, zj;                \
    if (groupPos == 0) {                   \
       groupNo++;                          \
       groupPos = G_SIZE;                  \
    }                                      \
    groupPos--;                            \
-   lval = get_mtf_val_inner(groupNo);     \
-   /*zt = selector[groupNo];              \
+   zt = selector[groupNo];                \
    zn = minLens[zt];                      \
    zvec = bsR ( zn );                     \
    while (zvec > limit[zt][zn]) {         \
       zn++; bsR1(zj);                     \
       zvec = (zvec << 1) | zj;            \
    };                                     \
-   lval = perm[zt][zvec - base[zt][zn]];*/\
+   lval = perm[zt][zvec - base[zt][zn]];  \
 }
 
-
-void initUnzftab()
-{
-  Int32 i;
-  for (i = 0; i <= 255; i++) {
-    unzftab[i] = 0;
-  }
-}
 
 /*---------------------------------------------*/
 void getAndMoveToFrontDecode ( void )
 {
-  //UChar  yy[256];
-  Int32  i, j, nextSym, limitLast;
-  Int32  EOB, groupNo, groupPos;
+   UChar  yy[256];
+   Int32  i, j, nextSym, limitLast;
+   Int32  EOB, groupNo, groupPos;
 
-  limitLast = 100000 * blockSize100k;
-  origPtr   = bsGetIntVS ( 24 );
+   limitLast = 100000 * blockSize100k;
+   origPtr   = bsGetIntVS ( 24 );
 
-  recvDecodingTables();
-  EOB      = nInUse+1;
-  groupNo  = -1;
-  groupPos = 0;
+   recvDecodingTables();
+   EOB      = nInUse+1;
+   groupNo  = -1;
+   groupPos = 0;
 
-  /*--
-    Setting up the unzftab entries here is not strictly
-    necessary, but it does save having to do it later
-    in a separate pass, and so saves a block's worth of
-    cache misses.
-    --*/
-  initUnzftab();
+   /*--
+      Setting up the unzftab entries here is not strictly
+      necessary, but it does save having to do it later
+      in a separate pass, and so saves a block's worth of
+      cache misses.
+   --*/
+   for (i = 0; i <= 255; i++) unzftab[i] = 0;
 
-  inityy(256);
+   for (i = 0; i <= 255; i++) yy[i] = (UChar) i;
 
+   last = -1;
 
-  last = -1;
+   GET_MTF_VAL(nextSym);
 
-  GET_MTF_VAL(nextSym);
+   while (True) {
 
-  while (True) {
-    DBG(__LINE__);
+      if (nextSym == EOB) break;
 
-    if (nextSym == EOB) break;
+      if (nextSym == RUNA || nextSym == RUNB) {
+         UChar ch;
+         Int32 s = -1;
+         Int32 N = 1;
+         do {
+            if (nextSym == RUNA) s = s + (0+1) * N; else
+            if (nextSym == RUNB) s = s + (1+1) * N;
+            N = N * 2;
+            GET_MTF_VAL(nextSym);
+         }
+            while (nextSym == RUNA || nextSym == RUNB);
 
-    if (nextSym == RUNA || nextSym == RUNB) {
-      UChar ch;
-      Int32 s = -1;
-      Int32 N = 1;
-      do {
-        DBG(__LINE__);
-        if (nextSym == RUNA) s = s + (0+1) * N; else
-          if (nextSym == RUNB) s = s + (1+1) * N;
-        N = N * 2;
-        GET_MTF_VAL(nextSym);
+         s++;
+         ch = seqToUnseq[yy[0]];
+         unzftab[ch] += s;
+
+         if (smallMode)
+            while (s > 0) {
+               last++; 
+               ll16[last] = ch;
+               s--;
+            }
+         else
+            while (s > 0) {
+               last++;
+               ll8[last] = ch;
+               s--;
+            };
+
+         if (last >= limitLast) blockOverrun();
+         continue;
+
+      } else {
+
+         UChar tmp;
+         last++; if (last >= limitLast) blockOverrun();
+
+         tmp = yy[nextSym-1];
+         unzftab[seqToUnseq[tmp]]++;
+         if (smallMode)
+            ll16[last] = seqToUnseq[tmp]; else
+            ll8[last]  = seqToUnseq[tmp];
+
+         /*--
+            This loop is hammered during decompression,
+            hence the unrolling.
+
+            for (j = nextSym-1; j > 0; j--) yy[j] = yy[j-1];
+         --*/
+
+         j = nextSym-1;
+         for (; j > 3; j -= 4) {
+            yy[j]   = yy[j-1];
+            yy[j-1] = yy[j-2];
+            yy[j-2] = yy[j-3];
+            yy[j-3] = yy[j-4];
+         }
+         for (; j > 0; j--) yy[j] = yy[j-1];
+
+         yy[0] = tmp;
+         GET_MTF_VAL(nextSym);
+         continue;
       }
-      while (nextSym == RUNA || nextSym == RUNB);
-
-      s++;
-      ch = seqToUnseq[yy[0]];
-      unzftab[ch] += s;
-
-      if (smallMode)
-        while (s > 0) {
-          DBG(__LINE__);
-          last++; 
-          ll16[last] = ch;
-          s--;
-        }
-      else
-        while (s > 0) {
-          DBG(__LINE__);
-          last++;
-          ll8[last] = ch;
-          s--;
-        };
-
-      if (last >= limitLast) blockOverrun();
-      continue;
-
-    } else {
-
-      UChar tmp;
-      last++; if (last >= limitLast) blockOverrun();
-
-      tmp = yy[nextSym-1];
-      unzftab[seqToUnseq[tmp]]++;
-      if (smallMode)
-        ll16[last] = seqToUnseq[tmp]; else
-          ll8[last]  = seqToUnseq[tmp];
-
-      /*--
-        This loop is hammered during decompression,
-        hence the unrolling.
-
-        for (j = nextSym-1; j > 0; j--) yy[j] = yy[j-1];
-        --*/
-
-      j = nextSym-1;
-      for (; j > 3; j -= 4) {
-        DBG(__LINE__);
-        yy[j]   = yy[j-1];
-        yy[j-1] = yy[j-2];
-        yy[j-2] = yy[j-3];
-        yy[j-3] = yy[j-4];
-      }
-      for (; j > 0; j--) {
-        DBG(__LINE__);
-        yy[j] = yy[j-1];
-      }
-
-      yy[0] = tmp;
-      GET_MTF_VAL(nextSym);
-      continue;
-    }
-  }
+   }
 }
 
 
@@ -2144,6 +1869,7 @@ INLINE Bool fullGtU ( Int32 i1, Int32 i2 )
    k = last + 1;
 
    do {
+
       c1 = block[i1];
       c2 = block[i2];
       if (c1 != c2) return (c1 > c2);
@@ -2207,21 +1933,16 @@ void simpleSort ( Int32 lo, Int32 hi, Int32 d )
    if (bigN < 2) return;
 
    hp = 0;
-   while (incs[hp] < bigN) {
-     DBG(__LINE__);
-     hp++;
-   }
+   while (incs[hp] < bigN) hp++;
    hp--;
 
    for (; hp >= 0; hp--) {
-      DBG(__LINE__);
       h = incs[hp];
       if (verbosity >= 5) 
          fprintf ( stderr, "          shell increment %d\n", h );
 
       i = lo + h;
       while (True) {
-         DBG(__LINE__);
 
          /*-- copy 1 --*/
          if (i > hi) break;
@@ -2325,19 +2046,16 @@ typedef
 #define QSORT_STACK_SIZE 1000
 
 
-// XXX local array turned global
-StackElem stack[QSORT_STACK_SIZE];
 void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
 {
    Int32 unLo, unHi, ltLo, gtHi, med, n, m;
    Int32 sp, lo, hi, d;
-   //StackElem stack[QSORT_STACK_SIZE];
+   StackElem stack[QSORT_STACK_SIZE];
 
    sp = 0;
    push ( loSt, hiSt, dSt );
 
    while (sp > 0) {
-      DBG(__LINE__);
 
       if (sp >= QSORT_STACK_SIZE) panic ( "stack overflow in qSort3" );
 
@@ -2357,9 +2075,7 @@ void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
       unHi = gtHi = hi;
 
       while (True) {
-        DBG(__LINE__);
          while (True) {
-            DBG(__LINE__);
             if (unLo > unHi) break;
             n = ((Int32)block[zptr[unLo]+d]) - med;
             if (n == 0) { swap(zptr[unLo], zptr[ltLo]); ltLo++; unLo++; continue; };
@@ -2367,7 +2083,6 @@ void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
             unLo++;
          }
          while (True) {
-            DBG(__LINE__);
             if (unLo > unHi) break;
             n = ((Int32)block[zptr[unHi]+d]) - med;
             if (n == 0) { swap(zptr[unHi], zptr[gtHi]); gtHi--; unHi--; continue; };
@@ -2406,269 +2121,187 @@ void qSort3 ( Int32 loSt, Int32 hiSt, Int32 dSt )
 #define SETMASK (1 << 21)
 #define CLEARMASK (~(SETMASK))
 
-// local arrays made global
-Int32 runningOrder[256];
-Int32 copy[256];
-Bool bigDone[256];
-
-void initrunningOrder()
-{
-  Int32 i;
-  for (i = 0; i <= 255; i++) {
-    DBG(__LINE__); // required to prevent vectorization with RODATA load
-    runningOrder[i] = i;
-  }
-}
-
-void initbigDone()
-{
-  Int32 i;
-  for (i = 0; i <= 255; i++) {
-    bigDone[i] = False;
-  }
-}
-
-// XXX does not pass without fcalls
-void initftab()
-{
-  Int32 i, j;
-  UChar c1, c2;
-  for (i = 0; i <= 65536; i++) {
-    DBG(__LINE__);
-    ftab[i] = 0;
-  }
-
-  c1 = block[-1];
-  for (i = 0; i <= last; i++) {
-    DBG(__LINE__);
-    c2 = block[i];
-    ftab[(c1 << 8) + c2]++;
-    c1 = c2;
-  }
-
-  for (i = 1; i <= 65536; i++) {
-    DBG(__LINE__);
-    ftab[i] += ftab[i-1];
-  }
-
-  c1 = block[0];
-  for (i = 0; i < last; i++) {
-    DBG(__LINE__);
-    c2 = block[i+1];
-    j = (c1 << 8) + c2;
-    c1 = c2;
-    ftab[j]--;
-    zptr[ftab[j]] = i;
-  }
-  j = (block[last] << 8) + block[0];
-  ftab[j]--;
-  zptr[ftab[j]] = last;
-}
-
-Int32 h; // made global to prevent closed form computation
-Int32 calculateh()
-{
-  h = 1;
-  do {
-    DBG(__LINE__); // required to prevent closed form computation
-    h = 3 * h + 1;
-  } while (h <= 256);
-  return h;
-}
-
-void calculateRunningOrder()
-{
-  Int32 i, j;
-  Int32 vv;
-  Int32 h = calculateh();
-  do {
-    h = h / 3;
-    for (i = h; i <= 255; i++) {
-      DBG(__LINE__);
-      vv = runningOrder[i];
-      j = i;
-      while ( BIGFREQ(runningOrder[j-h]) > BIGFREQ(vv) ) {
-        DBG(__LINE__);
-        runningOrder[j] = runningOrder[j-h];
-        j = j - h;
-        if (j <= (h - 1)) goto zero;
-      }
-zero:
-      runningOrder[j] = vv;
-    }
-  } while (h != 1);
-}
-
-void setupOvershootArea()
-{
-  Int32 i;
-  for (i = 0; i < NUM_OVERSHOOT_BYTES; i++) {
-    block[last+i+1] = block[i % (last+1)];
-  }
-  for (i = 0; i <= last+NUM_OVERSHOOT_BYTES; i++) {
-    quadrant[i] = 0;
-  }
-  block[-1] = block[last];
-}
-
-void synthesisSortedOrderforSmallBuckets(Int32 ss)
-{
-  Int32 j;
-
-  for (j = 0; j <= 255; j++) {
-    copy[j] = ftab[(j << 8) + ss] & CLEARMASK;
-  }
-  for (j = ftab[ss << 8] & CLEARMASK;
-      j < (ftab[(ss+1) << 8] & CLEARMASK);
-      j++) {
-    DBG(__LINE__);
-    UChar c1 = block[zptr[j]-1];
-    if ( ! bigDone[c1] ) {
-      zptr[copy[c1]] = zptr[j] == 0 ? last : zptr[j] - 1;
-      copy[c1] ++;
-    }
-  }
-
-  for (j = 0; j <= 255; j++) {
-    ftab[(j << 8) + ss] |= SETMASK;
-  }
-}
-
-void updateQuadrantDescriptors(Int32 ss)
-{
-  Int32 j;
-  Int32 bbStart  = ftab[ss << 8] & CLEARMASK;
-  Int32 bbSize   = (ftab[(ss+1) << 8] & CLEARMASK) - bbStart;
-  Int32 shifts   = 0;
-
-  while ((bbSize >> shifts) > 65534) {
-    shifts++;
-  }
-  for (j = 0; j < bbSize; j++) {
-    DBG(__LINE__);
-    Int32 a2update     = zptr[bbStart + j];
-    UInt16 qVal        = (UInt16)(j >> shifts);
-    quadrant[a2update] = qVal;
-    if (a2update < NUM_OVERSHOOT_BYTES)
-      quadrant[a2update + last + 1] = qVal;
-  }
-
-  if (! ( ((bbSize-1) >> shifts) <= 65535 )) panic ( "sortIt" );
-}
-
 void sortIt ( void )
 {
-  Int32 i, j, ss, sb;
-  //Int32 runningOrder[256];
-  //Int32 copy[256];
-  //Bool bigDone[256];
-  UChar c1, c2;
-  Int32 numQSorted;
+   Int32 i, j, ss, sb;
+   Int32 runningOrder[256];
+   Int32 copy[256];
+   Bool bigDone[256];
+   UChar c1, c2;
+   Int32 numQSorted;
 
-  /*--
-    In the various block-sized structures, live data runs
-    from 0 to last+NUM_OVERSHOOT_BYTES inclusive.  First,
-    set up the overshoot area for block.
-    --*/
+   /*--
+      In the various block-sized structures, live data runs
+      from 0 to last+NUM_OVERSHOOT_BYTES inclusive.  First,
+      set up the overshoot area for block.
+   --*/
 
-  if (verbosity >= 4) fprintf ( stderr, "        sort initialise ...\n" );
-  setupOvershootArea();
+   if (verbosity >= 4) fprintf ( stderr, "        sort initialise ...\n" );
+   for (i = 0; i < NUM_OVERSHOOT_BYTES; i++)
+       block[last+i+1] = block[i % (last+1)];
+   for (i = 0; i <= last+NUM_OVERSHOOT_BYTES; i++)
+       quadrant[i] = 0;
 
-  if (last < 4000) {
+   block[-1] = block[last];
 
-    /*--
-      Use simpleSort(), since the full sorting mechanism
-      has quite a large constant overhead.
-      --*/
-    if (verbosity >= 4) fprintf ( stderr, "        simpleSort ...\n" );
-    for (i = 0; i <= last; i++) {
-      DBG(__LINE__);
-      zptr[i] = i;
-    }
-    firstAttempt = False;
-    workDone = workLimit = 0;
-    simpleSort ( 0, last, 0 );
-    if (verbosity >= 4) fprintf ( stderr, "        simpleSort done.\n" );
-
-  } else {
-
-    numQSorted = 0;
-    initbigDone();
-
-    if (verbosity >= 4) fprintf ( stderr, "        bucket sorting ...\n" );
-
-    initftab();
-    /*--
-      Now ftab contains the first loc of every small bucket.
-      Calculate the running order, from smallest to largest
-      big bucket.
-      --*/
-
-    initrunningOrder();
-    calculateRunningOrder();
-
-    /*--
-      The main sorting loop.
-      --*/
-
-    for (i = 0; i <= 255; i++) {
-      DBG(__LINE__);
+   if (last < 4000) {
 
       /*--
-        Process big buckets, starting with the least full.
-        --*/
-      ss = runningOrder[i];
+         Use simpleSort(), since the full sorting mechanism
+         has quite a large constant overhead.
+      --*/
+      if (verbosity >= 4) fprintf ( stderr, "        simpleSort ...\n" );
+      for (i = 0; i <= last; i++) zptr[i] = i;
+      firstAttempt = False;
+      workDone = workLimit = 0;
+      simpleSort ( 0, last, 0 );
+      if (verbosity >= 4) fprintf ( stderr, "        simpleSort done.\n" );
+
+   } else {
+
+      numQSorted = 0;
+      for (i = 0; i <= 255; i++) bigDone[i] = False;
+
+      if (verbosity >= 4) fprintf ( stderr, "        bucket sorting ...\n" );
+
+      for (i = 0; i <= 65536; i++) ftab[i] = 0;
+
+      c1 = block[-1];
+      for (i = 0; i <= last; i++) {
+         c2 = block[i];
+         ftab[(c1 << 8) + c2]++;
+         c1 = c2;
+      }
+
+      for (i = 1; i <= 65536; i++) ftab[i] += ftab[i-1];
+
+      c1 = block[0];
+      for (i = 0; i < last; i++) {
+         c2 = block[i+1];
+         j = (c1 << 8) + c2;
+         c1 = c2;
+         ftab[j]--;
+         zptr[ftab[j]] = i;
+      }
+      j = (block[last] << 8) + block[0];
+      ftab[j]--;
+      zptr[ftab[j]] = last;
 
       /*--
-        Complete the big bucket [ss] by quicksorting
-        any unsorted small buckets [ss, j].  Hopefully
-        previous pointer-scanning phases have already
-        completed many of the small buckets [ss, j], so
-        we don't have to sort them at all.
-        --*/
-      for (j = 0; j <= 255; j++) {
-        DBG(__LINE__);
-        sb = (ss << 8) + j;
-        if ( ! (ftab[sb] & SETMASK) ) {
-          Int32 lo = ftab[sb]   & CLEARMASK;
-          Int32 hi = (ftab[sb+1] & CLEARMASK) - 1;
-          if (hi > lo) {
-            if (verbosity >= 4)
-              fprintf ( stderr,
-                  "        qsort [0x%x, 0x%x]   done %d   this %d\n",
-                  ss, j, numQSorted, hi - lo + 1 );
-            qSort3 ( lo, hi, 2 );
-            numQSorted += ( hi - lo + 1 );
-            if (workDone > workLimit && firstAttempt) return;
-          }
-          ftab[sb] |= SETMASK;
-        }
+         Now ftab contains the first loc of every small bucket.
+         Calculate the running order, from smallest to largest
+         big bucket.
+      --*/
+
+      for (i = 0; i <= 255; i++) runningOrder[i] = i;
+
+      {
+         Int32 vv;
+         Int32 h = 1;
+         do h = 3 * h + 1; while (h <= 256);
+         do {
+            h = h / 3;
+            for (i = h; i <= 255; i++) {
+               vv = runningOrder[i];
+               j = i;
+               while ( BIGFREQ(runningOrder[j-h]) > BIGFREQ(vv) ) {
+                  runningOrder[j] = runningOrder[j-h];
+                  j = j - h;
+                  if (j <= (h - 1)) goto zero;
+               }
+               zero:
+               runningOrder[j] = vv;
+            }
+         } while (h != 1);
       }
 
       /*--
-        The ss big bucket is now done.  Record this fact,
-        and update the quadrant descriptors.  Remember to
-        update quadrants in the overshoot area too, if
-        necessary.  The "if (i < 255)" test merely skips
-        this updating for the last bucket processed, since
-        updating for the last bucket is pointless.
-        --*/
-      bigDone[ss] = True;
+         The main sorting loop.
+      --*/
 
-      if (i < 255) {
-        updateQuadrantDescriptors(ss);
+      for (i = 0; i <= 255; i++) {
+
+         /*--
+            Process big buckets, starting with the least full.
+         --*/
+         ss = runningOrder[i];
+
+         /*--
+            Complete the big bucket [ss] by quicksorting
+            any unsorted small buckets [ss, j].  Hopefully
+            previous pointer-scanning phases have already
+            completed many of the small buckets [ss, j], so
+            we don't have to sort them at all.
+         --*/
+         for (j = 0; j <= 255; j++) {
+            sb = (ss << 8) + j;
+            if ( ! (ftab[sb] & SETMASK) ) {
+               Int32 lo = ftab[sb]   & CLEARMASK;
+               Int32 hi = (ftab[sb+1] & CLEARMASK) - 1;
+               if (hi > lo) {
+                  if (verbosity >= 4)
+                     fprintf ( stderr,
+                               "        qsort [0x%x, 0x%x]   done %d   this %d\n",
+                               ss, j, numQSorted, hi - lo + 1 );
+                  qSort3 ( lo, hi, 2 );
+                  numQSorted += ( hi - lo + 1 );
+                  if (workDone > workLimit && firstAttempt) return;
+               }
+               ftab[sb] |= SETMASK;
+            }
+         }
+
+         /*--
+            The ss big bucket is now done.  Record this fact,
+            and update the quadrant descriptors.  Remember to
+            update quadrants in the overshoot area too, if
+            necessary.  The "if (i < 255)" test merely skips
+            this updating for the last bucket processed, since
+            updating for the last bucket is pointless.
+         --*/
+         bigDone[ss] = True;
+
+         if (i < 255) {
+            Int32 bbStart  = ftab[ss << 8] & CLEARMASK;
+            Int32 bbSize   = (ftab[(ss+1) << 8] & CLEARMASK) - bbStart;
+            Int32 shifts   = 0;
+
+            while ((bbSize >> shifts) > 65534) shifts++;
+
+            for (j = 0; j < bbSize; j++) {
+               Int32 a2update     = zptr[bbStart + j];
+               UInt16 qVal        = (UInt16)(j >> shifts);
+               quadrant[a2update] = qVal;
+               if (a2update < NUM_OVERSHOOT_BYTES)
+                  quadrant[a2update + last + 1] = qVal;
+            }
+
+            if (! ( ((bbSize-1) >> shifts) <= 65535 )) panic ( "sortIt" );
+         }
+
+         /*--
+            Now scan this big bucket so as to synthesise the
+            sorted order for small buckets [t, ss] for all t != ss.
+         --*/
+         for (j = 0; j <= 255; j++)
+            copy[j] = ftab[(j << 8) + ss] & CLEARMASK;
+
+         for (j = ftab[ss << 8] & CLEARMASK;
+              j < (ftab[(ss+1) << 8] & CLEARMASK);
+              j++) {
+            c1 = block[zptr[j]-1];
+            if ( ! bigDone[c1] ) {
+               zptr[copy[c1]] = zptr[j] == 0 ? last : zptr[j] - 1;
+               copy[c1] ++;
+            }
+         }
+
+         for (j = 0; j <= 255; j++) ftab[(j << 8) + ss] |= SETMASK;
       }
-
-      /*--
-        Now scan this big bucket so as to synthesise the
-        sorted order for small buckets [t, ss] for all t != ss.
-        --*/
-      synthesisSortedOrderforSmallBuckets(ss);
-    }
-    if (verbosity >= 4)
-      fprintf ( stderr, "        %d pointers, %d sorted, %d scanned\n",
-          last+1, numQSorted, (last+1) - numQSorted );
-  }
+      if (verbosity >= 4)
+         fprintf ( stderr, "        %d pointers, %d sorted, %d scanned\n",
+                           last+1, numQSorted, (last+1) - numQSorted );
+   }
 }
 
 
@@ -2757,7 +2390,7 @@ void randomiseBlock ( void )
 {
    Int32 i;
    RAND_DECLS;
-   initinUseToFalse();
+   for (i = 0; i < 256; i++) inUse[i] = False;
 
    for (i = 0; i <= last; i++) {
       RAND_UPD_MASK;
@@ -2782,8 +2415,8 @@ void doReversibleTransformation ( void )
    sortIt ();
 
    if (verbosity >= 3)
-      fprintf ( stderr, "      %d work, %d block\n",
-                        workDone, last);
+      fprintf ( stderr, "      %d work, %d block, ratio %5.2f\n",
+                        workDone, last, (float)workDone / (float)(last) );
 
    if (workDone > workLimit && firstAttempt) {
       if (verbosity >= 2)
@@ -2794,15 +2427,15 @@ void doReversibleTransformation ( void )
       firstAttempt = False;
       sortIt();
       if (verbosity >= 3)
-         fprintf ( stderr, "      %d work, %d block\n",
-                           workDone, last);
+         fprintf ( stderr, "      %d work, %d block, ratio %f\n",
+                           workDone, last, (float)workDone / (float)(last) );
    }
 
    origPtr = -1;
-   for (i = 0; i <= last; i++) {
+   for (i = 0; i <= last; i++)
        if (zptr[i] == 0)
           { origPtr = i; break; };
-   }
+
    if (origPtr == -1) panic ( "doReversibleTransformation" );
 }
 
@@ -2829,38 +2462,13 @@ INLINE Int32 indexIntoF ( Int32 indx, Int32 *cftab )
       tPos = GET_LL(tPos);
 
 
-// XXX local array turned global -- required in both undoReversibleTransformation_{small,fast}
-Int32  cftab[257], cftabAlso[257];
-
-void setUpcftab()
-{
-  Int32 i;
-  cftab[0] = 0;
-  for (i = 1; i <= 256; i++) {
-    DBG(__LINE__); // required to prevent non-bisimilar transformation -- loop iterator and writes move from 256 down to 0
-    cftab[i] = unzftab[i-1];
-  }
-  for (i = 1; i <= 256; i++) {
-    DBG(__LINE__); // required because otherwise compiler hoists the load out of loop and the corresponding LLVM var is not added to eqclasses because it is defined inside the loop body and is not live at start of body.
-    cftab[i] += cftab[i-1];
-  }
-}
-
-void setUpcftabAlso()
-{
-  Int32 i;
-  for (i = 0; i <= 256; i++) {
-    cftabAlso[i] = cftab[i];
-  }
-}
-
 #ifdef SPEC_CPU2000
 void undoReversibleTransformation_small ( int dst )
 #else
 void undoReversibleTransformation_small ( FILE* dst )
 #endif
 {
-   //Int32  cftab[257], cftabAlso[257];
+   Int32  cftab[257], cftabAlso[257];
    Int32  i, j, tmp, tPos;
    UChar  ch;
 
@@ -2871,14 +2479,15 @@ void undoReversibleTransformation_small ( FILE* dst )
    --*/
 
    /*-- Set up cftab to facilitate generation of indexIntoF --*/
-   setUpcftab();
+   cftab[0] = 0;
+   for (i = 1; i <= 256; i++) cftab[i] = unzftab[i-1];
+   for (i = 1; i <= 256; i++) cftab[i] += cftab[i-1];
 
    /*-- Make a copy of it, used in generation of T --*/
-   setUpcftabAlso();
+   for (i = 0; i <= 256; i++) cftabAlso[i] = cftab[i];
 
    /*-- compute the T vector --*/
    for (i = 0; i <= last; i++) {
-      DBG(__LINE__);
       ch = (UChar)ll16[i];
       SET_LL(i, cftabAlso[ch]);
       cftabAlso[ch]++;
@@ -2904,7 +2513,6 @@ void undoReversibleTransformation_small ( FILE* dst )
    i = origPtr;
    j = GET_LL(i);
    do {
-      DBG(__LINE__);
       tmp = GET_LL(j);
       SET_LL(j, i);
       i = j;
@@ -2972,7 +2580,6 @@ void undoReversibleTransformation_small ( FILE* dst )
                      z ^= RAND_MASK;
                   }
                   for (j2 = 0;  j2 < (Int32)z;  j2++) {
-                     DBG(__LINE__);
                      if (dst) retVal = putc (ch2, dst);
                      UPDATE_CRC ( localCrc, (UChar)ch2 );
                   }
@@ -3004,7 +2611,7 @@ void undoReversibleTransformation_fast ( int dst )
 void undoReversibleTransformation_fast ( FILE* dst )
 #endif
 {
-   //Int32  cftab[257];
+   Int32  cftab[257];
    Int32  i, tPos;
    UChar  ch;
 
@@ -3015,7 +2622,9 @@ void undoReversibleTransformation_fast ( FILE* dst )
    --*/
 
    /*-- Set up cftab to facilitate generation of T^(-1) --*/
-   setUpcftab();
+   cftab[0] = 0;
+   for (i = 1; i <= 256; i++) cftab[i] = unzftab[i-1];
+   for (i = 1; i <= 256; i++) cftab[i] += cftab[i-1];
 
    /*-- compute the T^(-1) vector --*/
    for (i = 0; i <= last; i++) {
@@ -3169,9 +2778,8 @@ INLINE Int32 getRLEpair ( FILE* src )
       return (1 << 16) | ch;
    } else {
       Int32 i;
-      for (i = 1; i <= runLength; i++) {
+      for (i = 1; i <= runLength; i++)
          UPDATE_CRC ( globalCrc, (UChar)ch );
-      }
       return (runLength << 16) | ch;
    }
 }
@@ -3189,7 +2797,7 @@ void loadAndRLEsource ( FILE* src )
    last = -1;
    ch   = 0;
 
-   initinUseToFalse();
+   for (i = 0; i < 256; i++) inUse[i] = False;
 
    /*--- 20 is just a paranoia constant ---*/
    allowableBlockSize = 100000 * blockSize100k - 20;
@@ -3321,11 +2929,10 @@ void compressStream ( FILE *stream, FILE *zStream )
       ERROR_IF_NOT_ZERO ( ferror(zStream) );
    }
 
-   // XXX we cannot match ITE on RODATA function args
-   //if (verbosity >= 2 && nBlocksRandomised > 0)
-   //   fprintf ( stderr, "    %d block%s needed randomisation\n", 
-   //                     nBlocksRandomised,
-   //                     nBlocksRandomised == 1 ? "" : "s" );
+   if (verbosity >= 2 && nBlocksRandomised > 0)
+      fprintf ( stderr, "    %d block%s needed randomisation\n", 
+                        nBlocksRandomised,
+                        nBlocksRandomised == 1 ? "" : "s" );
 
    /*--
       Now another magic 48-bit number, 0x177245385090, to
@@ -3360,8 +2967,11 @@ void compressStream ( FILE *stream, FILE *zStream )
    if (bytesOut == 0) bytesOut = 1;
 
    if (verbosity >= 1)
-      fprintf ( stderr,
-                        "%d in, %d out.\n",
+      fprintf ( stderr, "%6.3f:1, %6.3f bits/byte, "
+                        "%5.2f%% saved, %d in, %d out.\n",
+                (float)bytesIn / (float)bytesOut,
+                (8.0 * (float)bytesOut) / (float)bytesIn,
+                100.0 * (1.0 - (float)bytesOut / (float)bytesIn),
                 bytesIn,
                 bytesOut
               );
@@ -3526,7 +3136,6 @@ Bool testStream ( FILE *zStream )
      fclose ( zStream );
      fprintf ( stderr, "\n%s: bad magic number (ie, not created by bzip2)\n",
                        inName );
-     DBG2(__LINE__); // required to prevent tail merge of fprintf with other exit paths
      return False;
    }
 
@@ -3557,7 +3166,6 @@ Bool testStream ( FILE *zStream )
          fprintf ( stderr,
                    "\n%s, block %d: bad header (not == 0x314159265359)\n",
                    inName, currBlockNo );
-         DBG(__LINE__); // required to prevent tail merge of fprintf with other exit paths
          return False;
       }
       storedBlockCRC = bsGetUInt32 ();
@@ -3585,12 +3193,11 @@ Bool testStream ( FILE *zStream )
       if (verbosity >= 2) fprintf ( stderr, "] " );
 
       if (storedBlockCRC != computedBlockCRC) {
-        goto CRCmismatch;
-        // bsFinishedWithStream();
-        // fclose ( zStream );
-        // fprintf ( stderr, "\n%s, block %d: computed CRC does not match stored one\n",
-        //                   inName, currBlockNo );
-        // return False;
+         bsFinishedWithStream();
+         fclose ( zStream );
+         fprintf ( stderr, "\n%s, block %d: computed CRC does not match stored one\n",
+                           inName, currBlockNo );
+         return False;
       }
 
       if (verbosity >= 2) fprintf ( stderr, "ok\n" );
@@ -3604,12 +3211,11 @@ Bool testStream ( FILE *zStream )
                 "    combined CRCs: stored = 0x%x, computed = 0x%x\n    ",
                 storedCombinedCRC, computedCombinedCRC );
    if (storedCombinedCRC != computedCombinedCRC) {
-     goto CRCmismatch;
-     // bsFinishedWithStream();
-     // fclose ( zStream );
-     // fprintf ( stderr, "\n%s: computed CRC does not match stored one\n",
-     //                   inName );
-     // return False;
+      bsFinishedWithStream();
+      fclose ( zStream );
+      fprintf ( stderr, "\n%s: computed CRC does not match stored one\n",
+                        inName );
+      return False;
    }
 
    bsFinishedWithStream ();
@@ -3617,14 +3223,6 @@ Bool testStream ( FILE *zStream )
    retVal = fclose ( zStream );
    ERROR_IF_EOF ( retVal );
    return True;
-
-CRCmismatch:
-   bsFinishedWithStream();
-   fclose ( zStream );
-   fprintf ( stderr, "\n%s: computed CRC does not match stored one\n",
-       inName );
-   return False;
-
 }
 
 
@@ -3684,7 +3282,7 @@ void cleanUpAndFail ( Int32 ec )
                 progName, numFileNames, 
                           numFileNames - numFilesProcessed );
    }
-   MYmyexit ( ec );
+   exit ( ec );
 }
 
 
@@ -3803,54 +3401,31 @@ void mySignalCatcher ( IntNative n )
    cleanUpAndFail(1);
 }
 
+
 /*---------------------------------------------*/
-void bug_compress()
+void mySIGSEGVorSIGBUScatcher ( IntNative n )
 {
+   if (opMode == OM_Z)
       fprintf ( stderr,
                 "\n%s: Caught a SIGSEGV or SIGBUS whilst compressing,\n"
                 "\twhich probably indicates a bug in bzip2.  Please\n"
                 "\treport it to me at: jseward@acm.org\n",
                 progName );
-}
-
-void bug_decompress()
-{
-     fprintf ( stderr,
+      else
+      fprintf ( stderr,
                 "\n%s: Caught a SIGSEGV or SIGBUS whilst decompressing,\n"
                 "\twhich probably indicates that the compressed data\n"
                 "\tis corrupted.\n",
                 progName );
-}
-
-void mySIGSEGVorSIGBUScatcher ( IntNative n )
-{
-   if (opMode == OM_Z)
-     bug_compress();
-   else
-     bug_decompress();
 
    showFileNames();
    if (opMode == OM_Z)
-     cleanUpAndFail( 3 );
-   else
+      cleanUpAndFail( 3 ); else
       { cadvise(); cleanUpAndFail( 2 ); }
 }
 
 
 /*---------------------------------------------*/
-
-void myuncompressOutOfMemory ( Int32 draw, Int32 blockSize )
-{
-   fprintf ( stderr,
-             "\n%s: Can't allocate enough memory for decompression.\n"
-             "\tRequested %d bytes for a block size of %d.\n"
-             "\tTry selecting space-economic decompress (with flag -s)\n"
-             "\tand failing that, find a machine with more memory.\n",
-             progName, draw, blockSize );
-   showFileNames();
-   cleanUpAndFail(1);
-}
-
 void uncompressOutOfMemory ( Int32 draw, Int32 blockSize )
 {
    fprintf ( stderr,
@@ -4417,7 +3992,7 @@ void *myMalloc ( Int32 n )
          "%s: `malloc' failed on request for %d bytes.\n",
          progName, n
       );
-      MYmyexit ( 1 );
+      exit ( 1 );
    }
    return p;
 }
@@ -4479,7 +4054,7 @@ IntNative main ( IntNative argc, Char *argv[] )
                 "\tof 4, 2 and 1 bytes to run properly, and they don't.\n"
                 "\tProbably you can fix this by defining them correctly,\n"
                 "\tand recompiling.  Bye!\n" );
-      MYmyexit(1);
+      exit(1);
    }
 
 
@@ -4555,11 +4130,9 @@ IntNative main ( IntNative argc, Char *argv[] )
 
 
    /*-- Look at the flags. --*/
-   for (aa = argList; aa != NULL; aa = aa->link) {
-      DBG(__LINE__);
-      if (aa->name[0] == '-' && aa->name[1] != '-') {
-         for (j = 1; aa->name[j] != '\0'; j++) {
-            DBG(__LINE__);
+   for (aa = argList; aa != NULL; aa = aa->link)
+      if (aa->name[0] == '-' && aa->name[1] != '-')
+         for (j = 1; aa->name[j] != '\0'; j++)
             switch (aa->name[j]) {
                case 'c': srcMode          = SM_F2O; break;
                case 'd': opMode           = OM_UNZ; break;
@@ -4580,21 +4153,17 @@ IntNative main ( IntNative argc, Char *argv[] )
                case 'L': license();            break;
                case 'v': verbosity++; break;
                case 'h': usage ( progName );
-                         MYmyexit ( 1 );
+                         exit ( 1 );
                          break;
                default:  fprintf ( stderr, "%s: Bad flag `%s'\n",
                                    progName, aa->name );
                          usage ( progName );
-                         MYmyexit ( 1 );
+                         exit ( 1 );
                          break;
          }
-       }
-     }
-   }
 
    /*-- And again ... --*/
    for (aa = argList; aa != NULL; aa = aa->link) {
-      DBG(__LINE__);
       if (ISFLAG("--stdout"))            srcMode          = SM_F2O;  else
       if (ISFLAG("--decompress"))        opMode           = OM_UNZ;  else
       if (ISFLAG("--compress"))          opMode           = OM_Z;    else
@@ -4606,12 +4175,12 @@ IntNative main ( IntNative argc, Char *argv[] )
       if (ISFLAG("--repetitive-fast"))   workFactor = 5;             else
       if (ISFLAG("--repetitive-best"))   workFactor = 150;           else
       if (ISFLAG("--verbose"))           verbosity++;                else
-      if (ISFLAG("--help"))              { usage ( progName ); MYmyexit ( 1 ); }
+      if (ISFLAG("--help"))              { usage ( progName ); exit ( 1 ); }
          else
          if (strncmp ( aa->name, "--", 2) == 0) {
             fprintf ( stderr, "%s: Bad flag `%s'\n", progName, aa->name );
             usage ( progName );
-            MYmyexit ( 1 );
+            exit ( 1 );
          }
    }
 
@@ -4620,19 +4189,19 @@ IntNative main ( IntNative argc, Char *argv[] )
    if (opMode == OM_Z && srcMode == SM_F2O && numFileNames > 1) {
       fprintf ( stderr, "%s: I won't compress multiple files to stdout.\n",
                 progName );
-      MYmyexit ( 1 );
+      exit ( 1 );
    }
 
    if (srcMode == SM_F2O && numFileNames == 0) {
       fprintf ( stderr, "%s: -c expects at least one filename.\n",
                 progName );
-      MYmyexit ( 1 );
+      exit ( 1 );
    }
 
    if (opMode == OM_TEST && srcMode == SM_F2O) {
       fprintf ( stderr, "%s: -c and -t cannot be used together.\n",
                 progName );
-      MYmyexit ( 1 );
+      exit ( 1 );
    }
 
    if (opMode != OM_Z) blockSize100k = 0;
@@ -4662,20 +4231,18 @@ IntNative main ( IntNative argc, Char *argv[] )
       if (srcMode == SM_I2O)
          testf ( NULL );
          else
-         for (aa = argList; aa != NULL; aa = aa->link) {
-            DBG(__LINE__);
+         for (aa = argList; aa != NULL; aa = aa->link)
             if (aa->name[0] != '-') {
                numFilesProcessed++;
                testf ( aa->name );
             }
-         }
       if (testFailsExist) {
          fprintf ( stderr,
            "\n"
            "You can use the `bzip2recover' program to *attempt* to recover\n"
            "data from undamaged sections of corrupted files.\n\n"
          );
-         MYmyexit(2);
+         exit(2);
       }
    }
    return 0;
@@ -4703,7 +4270,7 @@ void spec_initbufs();
 void spec_compress(int in, int out, int level);
 void spec_uncompress(int in, int out, int level);
 int spec_init ();
-//int spec_random_load (int fd);
+int spec_random_load (int fd);
 int spec_load (int num, char *filename, int size);
 int spec_read (int fd, unsigned char *buf, int size);
 int spec_getc (int fd);
@@ -4714,8 +4281,7 @@ int spec_write(int fd, unsigned char *buf, int size);
 int spec_putc(unsigned char ch, int fd);
 int debug_time();
 
-//#define DEBUG
-#undef DEBUG // XXX do not change this
+#define DEBUG
 
 #ifdef DEBUG
 int dbglvl=4;
@@ -4740,13 +4306,40 @@ struct spec_fd_t {
     unsigned char *buf;
 } spec_fd[MAX_SPEC_FD];
 
-long int seedi;
 
 #undef read
 #undef write
 #undef ferror
 #undef getc
 #undef ungetc
+
+long int seedi;
+double ran()
+/* See "Random Number Generators: Good Ones Are Hard To Find", */
+/*     Park & Miller, CACM 31#10 October 1988 pages 1192-1201. */
+/***********************************************************/
+/* THIS IMPLEMENTATION REQUIRES AT LEAST 32 BIT INTEGERS ! */
+/***********************************************************/
+#define _A_MULTIPLIER  16807L
+#define _M_MODULUS     2147483647L /* (2**31)-1 */
+#define _Q_QUOTIENT    127773L     /* 2147483647 / 16807 */
+#define _R_REMAINDER   2836L       /* 2147483647 % 16807 */
+{
+	long lo;
+	long hi;
+	long test;
+
+	hi = seedi / _Q_QUOTIENT;
+	lo = seedi % _Q_QUOTIENT;
+	test = _A_MULTIPLIER * lo - _R_REMAINDER * hi;
+	if (test > 0) {
+		seedi = test;
+	} else {
+		seedi = test + _M_MODULUS;
+	}
+	return ( (float) seedi / _M_MODULUS);
+}
+
 
 int spec_init () {
     int i, j;
@@ -4762,17 +4355,15 @@ int spec_init () {
 	spec_fd[i].buf = (unsigned char *)malloc(limit+FUDGE_BUF);
 	if (spec_fd[i].buf == NULL) {
 	    printf ("spec_init: Error mallocing memory!\n");
-	    MYmyexit(1);
+	    exit(1);
 	}
 	for (j = 0; j < limit; j+=1024) {
-      //DBG(__LINE__);
 	    spec_fd[i].buf[j] = 0;
 	}
     }
     return 0;
 }
 
-#if 0
 int spec_random_load (int fd) {
     /* Now fill up the first chunk with random data, if this data is truly
        random then we will not get much of a boost out of it */
@@ -4801,90 +4392,89 @@ int spec_random_load (int fd) {
     spec_fd[fd].len = 1024*1024;
     return 0;
 }
-#endif
 
 int spec_load (int num, char *filename, int size) {
 #define FILE_CHUNK (128*1024)
-  int fd, rc, i;
+    int fd, rc, i;
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
-  fd = open(filename, O_RDONLY|O_BINARY);
-  if (fd < 0) {
-	  fprintf(stderr, "Can't open file %s: %s\n", filename, MYmystrerrorno());
-	  MYmyexit (1);
-  }
-  spec_fd[num].pos = spec_fd[num].len = 0;
-  for (i = 0 ; i < size; i+= rc) {
-	  rc = read(fd, spec_fd[num].buf+i, FILE_CHUNK);
-	  if (rc == 0) break;
-	  if (rc < 0) {
-	    fprintf(stderr, "Error reading from %s: %s\n", filename, MYmystrerrorno());
-	    MYmyexit (1);
-	  }
-	  spec_fd[num].len += rc;
-  }
-  close(fd);
-  while (spec_fd[num].len < size) {
-	  int tmp = size - spec_fd[num].len;
-	  if (tmp > spec_fd[num].len) tmp = spec_fd[num].len;
-	  debug1(3,"Duplicating %d bytes\n", tmp);
-	  memcpy(spec_fd[num].buf+spec_fd[num].len, spec_fd[num].buf, tmp);
-	  spec_fd[num].len += tmp;
-  }
-  return 0;
+    fd = open(filename, O_RDONLY|O_BINARY);
+    if (fd < 0) {
+	fprintf(stderr, "Can't open file %s: %s\n", filename, strerror(errno));
+	exit (1);
+    }
+    spec_fd[num].pos = spec_fd[num].len = 0;
+    for (i = 0 ; i < size; i+= rc) {
+	rc = read(fd, spec_fd[num].buf+i, FILE_CHUNK);
+	if (rc == 0) break;
+	if (rc < 0) {
+	    fprintf(stderr, "Error reading from %s: %s\n", filename, strerror(errno));
+	    exit (1);
+	}
+	spec_fd[num].len += rc;
+    }
+    close(fd);
+    while (spec_fd[num].len < size) {
+	int tmp = size - spec_fd[num].len;
+	if (tmp > spec_fd[num].len) tmp = spec_fd[num].len;
+	debug1(3,"Duplicating %d bytes\n", tmp);
+	memcpy(spec_fd[num].buf+spec_fd[num].len, spec_fd[num].buf, tmp);
+	spec_fd[num].len += tmp;
+    }
+    return 0;
 }
 
 int spec_read (int fd, unsigned char *buf, int size) {
-  int rc = 0;
-  debug3(4,"spec_read: %d, %p, %d = ", fd, (void *)buf, size);
-  if (fd > MAX_SPEC_FD) {
-	  fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
-	  MYmyexit (1);
-  }
-  if (spec_fd[fd].pos >= spec_fd[fd].len) {
-	  debug(4,"EOF\n");
-	  return EOF;
-  }
-  if (spec_fd[fd].pos + size >= spec_fd[fd].len) {
-	  rc = spec_fd[fd].len - spec_fd[fd].pos;
-  } else {
-	  rc = size;
-  }
-  memcpy(buf, &(spec_fd[fd].buf[spec_fd[fd].pos]), rc);
-  spec_fd[fd].pos += rc;
-  debug1(4,"%d\n", rc);
-  return rc;
+    int rc = 0;
+    debug3(4,"spec_read: %d, %p, %d = ", fd, (void *)buf, size);
+    if (fd > MAX_SPEC_FD) {
+	fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
+	exit (1);
+    }
+    if (spec_fd[fd].pos >= spec_fd[fd].len) {
+	debug(4,"EOF\n");
+	return EOF;
+    }
+    if (spec_fd[fd].pos + size >= spec_fd[fd].len) {
+	rc = spec_fd[fd].len - spec_fd[fd].pos;
+    } else {
+	rc = size;
+    }
+    memcpy(buf, &(spec_fd[fd].buf[spec_fd[fd].pos]), rc);
+    spec_fd[fd].pos += rc;
+    debug1(4,"%d\n", rc);
+    return rc;
 }
 int spec_getc (int fd) {
-  int rc = 0;
-  debug1(4,"spec_getc: %d = ", fd);
-  if (fd > MAX_SPEC_FD) {
-	  fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
-	  MYmyexit (1);
-  }
-  if (spec_fd[fd].pos >= spec_fd[fd].len) {
-	  debug(4,"EOF\n");
-	  return EOF;
-  }
-  rc = spec_fd[fd].buf[spec_fd[fd].pos++];
-  debug1(4,"%d\n", rc);
-  return rc;
+    int rc = 0;
+    debug1(4,"spec_getc: %d = ", fd);
+    if (fd > MAX_SPEC_FD) {
+	fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
+	exit (1);
+    }
+    if (spec_fd[fd].pos >= spec_fd[fd].len) {
+	debug(4,"EOF\n");
+	return EOF;
+    }
+    rc = spec_fd[fd].buf[spec_fd[fd].pos++];
+    debug1(4,"%d\n", rc);
+    return rc;
 }
 int spec_ungetc (unsigned char ch, int fd) {
     int rc = 0;
     debug1(4,"spec_ungetc: %d = ", fd);
     if (fd > MAX_SPEC_FD) {
 	fprintf(stderr, "spec_read: fd=%d, > MAX_SPEC_FD!\n", fd);
-	MYmyexit (1);
+	exit (1);
     }
     if (spec_fd[fd].pos <= 0) {
 	fprintf(stderr, "spec_ungetc: pos %d <= 0\n", spec_fd[fd].pos);
-	MYmyexit (1);
+	exit (1);
     }
     if (spec_fd[fd].buf[--spec_fd[fd].pos] != ch) {
 	fprintf(stderr, "spec_ungetc: can't unget something that wasn't what was in the buffer!\n");
-	MYmyexit (1);
+	exit (1);
     }
     debug1(4,"%d\n", rc);
     return ch;
@@ -4903,7 +4493,7 @@ int spec_write(int fd, unsigned char *buf, int size) {
     debug3(4,"spec_write: %d, %p, %d = ", fd, (void *)buf, size);
     if (fd > MAX_SPEC_FD) {
 	fprintf(stderr, "spec_write: fd=%d, > MAX_SPEC_FD!\n", fd);
-	MYmyexit (1);
+	exit (1);
     }
     memcpy(&(spec_fd[fd].buf[spec_fd[fd].pos]), buf, size); 
     spec_fd[fd].len += size;
@@ -4915,7 +4505,7 @@ int spec_putc(unsigned char ch, int fd) {
     debug2(4,"spec_putc: %d, %d = ", ch, fd);
     if (fd > MAX_SPEC_FD) {
 	fprintf(stderr, "spec_write: fd=%d, > MAX_SPEC_FD!\n", fd);
-	MYmyexit (1);
+	exit (1);
     }
     spec_fd[fd].buf[spec_fd[fd].pos++] = ch;
     spec_fd[fd].len ++;
@@ -4924,104 +4514,101 @@ int spec_putc(unsigned char ch, int fd) {
 
 #define MB (1024*1024)
 #ifdef SPEC_CPU2000
-int main (int argc, char *argv[])
-{
-  int i, level;
-  int input_size=64, compressed_size;
-  char *input_name="input.combined";
-  unsigned char *validate_array;
-  seedi = 10;
+int main (int argc, char *argv[]) {
+    int i, level;
+    int input_size=64, compressed_size;
+    char *input_name="input.combined";
+    unsigned char *validate_array;
+    seedi = 10;
 
-  if (argc > 1) input_name=argv[1];
-  if (argc > 2) input_size=atoi(argv[2]);
-  if (argc > 3) 
-	  compressed_size=atoi(argv[3]);
-  else
-	  compressed_size=input_size;
+    if (argc > 1) input_name=argv[1];
+    if (argc > 2) input_size=atoi(argv[2]);
+    if (argc > 3) 
+	compressed_size=atoi(argv[3]);
+    else
+	compressed_size=input_size;
 
-  spec_fd[0].limit=input_size*MB;
-  spec_fd[1].limit=compressed_size*MB;
-  spec_fd[2].limit=input_size*MB;
-  spec_init();
+    spec_fd[0].limit=input_size*MB;
+    spec_fd[1].limit=compressed_size*MB;
+    spec_fd[2].limit=input_size*MB;
+    spec_init();
 
-  debug_time();
-  debug(2, "Loading Input Data\n");
-  spec_load(0, input_name, input_size*MB);
-  debug1(3, "Input data %d bytes in length\n", spec_fd[0].len);
+    debug_time();
+    debug(2, "Loading Input Data\n");
+    spec_load(0, input_name, input_size*MB);
+    debug1(3, "Input data %d bytes in length\n", spec_fd[0].len);
 
-  validate_array = (unsigned char *)malloc(input_size*MB/1024);
-  if (validate_array == NULL) {
-	  printf ("main: Error mallocing memory!\n");
-	  MYmyexit (1);
-  }
-  /* Save off one byte every ~1k for validation */
-  for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
-    DBG(__LINE__);
-	  validate_array[i] = spec_fd[0].buf[i*VALIDATE_SKIP];
-  }
+    validate_array = (unsigned char *)malloc(input_size*MB/1024);
+    if (validate_array == NULL) {
+	printf ("main: Error mallocing memory!\n");
+	exit (1);
+    }
+    /* Save off one byte every ~1k for validation */
+    for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
+	validate_array[i] = spec_fd[0].buf[i*VALIDATE_SKIP];
+    }
 
 
 #ifdef DEBUG_DUMP
-  fd = open ("out.uncompressed", O_RDWR|O_CREAT, 0644);
-  write(fd, spec_fd[0].buf, spec_fd[0].len);
-  close(fd);
+    fd = open ("out.uncompressed", O_RDWR|O_CREAT, 0644);
+    write(fd, spec_fd[0].buf, spec_fd[0].len);
+    close(fd);
 #endif
 
-  spec_initbufs();
+    spec_initbufs();
 
-  for (level=7; level <= 9; level += 2) {
-	  debug_time();
-	  debug1(2, "Compressing Input Data, level %d\n", level);
+    for (level=7; level <= 9; level += 2) {
+	debug_time();
+	debug1(2, "Compressing Input Data, level %d\n", level);
 
-	  spec_compress(0,1, level);
+	spec_compress(0,1, level);
 
-	  debug_time();
-	  debug1(3, "Compressed data %d bytes in length\n", spec_fd[1].len);
+	debug_time();
+	debug1(3, "Compressed data %d bytes in length\n", spec_fd[1].len);
 
 #ifdef DEBUG_DUMP
-	  {
+	{
 	    char buf[256];
 	    sprintf(buf, "out.compress.%d", level);
 	    fd = open (buf, O_RDWR|O_CREAT, 0644);
 	    write(fd, spec_fd[1].buf, spec_fd[1].len);
 	    close(fd);
-	  }
+	}
 #endif
 
-	  spec_reset(0);
-	  spec_rewind(1);
+	spec_reset(0);
+	spec_rewind(1);
 
-	  debug_time();
-	  debug(2, "Uncompressing Data\n");
-	  spec_uncompress(1,0, level);
-	  debug_time();
-	  debug1(3, "Uncompressed data %d bytes in length\n", spec_fd[0].len);
+	debug_time();
+	debug(2, "Uncompressing Data\n");
+	spec_uncompress(1,0, level);
+	debug_time();
+	debug1(3, "Uncompressed data %d bytes in length\n", spec_fd[0].len);
 
 #ifdef DEBUG_DUMP
-	  {
+	{
 	    char buf[256];
 	    sprintf(buf, "out.uncompress.%d", level);
 	    fd = open (buf, O_RDWR|O_CREAT, 0644);
 	    write(fd, spec_fd[0].buf, spec_fd[0].len);
 	    close(fd);
-	  }
+	}
 #endif
 
-	  for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
-      DBG(__LINE__);
+	for (i = 0; i*VALIDATE_SKIP < input_size*MB; i++) {
 	    if (validate_array[i] != spec_fd[0].buf[i*VALIDATE_SKIP]) {
-		    printf ("Tested %dMB buffer: Miscompared!!\n", input_size);
-		    MYmyexit (1);
+		printf ("Tested %dMB buffer: Miscompared!!\n", input_size);
+		exit (1);
 	    }
-	  }
-	  debug_time();
-	  debug(3, "Uncompressed data compared correctly\n");
-	  spec_reset(1);
-	  spec_rewind(0);
-  }
-  printf ("Tested %dMB buffer: OK!\n", input_size);
+	}
+	debug_time();
+	debug(3, "Uncompressed data compared correctly\n");
+	spec_reset(1);
+	spec_rewind(0);
+    }
+    printf ("Tested %dMB buffer: OK!\n", input_size);
 
-  return 0;
+    return 0;
 }
 
 #if defined(SPEC_BZIP)
@@ -5049,8 +4636,7 @@ void spec_uncompress(int in, int out, int lev) {
 #error You must have SPEC_BZIP defined!
 #endif
 
-// prevent compiler from optimizing away calls to this function
-__attribute__((optnone)) int debug_time () {
+int debug_time () {
 #ifdef TIMING_OUTPUT
     static int last = 0;
     struct timeval tv;

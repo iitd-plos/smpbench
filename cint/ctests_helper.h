@@ -9,7 +9,7 @@ int MYmystrcmp(const char *s1, const char *s2);
 int MYmystrncmp(const char *s1, const char *s2, size_t n);
 int MYmy_atoi(char const *s);
 int MYmyrand();
-char MYmy_char_inc(char const *i);
+char MYmy_char_inc(char *i);
 int MYmyrand_char();
 void MYmyprint_char(char c);
 void MYmyprint_int(int c);
@@ -30,8 +30,18 @@ void MYmydebug2(int n);
 #define strcmp MYmystrcmp
 #define strncmp MYmystrncmp
 
-#define DBG(l) MYmydebug(l)
-#define DBG2(l) MYmydebug2(l)
 
+extern void (*dbgptr)(int);
+extern void (*dbgptr2)(int);
+
+#define DBG(l) dbgptr(l)
+#define DBG2(l) dbgptr2(l)
+//#define DBG(l) MYmydebug(l)
+//#define DBG2(l) MYmydebug2(l)
+
+//#define LEN 30000
+//#define LEN2 500
+//
+//int dummy(float a[LEN], float b[LEN], float c[LEN], float d[LEN], float e[LEN], float aa[LEN2][LEN2], float bb[LEN2][LEN2], float cc[LEN2][LEN2], float s);
 
 #endif
