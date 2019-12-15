@@ -2051,7 +2051,7 @@ int s323()
 
 
 // ICC  UNDEF OPCODE -- movmskps
-
+/*
 int s331()
 {
 
@@ -2070,7 +2070,7 @@ int s331()
 	temp = j+1;
 	return 0;
 }
-
+*/
 
 int s332( TYPE t)
 {

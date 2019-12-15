@@ -4,67 +4,67 @@ LINKER_SCRIPT=$(SRCDIR)/misc/ld.script
 LLVM_OPT_FLAGS=-O3 -strip-debug
 
 tsvc/%.gcc.eqchecker.O0.i386.o: tsvc/%.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g -O0 $< -o $@
 tsvc/tsvc_helper.gcc.eqchecker.O0.i386.o: tsvc/tsvc_helper.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g -O0 $< -o $@
 tsvc/%.gcc.eqchecker.O0.i386: tsvc/%.gcc.eqchecker.O0.i386.o tsvc/tsvc_helper.gcc.eqchecker.O0.i386.o
-	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
 tsvc/%.gcc.eqchecker.O2.i386.o: tsvc/%.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g -O2 $< -o $@
 tsvc/tsvc_helper.gcc.eqchecker.O2.i386.o: tsvc/tsvc_helper.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g -O2 $< -o $@
 tsvc/%.gcc.eqchecker.O2.i386: tsvc/%.gcc.eqchecker.O2.i386.o tsvc/tsvc_helper.gcc.eqchecker.O2.i386.o
-	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
 tsvc/%.gcc.eqchecker.O3.i386.o: tsvc/%.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g -O3 $< -o $@
 tsvc/tsvc_helper.gcc.eqchecker.O3.i386.o: tsvc/tsvc_helper.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g -O3 $< -o $@
 tsvc/%.gcc.eqchecker.O3.i386: tsvc/%.gcc.eqchecker.O3.i386.o tsvc/tsvc_helper.gcc.eqchecker.O3.i386.o
-	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 tsvc/%.clang.eqchecker.O0.i386.o: tsvc/%.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g -O0 $< -o $@
 tsvc/tsvc_helper.clang.eqchecker.O0.i386.o: tsvc/tsvc_helper.c
-	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
+	$(GCC_I386) -c $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g -O0 $< -o $@
 tsvc/%.clang.eqchecker.O0.i386: tsvc/%.clang.eqchecker.O0.i386.o tsvc/tsvc_helper.clang.eqchecker.O0.i386.o
-	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+	$(GCC_I386) $(CFLAGS) $(GCC_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
 tsvc/%.clang.eqchecker.O2.i386.o: tsvc/%.c
-	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
+	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS_UNROLL) -g -O2 $< -o $@
 tsvc/tsvc_helper.clang.eqchecker.O2.i386.o: tsvc/tsvc_helper.c
-	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
+	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS_UNROLL) -g -O2 $< -o $@
 tsvc/%.clang.eqchecker.O2.i386: tsvc/%.clang.eqchecker.O2.i386.o tsvc/tsvc_helper.clang.eqchecker.O2.i386.o
-	$(CLANG_I386) $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+	$(CLANG_I386) $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
 tsvc/%.clang.eqchecker.O3.i386.o: tsvc/%.c
-	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
+	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS_UNROLL) -g -O3 $< -o $@
 tsvc/tsvc_helper.clang.eqchecker.O3.i386.o: tsvc/tsvc_helper.c
-	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
+	$(CLANG_I386) -c $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS_UNROLL) -g -O3 $< -o $@
 tsvc/%.clang.eqchecker.O3.i386: tsvc/%.clang.eqchecker.O3.i386.o tsvc/tsvc_helper.clang.eqchecker.O3.i386.o
-	$(CLANG_I386) $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+	$(CLANG_I386) $(CFLAGS) $(CLANG_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 tsvc/%.icc.eqchecker.O0.i386.o: tsvc/%.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
+	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g -O0 $< -o $@
 tsvc/tsvc_helper.icc.eqchecker.O0.i386.o: tsvc/tsvc_helper.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O0 $< -o $@
+	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g -O0 $< -o $@
 tsvc/%.icc.eqchecker.O0.i386: tsvc/%.icc.eqchecker.O0.i386.o tsvc/tsvc_helper.icc.eqchecker.O0.i386.o
-	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
+	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O0 $^ -o $@ $(LIBS)
 
 tsvc/%.icc.eqchecker.O2.i386.o: tsvc/%.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
+	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g -O2 $< -o $@
 tsvc/tsvc_helper.icc.eqchecker.O2.i386.o: tsvc/tsvc_helper.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O2 $< -o $@
+	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g -O2 $< -o $@
 tsvc/%.icc.eqchecker.O2.i386: tsvc/%.icc.eqchecker.O2.i386.o tsvc/tsvc_helper.icc.eqchecker.O2.i386.o
-	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
+	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O2 $^ -o $@ $(LIBS)
 
 tsvc/%.icc.eqchecker.O3.i386.o: tsvc/%.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
+	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g -O3 $< -o $@
 tsvc/tsvc_helper.icc.eqchecker.O3.i386.o: tsvc/tsvc_helper.c
-	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g -O3 $< -o $@
+	$(ICC_I386) -c $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g -O3 $< -o $@
 tsvc/%.icc.eqchecker.O3.i386: tsvc/%.icc.eqchecker.O3.i386.o tsvc/tsvc_helper.icc.eqchecker.O3.i386.o
-	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
+	$(ICC_I386) $(CFLAGS) $(ICC_I386_EQCHECKER_FLAGS_UNROLL) -g $(LINKER_SCRIPT_I386_FLAG) -O3 $^ -o $@ $(LIBS)
 
 tsvc/%.ccomp.eqchecker.O2.i386.o: tsvc/%.c
 	$(CCOMP_I386) -c $(CCOMP_CFLAGS) $(LINKER_SCRIPT_I386_FLAG) -g -O2 $< -o $@
