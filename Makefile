@@ -41,5 +41,5 @@ cleansrc::
 distclean: clean
 	rm -rf $(build) config-host.mak config-host.h misc/config_host.pm
 
-bzip2_run:: input.combined
-	time $(build)/cint/bzip2.clang.eqchecker.O3.i386
+#bzip2_run:: input.combined
+#	time $(build)/cint/bzip2.clang.eqchecker.O3.i386

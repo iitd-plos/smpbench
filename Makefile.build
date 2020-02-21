@@ -33,7 +33,7 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 CINT_PROG_NAMES+= binarytrees qsort emptyloop bubsort pcrack fibo_iter hsearch fib lists nsievebits nsieve qsort vmach
 CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
 
-CINT_PROG_NAMES_EQCHECKER+= ctests glibcqsort bzip2 $(CINT_PROG_NAMES)
+CINT_PROG_NAMES_EQCHECKER+= #ctests glibcqsort bzip2 $(CINT_PROG_NAMES)
 CINT_PROGS_EQCHECKER=$(addprefix cint/, $(CINT_PROG_NAMES_EQCHECKER))
 
 CINT_PROGS_GCC=$(CINT_PROGS) $(CINT_GCC_CLANG_ICC_PROGS)
