@@ -30,7 +30,7 @@ RANDOM_FILES = randfile.1.1 randfile.2.1 randfile.2.2 randfile.5.1 randfile.10.2
 #CINT_GCC_CLANG_ICC_PROG_NAMES = #rsa64 ds sense crc ar midi intermittent array_cmpb array_cmpw array_cmpl array_setb array_setw array_setl count_ones32 array_findb array_findw array_findl array_rfindb array_rfindw array_rfindl my_strlen my_strrchr
 #NEEDS ENHANCED TRANSMAPS AND LIVENESS ANALYSIS FOR BEST PERFORMANCE: matmul matmul_noalias
 
-CINT_PROG_NAMES+= binarytrees qsort emptyloop bubsort pcrack fibo_iter hsearch fib lists nsievebits nsieve qsort vmach
+CINT_PROG_NAMES+= fibo_iter binarytrees qsort emptyloop bubsort pcrack fibo_iter hsearch fib lists nsievebits nsieve qsort vmach
 CINT_PROGS=$(addprefix cint/, $(CINT_PROG_NAMES))
 
 CINT_PROG_NAMES_EQCHECKER+= ctests glibcqsort bzip2 $(CINT_PROG_NAMES)

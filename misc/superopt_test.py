@@ -5,9 +5,10 @@ import time
 from subprocess import check_call, STDOUT
 
 execfile("../smpbench-build/config.py")
-superopt_dir = os.path.abspath(srcdir + "/../superopt")
+superopt_root = os.path.abspath(srcdir + "/../superopt-project")
+superopt_dir = os.path.abspath(superopt_root + "/superopt")
 lli = "lli-3.4"
-llvm2tfg_build_dir = os.path.abspath(srcdir + "/../llvm-build")
+llvm2tfg_build_dir = os.path.abspath(superopt_root + "/llvm-build")
 
 color_red="`tput bold; tput setaf 1`"
 color_green="`tput bold; tput setaf 2`"
